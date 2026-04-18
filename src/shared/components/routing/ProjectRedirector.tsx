@@ -5,53 +5,80 @@ import { projectsApi } from "@/core/api/client";
 import { SplashScreen } from "@/shared/components/ui/SplashScreen";
 import { PreloaderIndicator } from "@/shared/components/ui/PreloaderIndicator";
 
+const REDIRECT_GUARD_TIMEOUT_MS = 10000;
+const LOGOUT_WAIT_TIMEOUT_MS = 1500;
+
 export function ProjectRedirector() {
   const { projectId } = useParams();
-  const { user, role, isAuthenticated, isLoading, isFullyReady, logout } = useAuth();
+  const { user, role, isAuthenticated, isLoading, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     let cancelled = false;
+    let resolved = false;
     const normalizeRole = (value: string | null | undefined) => {
       const upper = value?.toString().toUpperCase();
       return upper === "EMPLOYEE" ? "EMPLOYE" : upper;
     };
+    const currentPath = `${location.pathname}${location.search}${location.hash}`;
+    const loginUrl = `/login?redirect=${encodeURIComponent(currentPath)}`;
+    const goToLogin = () => {
+      if (cancelled || resolved) return;
+      resolved = true;
+      navigate(loginUrl, { replace: true });
+    };
+    const goTo = (to: string) => {
+      if (cancelled || resolved) return;
+      resolved = true;
+      navigate(to, { replace: true });
+    };
+    const setWrongAccountNotice = () => {
+      try {
+        sessionStorage.setItem(
+          "ikigai:authNotice",
+          "This link requires login with the correct account. You will be redirected to sign in."
+        );
+      } catch {
+        // ignore
+      }
+    };
+
+    const hardTimeoutId = window.setTimeout(() => {
+      goToLogin();
+    }, REDIRECT_GUARD_TIMEOUT_MS);
+
+    const sleep = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
     const run = async () => {
-      if (isLoading || !isFullyReady) return;
+      if (isLoading) return;
 
       const params = new URLSearchParams(location.search);
       const expectedRole = normalizeRole(params.get("expectedRole"));
       const expectedUserIdRaw = params.get("expectedUserId");
       const expectedUserId = expectedUserIdRaw ? Number.parseInt(expectedUserIdRaw, 10) : null;
-      const currentPath = `${location.pathname}${location.search}${location.hash}`;
 
       const forceReLogin = async () => {
+        setWrongAccountNotice();
+        const logoutTask = Promise.race([logout(), sleep(LOGOUT_WAIT_TIMEOUT_MS)]);
+        void logoutTask.finally(() => {
+          goToLogin();
+        });
         try {
-          sessionStorage.setItem(
-            "ikigai:authNotice",
-            "This link requires login with the correct account. You will be redirected to sign in."
-          );
+          await logoutTask;
         } catch {
           // ignore
         }
-        try {
-          await logout();
-        } finally {
-          if (!cancelled) {
-            navigate(`/login?redirect=${encodeURIComponent(currentPath)}`, { replace: true });
-          }
-        }
+        goToLogin();
       };
 
       if (!isAuthenticated) {
-        navigate(`/login?redirect=${encodeURIComponent(currentPath)}`, { replace: true });
+        goToLogin();
         return;
       }
 
       if (!projectId) {
-        navigate("/", { replace: true });
+        goTo("/");
         return;
       }
 
@@ -78,31 +105,32 @@ export function ProjectRedirector() {
           await forceReLogin();
           return;
         }
-        navigate("/", { replace: true });
+        goTo("/");
         return;
       }
 
       switch (normalizedRole) {
         case "ADMIN":
-          navigate(`/admin/projects/${projectId}`, { replace: true });
+          goTo(`/admin/projects/${projectId}`);
           break;
         case "EMPLOYE":
         case "EMPLOYEE":
-          navigate(`/employee/projects/${projectId}`, { replace: true });
+          goTo(`/employee/projects/${projectId}`);
           break;
         case "CLIENT":
-          navigate("/client/dashboard", { replace: true });
+          goTo("/client/dashboard");
           break;
         default:
-          navigate("/", { replace: true });
+          goTo("/");
       }
     };
 
     void run();
     return () => {
       cancelled = true;
+      window.clearTimeout(hardTimeoutId);
     };
-  }, [projectId, role, user?.id, isAuthenticated, isLoading, isFullyReady, logout, navigate, location.pathname, location.search, location.hash]);
+  }, [projectId, role, user?.id, isAuthenticated, isLoading, logout, navigate, location.pathname, location.search, location.hash]);
 
   return (
     <SplashScreen isLoading={true}>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import axios from "axios";
 import { 
@@ -20,9 +20,10 @@ import BorderGlow from "@/shared/components/effects/BorderGlow";
 type PageState = 'login' | 'forgot' | 'reset-success';
 
 export function LoginPage() {
-  const { login, role, isLoading } = useAuth();
+  const { login, isAuthenticated, isLoading, isFullyReady } = useAuth();
   const { t } = useI18n();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [pageState, setPageState] = useState<PageState>('login');
   const [email, setEmail] = useState("");
@@ -95,20 +96,19 @@ export function LoginPage() {
   }, []);
 
   useEffect(() => {
-    if (!isLoading && role) {
-      const searchParams = new URLSearchParams(window.location.search);
-      const redirectTo = searchParams.get("redirect");
-      const safeRedirect =
-        redirectTo && redirectTo.startsWith("/") && !redirectTo.startsWith("//") && !redirectTo.startsWith("/login")
-          ? redirectTo
-          : null;
-      if (safeRedirect) {
-        navigate(safeRedirect, { replace: true });
-      } else {
-        navigate("/", { replace: true });
-      }
+    if (isLoading || !isAuthenticated || !isFullyReady) return;
+    const searchParams = new URLSearchParams(location.search);
+    const redirectTo = searchParams.get("redirect");
+    const safeRedirect =
+      redirectTo && redirectTo.startsWith("/") && !redirectTo.startsWith("//") && !redirectTo.startsWith("/login")
+        ? redirectTo
+        : null;
+    if (safeRedirect) {
+      navigate(safeRedirect, { replace: true });
+    } else {
+      navigate("/", { replace: true });
     }
-  }, [role, navigate, isLoading]);
+  }, [isAuthenticated, isLoading, isFullyReady, location.search, navigate]);
 
   const pageVariants: any = {
     initial: { opacity: 0, y: 16 },

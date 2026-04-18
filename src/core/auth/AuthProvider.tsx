@@ -80,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Clear local state immediately to unblock account switching even if the network is slow.
     setUser(null);
     setApiRoleHeader(null);
-    setIsFullyReady(false);
+    setIsFullyReady(true);
     writeLastRole(null);
     cleanupObsoleteSessionKeys();
     cleanupObsoleteLocalKeys();
@@ -148,7 +148,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Do not force server logout on init failure (page refresh resilience).
         setUser(null);
         setApiRoleHeader(null);
-        setIsFullyReady(false);
+        // Auth has settled to signed-out state.
+        setIsFullyReady(true);
         writeLastRole(null);
       } finally {
         setAppInitializing(false);
