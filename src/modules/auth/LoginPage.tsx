@@ -29,6 +29,7 @@ export function LoginPage() {
   const [password, setPassword] = useState("");
   const [resetEmail, setResetEmail] = useState("");
   const [error, setError] = useState("");
+  const [authNotice, setAuthNotice] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isForgotSubmitting, setIsForgotSubmitting] = useState(false);
@@ -80,6 +81,18 @@ export function LoginPage() {
       setIsForgotSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    try {
+      const notice = sessionStorage.getItem("ikigai:authNotice");
+      if (notice) {
+        setAuthNotice(notice);
+        sessionStorage.removeItem("ikigai:authNotice");
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
 
   useEffect(() => {
     if (!isLoading && role) {
@@ -151,6 +164,16 @@ export function LoginPage() {
                   </div>
 
                   <AnimatePresence>
+                    {authNotice && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="mb-3 px-4 py-3 bg-blue-50/10 border border-blue-300/30 rounded-xl"
+                      >
+                        <p className="text-sm text-blue-300">{authNotice}</p>
+                      </motion.div>
+                    )}
                     {error && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
