@@ -145,6 +145,7 @@ export function MobileSidebar({
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const notificationsButtonRef = useRef<HTMLDivElement>(null);
+  const canUseNotifications = Boolean(onNotificationClick);
 
   // Close notifications when clicking outside
   useEffect(() => {
@@ -240,6 +241,7 @@ export function MobileSidebar({
                 <div className="flex items-center justify-between mb-8">
                   {/* Brand â€” text removed */}
                   <img src="/logo_cropped.png" alt="Logo" className="h-10 w-auto object-contain bg-transparent select-none" />                  <div className="flex items-center gap-2">
+                    {canUseNotifications && (
                     <div className="relative" ref={notificationsButtonRef}>
                       <button
                         onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
@@ -293,7 +295,7 @@ export function MobileSidebar({
                                     !notif.lu ? "bg-blue-50 dark:bg-blue-900/10" : ""
                                   }`}
                                   onClick={() => {
-                                    const routePath = notif.lien || undefined;
+                                    const routePath = notif.routePath || undefined;
                                     handleNotificationClick(notif.id, routePath);
                                   }}
                                 >
@@ -328,6 +330,7 @@ export function MobileSidebar({
                         </div>
                       )}
                     </div>
+                    )}
                   </div>                  <button
                     onClick={() => setIsOpen(false)}
                     className="p-2 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-full transition-colors"

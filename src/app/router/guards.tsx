@@ -1,10 +1,11 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/core/auth/AuthProvider";
 import type { UserRole } from "@/types/auth";
 import Preloader from "@/shared/components/feedback/Preloader";
 
 export function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isLoading, isAuthenticated, isFullyReady } = useAuth();
+  const location = useLocation();
   if (isLoading || (isAuthenticated && !isFullyReady)) {
     return (
       <div className="min-h-screen flex items-center justify-center p-12 bg-[#0a0a0b]">
@@ -12,12 +13,16 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (!isAuthenticated) {
+    const target = `${location.pathname}${location.search}${location.hash}`;
+    return <Navigate to={`/login?redirect=${encodeURIComponent(target)}`} replace />;
+  }
   return <>{children}</>;
 }
 
 export function RequireRole({ role, children }: { role: UserRole; children: React.ReactNode }) {
   const { role: currentRole, isLoading, isAuthenticated, isFullyReady } = useAuth();
+  const location = useLocation();
   if (isLoading || (isAuthenticated && !isFullyReady)) {
     return (
       <div className="min-h-screen flex items-center justify-center p-12 bg-[#0a0a0b]">
@@ -26,7 +31,8 @@ export function RequireRole({ role, children }: { role: UserRole; children: Reac
     );
   }
   if (!currentRole) {
-    return <Navigate to="/login" replace />;
+    const target = `${location.pathname}${location.search}${location.hash}`;
+    return <Navigate to={`/login?redirect=${encodeURIComponent(target)}`} replace />;
   }
   if (currentRole !== role) {
     if (currentRole === "ADMIN") return <Navigate to="/admin/dashboard" replace />;

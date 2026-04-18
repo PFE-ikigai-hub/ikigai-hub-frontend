@@ -635,21 +635,23 @@ export function SettingsPage() {
                       <h3 className="text-base text-stone-800 dark:text-stone-200">{t("settings.themeMode")}</h3>
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {(["light", "dark"] as const).map((mode) => (
                         <button
                           key={mode}
                           onClick={() => setTheme(mode)}
-                          className={`flex-1 flex items-center gap-3 py-3.5 px-5 rounded-xl border transition-all duration-200 ${
+                          className={`w-full min-w-0 h-12 flex items-center justify-between gap-3 px-4 rounded-xl border transition-all duration-200 ${
                             theme === mode
                               ? "bg-white dark:bg-black text-stone-900 dark:text-white border-stone-900 dark:border-white shadow-md"
                               : "border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800/30 text-stone-600 dark:text-stone-400 hover:border-stone-400 dark:hover:border-stone-500"
                           }`}
                           type="button"
                         >
-                          {mode === "light" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                          <span className="text-sm font-medium">{mode === "light" ? t("settings.light") : t("settings.dark")}</span>
-                          {theme === mode && <Check className="w-4 h-4 ml-auto" />}
+                          <span className="inline-flex items-center gap-2 min-w-0">
+                            {mode === "light" ? <Sun className="w-4 h-4 shrink-0" /> : <Moon className="w-4 h-4 shrink-0" />}
+                            <span className="text-sm font-medium truncate">{mode === "light" ? t("settings.light") : t("settings.dark")}</span>
+                          </span>
+                          {theme === mode && <Check className="w-4 h-4 shrink-0" />}
                         </button>
                       ))}
                     </div>

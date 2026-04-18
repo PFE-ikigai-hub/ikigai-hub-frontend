@@ -84,10 +84,13 @@ export function LoginPage() {
   useEffect(() => {
     if (!isLoading && role) {
       const searchParams = new URLSearchParams(window.location.search);
-      const redirectTo = searchParams.get('redirect');
-      
-      if (redirectTo) {
-        navigate(redirectTo, { replace: true });
+      const redirectTo = searchParams.get("redirect");
+      const safeRedirect =
+        redirectTo && redirectTo.startsWith("/") && !redirectTo.startsWith("//") && !redirectTo.startsWith("/login")
+          ? redirectTo
+          : null;
+      if (safeRedirect) {
+        navigate(safeRedirect, { replace: true });
       } else {
         navigate("/", { replace: true });
       }

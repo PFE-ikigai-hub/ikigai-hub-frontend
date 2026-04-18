@@ -34,13 +34,14 @@ function buildWsUrl(role: string | null): string | null {
 
 export function NotificationsProvider({ children }: { children: React.ReactNode }) {
   const { user, isAuthenticated, isFullyReady } = useAuth();
+  const isAdmin = user?.role === "ADMIN";
   const [notifications, setNotifications] = useState<ApiNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const stompRef = useRef<Client | null>(null);
 
   const refresh = useCallback(async () => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || isAdmin) return;
     setIsLoading(true);
     try {
       const [page, unread] = await Promise.all([
@@ -52,7 +53,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     } finally {
       setIsLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isAdmin]);
 
   const handleIncomingNotification = useCallback((payload: ApiNotification) => {
     setNotifications((prev) => {
@@ -65,7 +66,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   }, []);
 
   useEffect(() => {
-    if (!isAuthenticated || !isFullyReady || !user?.role) {
+    if (!isAuthenticated || !isFullyReady || !user?.role || isAdmin) {
       setNotifications([]);
       setUnreadCount(0);
       if (stompRef.current) {
@@ -118,7 +119,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
         stompRef.current = null;
       }
     };
-  }, [handleIncomingNotification, isAuthenticated, isFullyReady, refresh, user?.role]);
+  }, [handleIncomingNotification, isAuthenticated, isFullyReady, refresh, user?.role, isAdmin]);
 
   const markAsRead = useCallback(async (id: number) => {
     const updated = await notificationsApi.markAsRead(id);

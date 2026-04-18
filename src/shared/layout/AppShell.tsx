@@ -150,6 +150,7 @@ export function AppShell() {
   const profileRef = useRef<HTMLDivElement>(null);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
+  const showNotifications = user?.role !== "ADMIN";
   
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -299,6 +300,7 @@ export function AppShell() {
 
           {/* User Profile â€” Fixed at Bottom */}
           <div className="pt-4 mt-4">
+            {showNotifications && (
             <div className="relative mb-2" ref={notificationsRef}>
               {isNotificationsOpen && (
                 <div
@@ -388,6 +390,7 @@ export function AppShell() {
                 )}
               </button>
             </div>
+            )}
             <div className="relative" ref={profileRef}>
               {isProfileExpanded && (
                 <div
@@ -473,11 +476,11 @@ export function AppShell() {
               onOpenSettings={() => navigate("/settings")}
               onLogout={handleLogout}
               t={t}
-              notifications={notifications}
-              unreadCount={unreadCount}
-              onNotificationClick={(id, routePath) => handleNotificationClick(id, routePath)}
-              onDeleteNotification={(id) => deleteNotification(id)}
-              onMarkAllAsRead={() => markAllAsRead()}
+              notifications={showNotifications ? notifications : []}
+              unreadCount={showNotifications ? unreadCount : 0}
+              onNotificationClick={showNotifications ? (id, routePath) => handleNotificationClick(id, routePath) : undefined}
+              onDeleteNotification={showNotifications ? (id) => deleteNotification(id) : undefined}
+              onMarkAllAsRead={showNotifications ? () => markAllAsRead() : undefined}
               formatTimeAgo={formatTimeAgo}
             />
           )}
