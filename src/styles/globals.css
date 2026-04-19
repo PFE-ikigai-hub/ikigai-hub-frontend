@@ -303,6 +303,20 @@ html {
     );
   }
 
+  /* Keep only custom password visibility toggle (hide native browser reveal icons) */
+  .hide-password-reveal::-ms-reveal,
+  .hide-password-reveal::-ms-clear {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  .hide-password-reveal::-webkit-credentials-auto-fill-button,
+  .hide-password-reveal::-webkit-strong-password-auto-fill-button {
+    display: none !important;
+    visibility: hidden;
+    pointer-events: none;
+  }
 }
 
 @keyframes skeleton-shimmer {

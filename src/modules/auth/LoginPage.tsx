@@ -214,7 +214,7 @@ export function LoginPage() {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           placeholder="••••••••"
-                          className="w-full pl-10 pr-12 py-3 border border-stone-700 rounded-xl bg-[#111113] text-white placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-stone-200/20 transition-all duration-200"
+                          className="hide-password-reveal w-full pl-10 pr-12 py-3 border border-stone-700 rounded-xl bg-[#111113] text-white placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-stone-200/20 transition-all duration-200"
                           required
                           minLength={6}
                           disabled={isSubmitting}
