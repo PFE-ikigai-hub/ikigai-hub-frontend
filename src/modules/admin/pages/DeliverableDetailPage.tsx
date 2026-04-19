@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Check, History, ShieldAlert, Trash2 } from "lucide-react";
-import { motion } from "motion/react";
+import { ArrowLeft, Check, History, Trash2 } from "lucide-react";
 import { deliverablesApi, versionsApi } from "@/core/api/client";
 import { useI18n } from "@/core/i18n/I18nProvider";
 import { useToast } from "@/shared/components/ui/toast";
@@ -135,7 +134,7 @@ export function AdminDeliverableDetailPage() {
             {deliverable.nom}
           </h1>
           <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
-            {deliverable.projetNom} • {deliverable.type} • {t(`status.${deliverable.statut}`)}
+            {deliverable.projetNom} - {deliverable.type} - {t(`status.${deliverable.statut}`)} with [{deliverable.type}]
           </p>
         </div>
 
@@ -160,20 +159,6 @@ export function AdminDeliverableDetailPage() {
           </button>
         </div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-amber-200 dark:border-amber-900/50 bg-amber-50/70 dark:bg-amber-950/20 p-4 flex items-start gap-3"
-      >
-        <ShieldAlert className="w-5 h-5 text-amber-700 dark:text-amber-400 mt-0.5" />
-        <div>
-          <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">Admin governance mode</p>
-          <p className="text-xs text-amber-700/90 dark:text-amber-400/90 mt-1">
-            File preview, file content access, comments, annotations, and downloads are disabled for ADMIN.
-          </p>
-        </div>
-      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
         <div className="rounded-2xl border border-stone-200/70 dark:border-stone-800/70 bg-white dark:bg-[#0d0d0f] p-4">
