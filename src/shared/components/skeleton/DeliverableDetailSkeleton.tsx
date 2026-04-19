@@ -9,10 +9,6 @@ export function DeliverableDetailSkeleton() {
           <SkeletonBlock className="h-9 w-72 max-w-[80vw]" />
           <SkeletonBlock className="h-4 w-96 max-w-[85vw]" />
         </div>
-        <div className="flex items-center gap-2">
-          <SkeletonBlock className="h-9 w-36 rounded-lg" />
-          <SkeletonBlock className="h-9 w-28 rounded-lg" />
-        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
