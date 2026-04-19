@@ -28,10 +28,10 @@ export function DeliverableRedirector() {
       resolved = true;
       navigate(loginUrl, { replace: true });
     };
-    const goTo = (to: string) => {
+    const goTo = (to: string, state?: Record<string, unknown>) => {
       if (cancelled || resolved) return;
       resolved = true;
-      navigate(to, { replace: true });
+      navigate(to, { replace: true, state });
     };
     const setWrongAccountNotice = () => {
       try {
@@ -115,14 +115,14 @@ export function DeliverableRedirector() {
 
       switch (normalizedRole) {
         case "ADMIN":
-          goTo(`/admin/deliverables/${deliverableId}${query}`);
+          goTo(`/admin/deliverables/${deliverableId}${query}`, { fromEmailDeepLink: true });
           break;
         case "EMPLOYE":
         case "EMPLOYEE":
-          goTo(`/employee/feedback/${deliverableId}${query}`);
+          goTo(`/employee/feedback/${deliverableId}${query}`, { fromEmailDeepLink: true });
           break;
         case "CLIENT":
-          goTo(`/client/review/${deliverableId}${query}`);
+          goTo(`/client/review/${deliverableId}${query}`, { fromEmailDeepLink: true });
           break;
         default:
           goTo("/");

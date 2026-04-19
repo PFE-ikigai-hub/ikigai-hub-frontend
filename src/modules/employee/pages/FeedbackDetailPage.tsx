@@ -15,6 +15,7 @@ import { SecureDownloadModal } from '@/shared/components/ui/SecureDownloadModal'
 import { SecureDeleteModal } from '@/modules/admin/components/SecureDeleteModal';
 import { useToast } from '@/shared/components/ui/toast';
 import { isLikelyPdfBlob, shouldReadTextPreview } from '@/shared/utils/preview';
+import { useSmartBackNavigation } from '@/shared/hooks/useSmartBackNavigation';
 
 // Lazy load PdfViewer to reduce initial bundle size
 const PdfViewer = lazy(() => import('@/shared/components/review/PdfViewer'));
@@ -35,7 +36,7 @@ export function EmployeeFeedbackDetailPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useI18n();
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const toast = useToast();
 
   const [zoom, setZoom] = useState(1);
@@ -72,13 +73,15 @@ export function EmployeeFeedbackDetailPage() {
   const [noteInterneDraft, setNoteInterneDraft] = useState('');
   const [savingNoteInterne, setSavingNoteInterne] = useState(false);
 
-  const handleBack = useCallback(() => {
-    if (window.history.state && window.history.state.idx > 0) {
-      navigate(-1);
-    } else {
-      navigate('/employee/feedback', { replace: true });
-    }
-  }, [navigate]);
+  const { goBack: handleBack } = useSmartBackNavigation({
+    role,
+    fallbackByRole: {
+      EMPLOYE: '/employee/feedback',
+      CLIENT: '/client/dashboard',
+      ADMIN: '/admin/projects',
+    },
+    defaultFallback: '/employee/feedback',
+  });
 
   useEffect(() => {
     if (Number.isNaN(livrableId)) {
@@ -639,7 +642,7 @@ export function EmployeeFeedbackDetailPage() {
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <div className="p-5 border-b border-stone-200/40 dark:border-stone-800/30 space-y-4">
                 <button
-                  onClick={() => navigate(-1)}
+                  onClick={handleBack}
                   className="inline-flex items-center gap-2 text-sm font-medium text-stone-600 hover:text-stone-900 dark:text-stone-300 dark:hover:text-white"
                   type="button"
                 >

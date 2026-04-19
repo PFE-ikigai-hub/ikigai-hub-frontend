@@ -4,6 +4,7 @@ import { ArrowLeft, ZoomIn, ZoomOut, Check, Download, Sparkles, RefreshCw, File,
 import { motion, AnimatePresence } from 'motion/react';
 import { deliverablesApi, triggerBrowserDownload, versionsApi } from '@/core/api/client';
 import type { DownloadConfirmationPayload } from '@/core/api/client';
+import { useAuth } from '@/core/auth/AuthProvider';
 import { useI18n } from '@/core/i18n/I18nProvider';
 import { InlineLoader } from '@/shared/components/feedback/InlineLoader';
 import { DeliverableDetailSkeleton } from '@/shared/components/skeleton';
@@ -19,6 +20,7 @@ const PdfViewer = lazy(() => import('@/shared/components/review/PdfViewer'));
 import type { ApiDeliverable, ApiVersion } from '@/types/index';
 import { normalizeVersions } from '@/shared/utils/versions';
 import { isLikelyPdfBlob, shouldReadTextPreview } from '@/shared/utils/preview';
+import { useSmartBackNavigation } from '@/shared/hooks/useSmartBackNavigation';
 
 export function ClientReviewDetailPage() {
   const { deliverableId } = useParams();
@@ -26,6 +28,7 @@ export function ClientReviewDetailPage() {
   const location = useLocation();
   const { t } = useI18n();
   const toast = useToast();
+  const { role } = useAuth();
 
   const [zoom, setZoom] = useState(1);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -60,13 +63,15 @@ export function ClientReviewDetailPage() {
   
   const [currentPdfPage, setCurrentPdfPage] = useState(1);
 
-  const handleBack = useCallback(() => {
-    if (window.history.state && window.history.state.idx > 0) {
-      navigate(-1);
-    } else {
-      navigate('/client/dashboard', { replace: true });
-    }
-  }, [navigate]);
+  const { goBack: handleBack } = useSmartBackNavigation({
+    role,
+    fallbackByRole: {
+      CLIENT: '/client/dashboard',
+      EMPLOYE: '/employee/feedback',
+      ADMIN: '/admin/projects',
+    },
+    defaultFallback: '/client/dashboard',
+  });
 
   // 1) Fetch deliverable + versions
   useEffect(() => {
@@ -633,7 +638,7 @@ export function ClientReviewDetailPage() {
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <div className="p-5 border-b border-stone-200/40 dark:border-stone-800/30 space-y-4">
                 <button
-                  onClick={() => navigate(-1)}
+                  onClick={handleBack}
                   className="inline-flex items-center gap-2 text-sm font-medium text-stone-600 hover:text-stone-900 dark:text-stone-300 dark:hover:text-white"
                   type="button"
                 >

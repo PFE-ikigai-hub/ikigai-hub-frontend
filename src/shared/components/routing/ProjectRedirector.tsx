@@ -28,10 +28,10 @@ export function ProjectRedirector() {
       resolved = true;
       navigate(loginUrl, { replace: true });
     };
-    const goTo = (to: string) => {
+    const goTo = (to: string, state?: Record<string, unknown>) => {
       if (cancelled || resolved) return;
       resolved = true;
-      navigate(to, { replace: true });
+      navigate(to, { replace: true, state });
     };
     const setWrongAccountNotice = () => {
       try {
@@ -111,11 +111,11 @@ export function ProjectRedirector() {
 
       switch (normalizedRole) {
         case "ADMIN":
-          goTo(`/admin/projects/${projectId}`);
+          goTo(`/admin/projects/${projectId}`, { fromEmailDeepLink: true });
           break;
         case "EMPLOYE":
         case "EMPLOYEE":
-          goTo(`/employee/projects/${projectId}`);
+          goTo(`/employee/projects/${projectId}`, { fromEmailDeepLink: true });
           break;
         case "CLIENT":
           goTo("/client/dashboard");
