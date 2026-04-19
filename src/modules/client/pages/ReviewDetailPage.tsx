@@ -793,11 +793,13 @@ export function ClientReviewDetailPage() {
                     </div>
                     <CommentsList 
                       versionId={currentVersion?.id || 0}
+                      enableTranslation
                       deliverableType={livrable?.type}
                       mediaRef={livrable?.type === 'VIDEO' ? videoRef : livrable?.type === 'AUDIO' ? audioRef : undefined}
                       onTimestampClick={seekToTimestamp}
                       currentPage={currentPdfPage}
                       onPageRefClick={(page) => setCurrentPdfPage(page)}
+                      floatingButtonMode="fixed"
                     />
                   </div>
                 </motion.div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { MessageCircle, Send, Trash2, Loader2, Languages, Clock, FileText, User } from 'lucide-react';
+import { MessageCircle, Send, Trash2, Loader2, Clock, FileText, Plus } from 'lucide-react';
 import { useAuth } from '@/core/auth/AuthProvider';
 import { useI18n } from '@/core/i18n/I18nProvider';
 import { commentsApi, translationApi } from '@/core/api/client';
@@ -15,9 +15,19 @@ interface CommentsListProps {
   onTimestampClick?: (seconds: number) => void;
   currentPage?: number;
   onPageRefClick?: (page: number) => void;
+  floatingButtonMode?: 'absolute' | 'fixed';
 }
 
-export function CommentsList({ versionId, enableTranslation = false, deliverableType, mediaRef, onTimestampClick, currentPage, onPageRefClick }: CommentsListProps) {
+export function CommentsList({
+  versionId,
+  enableTranslation = false,
+  deliverableType,
+  mediaRef,
+  onTimestampClick,
+  currentPage,
+  onPageRefClick,
+  floatingButtonMode = 'absolute',
+}: CommentsListProps) {
   const { user } = useAuth();
   const { t, language } = useI18n();
   const toast = useToast();
@@ -466,7 +476,7 @@ export function CommentsList({ versionId, enableTranslation = false, deliverable
                           {translatingId === comment.id && (
                             <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
                           )}
-                          {showTranslation[comment.id] ? "Voir l'original" : "Voir traduction"}
+                          {showTranslation[comment.id] ? t("comments.showOriginal") : t("comments.showTranslation")}
                         </button>
                       )}
                     </div>
@@ -544,13 +554,19 @@ export function CommentsList({ versionId, enableTranslation = false, deliverable
 
       {/* Floating Add Comment Button - Fixed at bottom right */}
       {canCreateComment && !isAdding && (
-        <div className="absolute bottom-8 right-8 z-[100] animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div
+          className={`z-[150] animate-in fade-in slide-in-from-bottom-4 duration-300 ${
+            floatingButtonMode === 'fixed'
+              ? 'fixed bottom-6 right-6 sm:bottom-8 sm:right-8'
+              : 'absolute bottom-6 right-6 sm:bottom-8 sm:right-8'
+          }`}
+        >
           <button
             onClick={() => setIsAdding(true)}
             className="w-14 h-14 rounded-full ikg-gradient-btn shadow-2xl shadow-indigo-500/30 flex items-center justify-center hover:scale-110 hover:-translate-y-1 active:scale-95 transition-all duration-300 group"
             title={t('review.addComment')}
           >
-            <MessageCircle className="w-7 h-7 text-white drop-shadow-sm group-hover:rotate-12 transition-transform" />
+            <Plus className="w-7 h-7 text-white drop-shadow-sm group-hover:rotate-90 transition-transform" />
             <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
           </button>
         </div>
@@ -558,4 +574,3 @@ export function CommentsList({ versionId, enableTranslation = false, deliverable
     </div>
   );
 }
-

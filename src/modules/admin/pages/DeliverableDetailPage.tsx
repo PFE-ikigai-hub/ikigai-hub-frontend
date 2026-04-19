@@ -1,866 +1,273 @@
-import { useState, useRef, useEffect, useCallback, lazy, Suspense } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, ZoomIn, ZoomOut, Download, RefreshCw, File, History, Trash2, ChevronLeft, ChevronRight, Check } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import { deliverablesApi, triggerBrowserDownload, versionsApi } from '@/core/api/client';
-import type { DownloadConfirmationPayload } from '@/core/api/client';
-import { useI18n } from '@/core/i18n/I18nProvider';
-import { InlineLoader } from '@/shared/components/feedback/InlineLoader';
-import { DeliverableDetailSkeleton } from '@/shared/components/skeleton';
-import { CommentsList } from '@/shared/components/review/CommentsList';
-import { VersionsList } from '@/shared/components/review/VersionsList';
-import { AnnotationTool } from '@/shared/components/review/AnnotationTool';
-import { SecureDownloadModal } from '@/shared/components/ui/SecureDownloadModal';
-import { SecureDeleteModal } from '@/modules/admin/components/SecureDeleteModal';
-import { useToast } from '@/shared/components/ui/toast';
-import type { ApiDeliverable, ApiVersion } from '@/types/index';
-import { normalizeVersions } from '@/shared/utils/versions';
-import { isLikelyPdfBlob, shouldReadTextPreview } from '@/shared/utils/preview';
-
-// Lazy load PdfViewer to reduce initial bundle size
-const PdfViewer = lazy(() => import('@/shared/components/review/PdfViewer'));
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, Check, History, ShieldAlert, Trash2 } from "lucide-react";
+import { motion } from "motion/react";
+import { deliverablesApi, versionsApi } from "@/core/api/client";
+import { useI18n } from "@/core/i18n/I18nProvider";
+import { useToast } from "@/shared/components/ui/toast";
+import { DeliverableDetailSkeleton } from "@/shared/components/skeleton";
+import { SecureDeleteModal } from "@/modules/admin/components/SecureDeleteModal";
+import type { ApiDeliverable, ApiVersion } from "@/types/index";
+import { normalizeVersions } from "@/shared/utils/versions";
 
 export function AdminDeliverableDetailPage() {
   const { deliverableId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const { t } = useI18n();
   const toast = useToast();
 
-  const [zoom, setZoom] = useState(1);
-  const [showCommentsSidebar, setShowCommentsSidebar] = useState(false);
-  const [downloadModalOpen, setDownloadModalOpen] = useState(false);
-  const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
-  
-  // PDF page navigation state
-  const [currentPdfPage, setCurrentPdfPage] = useState(1);
-  
-  // Secure delete modal states
-  const [deleteDeliverableModalOpen, setDeleteDeliverableModalOpen] = useState(false);
-  const [deleteVersionModalOpen, setDeleteVersionModalOpen] = useState(false);
+  const id = Number.parseInt(String(deliverableId ?? ""), 10);
 
-  const containerRef = useRef<HTMLDivElement>(null!);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [pendingSeekSeconds, setPendingSeekSeconds] = useState<number | null>(null);
-
-  const livrableId = Number.parseInt(String(deliverableId ?? ''), 10);
-
-  const [livrable, setLivrable] = useState<ApiDeliverable | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [deliverable, setDeliverable] = useState<ApiDeliverable | null>(null);
   const [versions, setVersions] = useState<ApiVersion[]>([]);
   const [selectedVersionId, setSelectedVersionId] = useState<number | null>(null);
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorNotFound, setErrorNotFound] = useState(false);
-
-  // Preview states
-  const [previewBlobUrl, setPreviewBlobUrl] = useState<string | null>(null);
-  const [previewMimeType, setPreviewMimeType] = useState<string>('');
-  const [previewText, setPreviewText] = useState<string>('');
-  const [previewError, setPreviewError] = useState('');
-  const [previewLoading, setPreviewLoading] = useState(false);
-
-  const handleBack = useCallback(() => {
-    if (window.history.state && window.history.state.idx > 0) {
-      navigate(-1);
-    } else {
-      // Admins usually want to go back to projects or deliverables list
-      navigate('/admin/projects', { replace: true });
-    }
-  }, [navigate]);
+  const [deleteVersionModalOpen, setDeleteVersionModalOpen] = useState(false);
+  const [deleteDeliverableModalOpen, setDeleteDeliverableModalOpen] = useState(false);
 
   useEffect(() => {
-    if (Number.isNaN(livrableId)) {
-      navigate('/admin/deliverables', { replace: true });
+    if (Number.isNaN(id)) {
+      navigate("/admin/deliverables", { replace: true });
       return;
     }
 
     let cancelled = false;
 
-    const fetchData = async () => {
-      setIsLoading(true);
-      setErrorNotFound(false);
+    const load = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const liv = await deliverablesApi.byId(livrableId);
+        const [d, versionsResponse] = await Promise.all([
+          deliverablesApi.byId(id),
+          versionsApi.byDeliverable(id),
+        ]);
         if (cancelled) return;
 
-        setLivrable(liv);
-        try {
-          const versionsResponse = await versionsApi.byDeliverable(livrableId);
-          if (cancelled) return;
-          const apiVersions = Array.isArray((versionsResponse as any)?.content)
-            ? (versionsResponse as any).content
-            : Array.isArray(versionsResponse)
-              ? versionsResponse
-              : Array.isArray(liv.versions)
-                ? liv.versions
-                : [];
-          const normalized = normalizeVersions(apiVersions);
-          setVersions(normalized);
-          
-          // Respect versionId from search params if present
-          const searchParams = new URLSearchParams(location.search);
-          const vId = searchParams.get('versionId');
-          if (vId) {
-            const vidNum = Number.parseInt(vId, 10);
-            if (normalized.some(v => v.id === vidNum)) {
-              setSelectedVersionId(vidNum);
-            } else {
-              setSelectedVersionId(normalized.length > 0 ? normalized[0].id : null);
-            }
-          } else {
-            setSelectedVersionId(normalized.length > 0 ? normalized[0].id : null);
-          }
-        } catch {
-          if (!cancelled) {
-            const fallback = normalizeVersions(Array.isArray(liv.versions) ? liv.versions : []);
-            setVersions(fallback);
-            setSelectedVersionId(fallback.length > 0 ? fallback[0].id : null);
-          }
-        }
-      } catch {
-        if (!cancelled) setErrorNotFound(true);
+        const normalized = normalizeVersions(versionsResponse.content ?? []);
+        setDeliverable(d);
+        setVersions(normalized);
+        setSelectedVersionId(normalized[0]?.id ?? null);
+      } catch (e: any) {
+        if (cancelled) return;
+        const msg = e?.response?.data?.message;
+        setError(typeof msg === "string" ? msg : t("review.notFound"));
       } finally {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
-    fetchData();
-    return () => { cancelled = true; };
-  }, [livrableId, navigate]);
+    void load();
 
-  const currentVersion = selectedVersionId
-    ? versions.find(v => v.id === selectedVersionId) || versions[0]
-    : versions[0];
-
-  useEffect(() => {
-    if (!currentVersion || !currentVersion.id || !livrable) {
-      // No version available - set error to stop loading
-      if (livrable && !currentVersion) {
-        setPreviewError('Aucune version disponible');
-      }
-      return;
-    }
-
-    let cancelled = false;
-    let localBlobUrl: string | null = null;
-
-    setPreviewBlobUrl(null);
-    setPreviewMimeType('');
-    setPreviewText('');
-    setPreviewError('');
-    setPreviewLoading(true);
-
-    const loadPreview = async () => {
-      try {
-        const { url, contentType, blob } = await versionsApi.preview(currentVersion.id);
-
-        if (cancelled) {
-          window.URL.revokeObjectURL(url);
-          return;
-        }
-
-        setPreviewMimeType(contentType || '');
-
-        if ((livrable.type === 'PDF' || contentType === 'application/pdf') && !(await isLikelyPdfBlob(blob, contentType))) {
-          window.URL.revokeObjectURL(url);
-          setPreviewError('Invalid PDF file');
-          setPreviewLoading(false);
-          return;
-        }
-
-        if (shouldReadTextPreview(livrable.type, contentType)) {
-          const text = await blob.text();
-          if (!cancelled) setPreviewText(text);
-          setPreviewLoading(false);
-          return;
-        }
-
-        localBlobUrl = url;
-        setPreviewBlobUrl(url);
-        setPreviewLoading(false);
-      } catch (err: any) {
-        if (!cancelled) {
-          const msg = err?.message || 'Preview not available';
-          setPreviewError(msg);
-          setPreviewLoading(false);
-        }
-      }
-    };
-
-    // Add timeout to prevent infinite loading
-    const timeoutId = setTimeout(() => {
-      if (!cancelled && previewLoading) {
-        setPreviewError('Preview timeout - please try again');
-        setPreviewLoading(false);
-      }
-    }, 30000); // 30 second timeout
-
-    loadPreview();
     return () => {
       cancelled = true;
-      clearTimeout(timeoutId);
-      if (localBlobUrl) window.URL.revokeObjectURL(localBlobUrl);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentVersion?.id, livrable?.type, previewRefreshKey]);
+  }, [id, navigate, t]);
 
-  const handleVersionSelect = useCallback((versionId: number) => {
-    setSelectedVersionId(versionId);
-  }, []);
+  const selectedVersion = useMemo(
+    () => (selectedVersionId ? versions.find((v) => v.id === selectedVersionId) ?? null : null),
+    [versions, selectedVersionId]
+  );
 
-  const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.25, 3));
-  const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.25, 0.5));
-  const handleRefreshImage = () => {
-    setZoom(1);
-    setPreviewRefreshKey((prev) => prev + 1);
-  };
-
-  const handleDownload = async (payload: DownloadConfirmationPayload) => {
-    if (!currentVersion) return;
-    const blob = await versionsApi.download(currentVersion.id, payload);
-    const base = (livrable?.nom || `version_${currentVersion.id}`).replace(/[\\/:*?"<>|]+/g, '_');
-    const version = currentVersion.numero?.trim?.() || `v${currentVersion.id}`;
-    triggerBrowserDownload(blob, `${base}_${version}`);
-  };
-
-  const seekToTimestamp = useCallback((seconds: number) => {
-    setPendingSeekSeconds(seconds);
-    const media = livrable?.type === 'VIDEO' ? videoRef.current : livrable?.type === 'AUDIO' ? audioRef.current : null;
-    if (media) {
-      media.currentTime = seconds;
-      media.play().catch(() => {});
-      setPendingSeekSeconds(null);
-    }
-  }, [livrable?.type]);
-
-  useEffect(() => {
-    if (pendingSeekSeconds == null) return;
-    const media = livrable?.type === 'VIDEO' ? videoRef.current : livrable?.type === 'AUDIO' ? audioRef.current : null;
-    if (!media) return;
-    media.currentTime = pendingSeekSeconds;
-    media.play().catch(() => {});
-    setPendingSeekSeconds(null);
-  }, [pendingSeekSeconds, livrable?.type, previewBlobUrl]);
-
-  const openDownloadModal = () => {
-    if (!currentVersion) return;
-    setDownloadModalOpen(true);
-  };
-
-  const handleDeleteDeliverable = () => {
-    setDeleteDeliverableModalOpen(true);
-  };
-  
-  const executeDeleteDeliverable = async (_adminPassword?: string) => {
+  const handleDeleteVersion = async () => {
+    if (!selectedVersion) return;
     try {
-      await deliverablesApi.delete(livrableId);
-      toast.success(t("admin.deliverableDeleted"));
-      navigate("/admin/deliverables", { replace: true });
-    } catch (e: any) {
-      const backendMessage = e?.response?.data?.message;
-      toast.error(typeof backendMessage === "string" ? backendMessage : t("common.error"));
-      throw e;
-    }
-  };
-
-  const handleDeleteVersion = () => {
-    if (!currentVersion || !livrable) return;
-    setDeleteVersionModalOpen(true);
-  };
-  
-  const executeDeleteVersion = async (_adminPassword?: string) => {
-    if (!currentVersion || !livrable) return;
-    try {
-      await versionsApi.delete(currentVersion.id);
-
-      setVersions((prev) => {
-        const next = prev.filter((v) => v.id !== currentVersion.id);
-        const nextSelected = next[0]?.id ?? null;
-        setSelectedVersionId(nextSelected);
-        return next;
-      });
-
+      await versionsApi.delete(selectedVersion.id);
+      const next = versions.filter((v) => v.id !== selectedVersion.id);
+      setVersions(next);
+      setSelectedVersionId(next[0]?.id ?? null);
       toast.success(t("review.versionDeleted"));
     } catch (e: any) {
-      const backendMessage = e?.response?.data?.message;
-      toast.error(typeof backendMessage === "string" ? backendMessage : t("common.error"));
+      const msg = e?.response?.data?.message;
+      toast.error(typeof msg === "string" ? msg : t("common.error"));
       throw e;
     }
   };
 
-  const renderPreview = () => {
-    if (previewError) {
-      return (
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center p-8">
-            <File className="w-12 h-12 text-stone-300 dark:text-stone-600 mx-auto mb-4" />
-            <p className="text-stone-500 dark:text-stone-400 mb-2">{t("review.previewUnavailable")}</p>
-            <p className="text-sm text-stone-400 dark:text-stone-500">{previewError}</p>
-            {currentVersion && (
-              <button
-                onClick={openDownloadModal}
-                className="mt-4 px-4 py-2 ikg-gradient-btn rounded-lg text-sm hover:opacity-90 transition-opacity"
-              >
-                {t("review.downloadFile")}
-              </button>
-            )}
-          </div>
-        </div>
-      );
+  const handleDeleteDeliverable = async () => {
+    if (!deliverable) return;
+    try {
+      await deliverablesApi.delete(deliverable.id);
+      toast.success(t("admin.deliverableDeleted"));
+      navigate(`/admin/projects/${deliverable.projetId}`, { replace: true });
+    } catch (e: any) {
+      const msg = e?.response?.data?.message;
+      toast.error(typeof msg === "string" ? msg : t("common.error"));
+      throw e;
     }
+  };
 
-    if (!currentVersion) {
-      return (
-        <div className="flex flex-col items-center justify-center h-full text-center p-8">
-          <File className="w-16 h-16 text-stone-300 dark:text-stone-600 mx-auto mb-4" />
-          <p className="text-stone-600 dark:text-stone-400 mb-2 font-medium">{livrable?.nom}</p>
-          <p className="text-sm text-stone-400 dark:text-stone-500">{t("review.noVersionAvailable")}</p>
-        </div>
-      );
-    }
+  if (loading) {
+    return <DeliverableDetailSkeleton />;
+  }
 
-    const type = livrable?.type || 'AUTRE';
-
-    // IMAGE
-    if (type === 'IMAGE' || previewMimeType.startsWith('image/')) {
-      return (
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="relative w-full h-full flex items-center justify-center p-4"
-        >
-          <img
-            src={previewBlobUrl!}
-            alt={livrable?.nom || 'preview'}
-            className="w-full h-full rounded-lg shadow-2xl shadow-stone-200/50 dark:shadow-black/50 bg-white dark:bg-[#0d0d0f] object-contain block"
-            style={{
-              transform: `scale(${zoom})`,
-              transformOrigin: 'center center',
-              transition: 'transform 0.2s cubic-bezier(0.2, 0, 0, 1)',
-            }}
-          />
-          <AnnotationTool
-            containerRef={containerRef}
-            zoom={zoom}
-            versionId={currentVersion?.id || 0}
-            refreshKey={previewRefreshKey}
-            interactive={false}
-            displayOnly={true}
-          />
-        </motion.div>
-      );
-    }
-
-    // VIDEO
-    if (type === 'VIDEO' || previewMimeType.startsWith('video/')) {
-      return (
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="relative max-h-full max-w-full flex items-center justify-center p-4"
-        >
-          <video
-            ref={videoRef}
-            src={previewBlobUrl!}
-            controls
-            controlsList="nodownload"
-            autoPlay
-            onContextMenu={(e) => e.preventDefault()}
-            className="max-w-full max-h-full rounded-lg shadow-2xl shadow-stone-200/50 dark:shadow-black/50 bg-black object-contain"
-          >
-            {t("review.videoUnsupported")}
-          </video>
-          {/* Annotations only for IMAGE */}
-        </motion.div>
-      );
-    }
-
-    // AUDIO
-    if (type === 'AUDIO' || previewMimeType.startsWith('audio/')) {
-      return (
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="w-full max-w-2xl mx-auto p-8"
-        >
-          <div className="bg-white dark:bg-stone-900 rounded-lg shadow-2xl shadow-stone-200/50 dark:shadow-black/50 p-8">
-            <div className="text-center mb-6">
-              <h3 className="text-lg font-semibold text-stone-900 dark:text-white mb-2">
-                {livrable?.nom || 'Audio Lecture'}
-              </h3>
-              <p className="text-sm text-stone-500 dark:text-stone-400">
-                {currentVersion?.numero}
-              </p>
-            </div>
-            <audio
-              ref={audioRef}
-              src={previewBlobUrl!}
-              controls
-              controlsList="nodownload"
-              onContextMenu={(e) => e.preventDefault()}
-              className="w-full mb-4"
-            >
-              {t("review.audioUnsupported")}
-            </audio>
-            {/* Annotations only for IMAGE */}
-          </div>
-        </motion.div>
-      );
-    }
-
-    // PDF - with scroll-based page detection
-    if (type === 'PDF' || previewMimeType === 'application/pdf') {
-      return (
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="w-full h-full"
-        >
-          <Suspense fallback={
-            <InlineLoader className="h-full" />
-          }>
-            <PdfViewer
-              url={previewBlobUrl!}
-              currentPage={currentPdfPage}
-              onPageChange={setCurrentPdfPage}
-            />
-          </Suspense>
-        </motion.div>
-      );
-    }
-
-    // TEXTE
-    if (type === 'TEXTE' || previewMimeType.startsWith('text/') || previewText) {
-      return (
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="w-full max-w-4xl mx-auto bg-white dark:bg-stone-900 rounded-lg shadow-2xl shadow-stone-200/50 dark:shadow-black/50 p-8 overflow-auto relative max-h-full"
-        >
-          <pre className="text-sm text-stone-800 dark:text-stone-200 whitespace-pre-wrap font-mono leading-relaxed">
-            {previewText}
-          </pre>
-          {/* Annotations only for IMAGE */}
-        </motion.div>
-      );
-    }
-
-    // AUTRE
+  if (!deliverable || error) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center p-8">
-          <File className="w-16 h-16 text-stone-300 dark:text-stone-600 mx-auto mb-4" />
-          <p className="text-stone-600 dark:text-stone-400 mb-2 font-medium">{livrable?.nom}</p>
-          <p className="text-sm text-stone-400 dark:text-stone-500 mb-6">
-            {t("review.previewUnavailableType")}
-          </p>
+      <div className="flex items-center justify-center h-full bg-white dark:bg-gray-900">
+        <div className="text-center text-stone-500 dark:text-stone-400">
+          <p>{error || t("review.notFound")}</p>
           <button
-            onClick={openDownloadModal}
-            className="px-6 py-2.5 ikg-gradient-btn rounded-xl text-sm hover:opacity-90 transition-opacity flex items-center gap-2 mx-auto"
+            type="button"
+            onClick={() => navigate("/admin/deliverables", { replace: true })}
+            className="mt-4 px-4 py-2 rounded-lg border border-stone-200 dark:border-stone-700 text-sm"
           >
-            <Download className="w-4 h-4" />
-            {t('deliverables.download')}
+            {t("review.back")}
           </button>
         </div>
       </div>
     );
-  };
-
-  if (isLoading) {
-    return (
-      <DeliverableDetailSkeleton />
-    );
-  }
-
-  if (!livrable || errorNotFound) {
-    return (
-      <div className="flex items-center justify-center h-full bg-white dark:bg-gray-900">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-gray-400 font-medium"
-        >
-          Livrable introuvable.
-        </motion.div>
-      </div>
-    );
-  }
-
-  // Show inline loader only when actually loading preview
-  if (previewLoading || (!previewBlobUrl && !previewText && !previewError && !errorNotFound && currentVersion)) {
-    return (
-      <DeliverableDetailSkeleton />
-    );
   }
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-background dark:bg-[#0a0a0b] transition-colors duration-300">
-      <motion.div
-        key="content"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        className="flex flex-col h-full overflow-hidden"
-      >
-        {/* Header */}
-        <header className="lg:hidden bg-white/70 dark:bg-[#0d0d0f]/70 backdrop-blur-xl border-b border-stone-200/50 dark:border-stone-800/40 px-6 py-3.5 z-20">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4 min-w-0">
-              <button
-                onClick={handleBack}
-                className="p-2 -ml-2 text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-all duration-200"
-                aria-label={t('review.back')}
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
+    <div className="p-6 md:p-8 lg:p-10 max-w-[1300px] mx-auto min-h-screen space-y-6">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <button
+            type="button"
+            onClick={() => navigate(`/admin/projects/${deliverable.projetId}`)}
+            className="inline-flex items-center gap-2 text-sm text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            {t("review.back")}
+          </button>
 
-              <div className="h-6 w-px bg-stone-200 dark:bg-stone-700 mx-2 hidden md:block" />
+          <h1 className="mt-3 text-2xl md:text-3xl font-semibold tracking-tight text-stone-900 dark:text-white">
+            {deliverable.nom}
+          </h1>
+          <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
+            {deliverable.projetNom} • {deliverable.type} • {t(`status.${deliverable.statut}`)}
+          </p>
+        </div>
 
-              <div className="min-w-0">
-                <div className="flex items-center gap-3">
-                  <h2 className="text-base font-bold text-stone-900 dark:text-white truncate tracking-tight">{livrable.nom}</h2>
-                  {currentVersion && (
-                    <span className="px-2 py-0.5 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-[11px] font-bold rounded border border-stone-200 dark:border-stone-700">
-                      {currentVersion.numero}
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5 truncate">
-                  {livrable.projetNom}
-                </p>
-                {(currentVersion?.uploadedByName || currentVersion?.uploadedAt || currentVersion?.dateUpload) && (
-                  <p className="mt-1 text-xs text-stone-600 dark:text-stone-300 truncate">
-                    {currentVersion?.uploadedByName ? `Upload par ${currentVersion.uploadedByName}` : "Upload"}{" "}
-                    â€¢{" "}
-                    {new Date(currentVersion?.uploadedAt || currentVersion?.dateUpload || "").toLocaleString("fr-FR")}
-                  </p>
-                )}
-                {currentVersion?.noteInterne?.trim() && (
-                  <p className="mt-1.5 text-xs text-stone-700 dark:text-stone-300 bg-stone-100/80 dark:bg-stone-800/60 border border-stone-200/70 dark:border-stone-700/60 rounded-md px-2 py-1 max-w-[520px] truncate">
-                    <span className="font-semibold">Note interne:</span> {currentVersion.noteInterne}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              {/* Mobile comments button */}
-              <button
-                onClick={() => setShowCommentsSidebar(!showCommentsSidebar)}
-                className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors relative"
-                aria-label="Historique et Commentaires" 
-              >
-                <History className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-              </button>
-
-              {/* Desktop Actions */}
-              <div className="hidden md:flex items-center gap-3">
-                {currentVersion && (
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleDeleteVersion}
-                    className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/30 rounded-lg transition-colors text-sm font-medium shadow-sm"
-                    type="button"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    {t("common.delete")} {t("review.version")}
-                  </motion.button>
-                )}
-
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleDeleteDeliverable}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/30 rounded-lg transition-colors text-sm font-medium shadow-sm"
-                  type="button"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  {t("common.delete")}
-                </motion.button>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <div className="flex flex-1 overflow-hidden min-h-0">
-          {/* Main preview area */}
-          <div className="flex-1 lg:w-[62%] lg:flex-none lg:order-2 min-w-0 flex flex-col overflow-auto bg-stone-50/30 dark:bg-[#0c0c0e]">
-            {livrable.type === 'IMAGE' && (
-              <div className="bg-white/40 dark:bg-stone-900/40 backdrop-blur-md border-b border-stone-100/30 dark:border-stone-800/30 px-6 py-2 flex items-center justify-center gap-4">
-                <div className="flex items-center bg-white/80 dark:bg-stone-800/80 rounded-xl shadow-sm border border-stone-200/40 dark:border-stone-700/40 p-0.5">
-                  <button
-                    onClick={handleZoomOut}
-                    className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-700 rounded transition-colors text-stone-500"
-                    type="button"
-                  >
-                    <ZoomOut className="w-4 h-4" />
-                  </button>
-                  <span className="text-xs font-mono text-stone-600 dark:text-stone-400 min-w-[48px] text-center border-x border-stone-100 dark:border-stone-700 mx-1">
-                    {Math.round(zoom * 100)}%
-                  </span>
-                  <button
-                    onClick={handleZoomIn}
-                    className="p-1.5 hover:bg-stone-100 dark:hover:bg-stone-700 rounded transition-colors text-stone-500"
-                    type="button"
-                  >
-                    <ZoomIn className="w-4 h-4" />
-                  </button>
-                </div>
-                <button
-                  onClick={handleRefreshImage}
-                  className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
-                  title="RafraÃ®chir"
-                  type="button"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-
-            {/* Canvas */}
-            <div 
-              ref={containerRef}
-              className="flex-1 overflow-auto p-6 md:p-8 lg:p-12 relative flex items-center justify-center"
+        <div className="flex items-center gap-2">
+          {selectedVersion && (
+            <button
+              type="button"
+              onClick={() => setDeleteVersionModalOpen(true)}
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/40"
             >
-              {renderPreview()}
-            </div>
-          </div>
+              <Trash2 className="w-3.5 h-3.5" />
+              {t("common.delete")} {t("review.version")}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setDeleteDeliverableModalOpen(true)}
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/40"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            {t("common.delete")}
+          </button>
+        </div>
+      </div>
 
-          {/* Right Sidebar - Desktop */}
-          <div className="hidden lg:flex lg:order-1 w-[38%] min-w-0 flex-col bg-white/60 dark:bg-[#0d0d0f]/60 backdrop-blur-xl border-r border-stone-200/40 dark:border-stone-800/30 shadow-xl shadow-stone-100/20 dark:shadow-none z-10 overflow-hidden">
-            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-              <div className="p-5 border-b border-stone-200/40 dark:border-stone-800/30 space-y-4">
-                <button
-                  onClick={() => navigate(-1)}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-stone-600 hover:text-stone-900 dark:text-stone-300 dark:hover:text-white"
-                  type="button"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  {t('review.back')}
-                </button>
-
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-base font-bold text-stone-900 dark:text-white truncate tracking-tight">{livrable.nom}</h2>
-                  </div>
-                  <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5 truncate">
-                    {livrable.projetNom}
-                  </p>
-                </div>
-
-                {versions.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {versions.map(v => (
-                      <button
-                        key={v.id}
-                        onClick={() => handleVersionSelect(v.id)}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
-                          v.id === currentVersion?.id 
-                            ? 'bg-stone-900 border-stone-900 text-white dark:bg-white dark:border-white dark:text-stone-900 shadow-sm' 
-                            : 'bg-white border-stone-200 text-stone-600 hover:bg-stone-50 hover:border-stone-300 dark:bg-transparent dark:border-stone-700/50 dark:text-stone-400 dark:hover:bg-stone-800/50'
-                        }`}
-                        type="button"
-                      >
-                        {v.numero}
-                        {v.statut === 'VALIDATED' && <Check className={`w-3.5 h-3.5 ${v.id === currentVersion?.id ? 'text-green-400 dark:text-green-600' : 'text-green-500'}`} />}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {currentVersion && (
-                  <div className="text-xs text-stone-500 dark:text-stone-400 flex flex-col gap-2">
-                    <div className="flex items-center gap-3">
-                      <span className="flex items-center gap-1">
-                        <History className="w-3.5 h-3.5" />
-                        {new Date(currentVersion.uploadedAt || currentVersion.dateUpload).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
-                      </span>
-                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                        currentVersion.statut === 'VALIDATED'
-                          ? 'text-green-700 bg-green-100 dark:bg-green-900/30'
-                          : 'text-indigo-700 bg-indigo-100 dark:bg-indigo-900/30'
-                      }`}>
-                        {t(`status.${currentVersion.statut}`)}
-                      </span>
-                    </div>
-                    {currentVersion.uploadedByName && (
-                      <div className="text-[11px]">
-                        Upload: <span className="font-medium text-stone-700 dark:text-stone-300">{currentVersion.uploadedByName}</span>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                <div className="flex flex-wrap gap-2">
-                  {currentVersion && (
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={handleDeleteVersion}
-                      className="flex items-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/30 rounded-lg transition-colors text-xs font-medium shadow-sm"
-                      type="button"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      {t("common.delete")} {t("review.version")}
-                    </motion.button>
-                  )}
-
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleDeleteDeliverable}
-                    className="flex items-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/30 rounded-lg transition-colors text-xs font-medium shadow-sm"
-                    type="button"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    {t("common.delete")}
-                  </motion.button>
-
-                  {currentVersion && (
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={openDownloadModal}
-                      className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-[#0d0d0f] border border-stone-200 dark:border-stone-800/60 text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-800 rounded-lg transition-colors text-xs font-medium shadow-sm"
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                      {t('deliverables.download')}
-                    </motion.button>
-                  )}
-                </div>
-              </div>
-              <div className="flex-1 min-h-0 overflow-y-auto flex flex-col pt-0">
-                <CommentsList 
-                  versionId={currentVersion?.id || 0}
-                  enableTranslation
-                  deliverableType={livrable?.type}
-                  mediaRef={livrable?.type === 'VIDEO' ? videoRef : livrable?.type === 'AUDIO' ? audioRef : undefined}
-                  onTimestampClick={seekToTimestamp}
-                  currentPage={currentPdfPage}
-                  onPageRefClick={(page) => setCurrentPdfPage(page)}
-                />
-              </div>
-            </div>
-          </div>
-
-
-          {/* Comments sidebar - Mobile (Overlay) */}
-          <AnimatePresence>
-            {showCommentsSidebar && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50" 
-                onClick={() => setShowCommentsSidebar(false)}
-              >
-                <motion.div 
-                  initial={{ x: '100%' }}
-                  animate={{ x: 0 }}
-                  exit={{ x: '100%' }}
-                  transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                  className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-white dark:bg-gray-800 shadow-2xl flex flex-col" 
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <button
-                    onClick={() => setShowCommentsSidebar(false)}
-                    className="absolute top-4 right-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors z-10"
-                    aria-label={t('common.close')}
-                    type="button"
-                  >
-                    <ArrowLeft className="w-5 h-5 dark:text-white" />
-                  </button>
-
-                  <div className="flex-1 flex flex-col overflow-hidden pt-12">
-                    <div className="px-5 pb-4 border-b border-stone-200/40 dark:border-stone-800/30 space-y-4">
-                      {versions.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {versions.map(v => (
-                            <button
-                              key={v.id}
-                              onClick={() => handleVersionSelect(v.id)}
-                              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
-                                v.id === currentVersion?.id 
-                                  ? 'bg-stone-900 border-stone-900 text-white dark:bg-white dark:border-white dark:text-stone-900 shadow-sm' 
-                                  : 'bg-white border-stone-200 text-stone-600 hover:bg-stone-50 hover:border-stone-300 dark:bg-transparent dark:border-stone-700/50 dark:text-stone-400 dark:hover:bg-stone-800/50'
-                              }`}
-                              type="button"
-                            >
-                              {v.numero}
-                              {v.statut === 'VALIDATED' && <Check className={`w-3.5 h-3.5 ${v.id === currentVersion?.id ? 'text-green-400 dark:text-green-600' : 'text-green-500'}`} />}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                      
-                      {currentVersion && (
-                        <div className="text-xs text-stone-500 dark:text-stone-400 flex flex-col gap-2">
-                          <div className="flex items-center gap-3">
-                            <span className="flex items-center gap-1">
-                              <History className="w-3.5 h-3.5" />
-                              {new Date(currentVersion.uploadedAt || currentVersion.dateUpload).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
-                            </span>
-                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                              currentVersion.statut === 'VALIDATED'
-                                ? 'text-green-700 bg-green-100 dark:bg-green-900/30'
-                                : 'text-indigo-700 bg-indigo-100 dark:bg-indigo-900/30'
-                            }`}>
-                              {t(`status.${currentVersion.statut}`)}
-                            </span>
-                          </div>
-                          {currentVersion.uploadedByName && (
-                            <div className="text-[11px]">
-                              Upload: <span className="font-medium text-stone-700 dark:text-stone-300">{currentVersion.uploadedByName}</span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    <CommentsList 
-                      versionId={currentVersion?.id || 0}
-                      enableTranslation
-                      deliverableType={livrable?.type}
-                      mediaRef={livrable?.type === 'VIDEO' ? videoRef : livrable?.type === 'AUDIO' ? audioRef : undefined}
-                      onTimestampClick={seekToTimestamp}
-                      currentPage={currentPdfPage}
-                      onPageRefClick={(page) => setCurrentPdfPage(page)}
-                    />
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-2xl border border-amber-200 dark:border-amber-900/50 bg-amber-50/70 dark:bg-amber-950/20 p-4 flex items-start gap-3"
+      >
+        <ShieldAlert className="w-5 h-5 text-amber-700 dark:text-amber-400 mt-0.5" />
+        <div>
+          <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">Admin governance mode</p>
+          <p className="text-xs text-amber-700/90 dark:text-amber-400/90 mt-1">
+            File preview, file content access, comments, annotations, and downloads are disabled for ADMIN.
+          </p>
         </div>
       </motion.div>
-      <SecureDownloadModal
-        isOpen={downloadModalOpen}
-        onClose={() => setDownloadModalOpen(false)}
-        onConfirm={handleDownload}
-      />
-      <SecureDeleteModal
-        isOpen={deleteDeliverableModalOpen}
-        onClose={() => setDeleteDeliverableModalOpen(false)}
-        title={t("delete_deliverable_confirm")}
-        description={t("delete_deliverable_warning", { name: livrable?.nom })}
-        strongMode={true}
-        onConfirm={executeDeleteDeliverable}
-      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
+        <div className="rounded-2xl border border-stone-200/70 dark:border-stone-800/70 bg-white dark:bg-[#0d0d0f] p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="inline-flex items-center gap-2 text-sm font-semibold text-stone-800 dark:text-stone-100">
+              <History className="w-4 h-4" />
+              {t("review.versions")}
+            </div>
+            <span className="text-xs text-stone-500 dark:text-stone-400">{versions.length}</span>
+          </div>
+
+          <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
+            {versions.map((v) => {
+              const active = selectedVersionId === v.id;
+              return (
+                <button
+                  key={v.id}
+                  type="button"
+                  onClick={() => setSelectedVersionId(v.id)}
+                  className={`w-full text-left p-3 rounded-xl border transition-colors ${
+                    active
+                      ? "border-stone-900 dark:border-white bg-stone-50 dark:bg-stone-900/50"
+                      : "border-stone-200 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-900/40"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-stone-900 dark:text-white">{v.numero}</p>
+                    {v.statut === "VALIDATED" && <Check className="w-4 h-4 text-green-500" />}
+                  </div>
+                  <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-1">
+                    {new Date(v.uploadedAt || v.dateUpload).toLocaleDateString("fr-FR")}
+                  </p>
+                </button>
+              );
+            })}
+            {versions.length === 0 && (
+              <div className="text-xs text-stone-500 dark:text-stone-400 py-6 text-center">
+                {t("review.noVersionAvailable")}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-stone-200/70 dark:border-stone-800/70 bg-white dark:bg-[#0d0d0f] p-5">
+          {selectedVersion ? (
+            <div className="space-y-4">
+              <h2 className="text-base font-semibold text-stone-900 dark:text-white">{t("review.version")} {selectedVersion.numero}</h2>
+
+              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <dt className="text-stone-500 dark:text-stone-400">{t("status")}</dt>
+                  <dd className="mt-1 font-medium text-stone-900 dark:text-white">{t(`status.${selectedVersion.statut}`)}</dd>
+                </div>
+                <div>
+                  <dt className="text-stone-500 dark:text-stone-400">{t("table.date")}</dt>
+                  <dd className="mt-1 font-medium text-stone-900 dark:text-white">
+                    {new Date(selectedVersion.uploadedAt || selectedVersion.dateUpload).toLocaleString("fr-FR")}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-stone-500 dark:text-stone-400">{t("review.uploadedBy")}</dt>
+                  <dd className="mt-1 font-medium text-stone-900 dark:text-white">{selectedVersion.uploadedByName || "-"}</dd>
+                </div>
+                <div>
+                  <dt className="text-stone-500 dark:text-stone-400">Review data</dt>
+                  <dd className="mt-1 font-medium text-stone-900 dark:text-white">Hidden for admin governance role</dd>
+                </div>
+              </dl>
+            </div>
+          ) : (
+            <div className="text-sm text-stone-500 dark:text-stone-400">
+              {t("review.noVersionAvailable")}
+            </div>
+          )}
+        </div>
+      </div>
+
       <SecureDeleteModal
         isOpen={deleteVersionModalOpen}
         onClose={() => setDeleteVersionModalOpen(false)}
         title={t("delete_version_confirm")}
-        description={t("review.deleteVersionConfirm", { version: currentVersion?.numero })}
-        strongMode={true}
-        onConfirm={executeDeleteVersion}
+        description={t("review.deleteVersionConfirm", { version: selectedVersion?.numero ?? "" })}
+        strongMode
+        onConfirm={handleDeleteVersion}
+      />
+
+      <SecureDeleteModal
+        isOpen={deleteDeliverableModalOpen}
+        onClose={() => setDeleteDeliverableModalOpen(false)}
+        title={t("delete_deliverable_confirm")}
+        description={t("delete_deliverable_warning", { name: deliverable.nom })}
+        strongMode
+        onConfirm={handleDeleteDeliverable}
       />
     </div>
   );
 }
-

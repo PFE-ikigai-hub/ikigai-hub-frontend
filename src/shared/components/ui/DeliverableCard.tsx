@@ -5,6 +5,7 @@ import { versionsApi } from '@/core/api/client';
 import BorderGlow from '../effects/BorderGlow';
 import { getStatusIcon } from '@/shared/utils/status';
 import { isLikelyPdfBlob } from '@/shared/utils/preview';
+import { useLocation } from 'react-router-dom';
 
 interface DeliverableCardProps {
   id: string;
@@ -21,6 +22,7 @@ interface DeliverableCardProps {
   layout?: 'grid' | 'list';
   showDeleteAction?: boolean;
   onDelete?: (id: string) => void;
+  disablePreview?: boolean;
   onClick: (id: string) => void;
 }
 
@@ -49,8 +51,11 @@ export function DeliverableCard({
   layout = 'grid',
   showDeleteAction = false,
   onDelete,
+  disablePreview = false,
 }: DeliverableCardProps) {
   const { t } = useI18n();
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
   const [thumbnailUrl, setThumbnailUrl] = useState<string | undefined>(initialThumbnailUrl);
   const [videoDuration, setVideoDuration] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
@@ -67,6 +72,8 @@ export function DeliverableCard({
 
   const isValidated = status === 'VALIDE';
   const safeType = (type || 'AUTRE').toUpperCase();
+  const canRenderThumbnail =
+    !disablePreview && !isAdminRoute && safeType !== 'AUDIO' && safeType !== 'TEXTE' && safeType !== 'PDF';
   const typeLabel = t(`filter.type.${safeType}`);
   const TypeIcon = typeIcons[safeType] || File;
   const StatusIcon = getStatusIcon(status);
@@ -102,7 +109,7 @@ export function DeliverableCard({
   // Try preview endpoint first (legacy behavior), then fallback to direct URL.
   useEffect(() => {
     if (!isVisible) return; // Don't fetch until visible
-    if (safeType === 'AUDIO' || safeType === 'TEXTE') {
+    if (!canRenderThumbnail) {
       return;
     }
 
@@ -166,7 +173,7 @@ export function DeliverableCard({
     return () => {
       cancelled = true;
     };
-  }, [latestVersionId, fichierUrl, safeType, isVisible]);
+  }, [latestVersionId, fichierUrl, canRenderThumbnail, safeType, isVisible]);
 
   useEffect(() => () => {
     if (previewBlobUrlRef.current) {
@@ -187,7 +194,7 @@ export function DeliverableCard({
                <div className={`w-14 h-12 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center relative shadow-sm border border-stone-200 dark:border-stone-700/50 ${
                  safeType === 'AUDIO' || safeType === 'TEXTE' ? 'bg-transparent' : 'bg-stone-100 dark:bg-stone-800/50'
                } ${isFetchInProgress ? 'animate-pulse' : ''}`}>
-                 {!hasError && thumbnailUrl ? (
+                 {!hasError && canRenderThumbnail && thumbnailUrl ? (
                    <div className="w-full h-full">
                      {safeType === 'VIDEO' ? (
                        <div className="relative w-full h-full">
@@ -205,16 +212,6 @@ export function DeliverableCard({
                              {videoDuration}
                            </div>
                          )}
-                       </div>
-                     ) : safeType === 'PDF' ? (
-                       <div className="relative w-full h-full bg-white overflow-hidden">
-                         <iframe
-                           src={`${thumbnailUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-                           className="absolute pointer-events-none border-none bg-white"
-                           style={{ width: 'calc(100% + 40px)', height: 'calc(100% + 40px)', top: '-20px', left: '-20px' }}
-                           tabIndex={-1}
-                           scrolling="no"
-                         />
                        </div>
                      ) : safeType === 'TEXTE' ? (
                        <div className="w-full h-full flex items-center justify-center bg-transparent">
@@ -323,7 +320,7 @@ export function DeliverableCard({
       <div className={`relative aspect-[16/10] w-full overflow-hidden flex items-center justify-center border-b border-stone-100 dark:border-stone-800/70 ${
         isFetchInProgress ? 'bg-stone-100 dark:bg-stone-900 animate-pulse' : 'bg-stone-50 dark:bg-black/40'
       }`}>
-        {!hasError && thumbnailUrl && !isFetchInProgress ? (
+        {!hasError && canRenderThumbnail && thumbnailUrl && !isFetchInProgress ? (
           <div className="w-full h-full">
             {safeType === 'VIDEO' ? (
               <div className="relative w-full h-full">
@@ -343,17 +340,6 @@ export function DeliverableCard({
                     {videoDuration}
                   </div>
                 )}
-              </div>
-            ) : safeType === 'PDF' ? (
-              <div className="relative w-full h-full bg-white overflow-hidden">
-                <iframe
-                  src={`${thumbnailUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-                  className="absolute pointer-events-none border-none bg-white"
-                  style={{ width: 'calc(100% + 40px)', height: 'calc(100% + 40px)', top: '-20px', left: '-20px' }}
-                  scrolling="no"
-                  title={title}
-                  tabIndex={-1}
-                />
               </div>
             ) : safeType === 'TEXTE' ? (
               <div className="w-full h-full flex items-center justify-center bg-transparent">

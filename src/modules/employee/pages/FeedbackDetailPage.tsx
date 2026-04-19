@@ -864,6 +864,7 @@ export function EmployeeFeedbackDetailPage() {
                       onTimestampClick={seekToTimestamp}
                       currentPage={currentPdfPage}
                       onPageRefClick={(page) => setCurrentPdfPage(page)}
+                      floatingButtonMode="fixed"
                     />
                   </div>
                 </motion.div>

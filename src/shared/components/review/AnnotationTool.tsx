@@ -47,6 +47,7 @@ export function AnnotationTool({
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const startPosRef = useRef({ x: 0, y: 0 });
+  const drawingTouchIdRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!versionId) return;
@@ -78,13 +79,10 @@ export function AnnotationTool({
     };
   }, [versionId, currentUserId, refreshKey]);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!interactive || displayOnly) return;
-    if (e.target !== e.currentTarget) return;
-
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
+  const startDrawing = (clientX: number, clientY: number, element: HTMLElement) => {
+    const rect = element.getBoundingClientRect();
+    const x = ((clientX - rect.left) / rect.width) * 100;
+    const y = ((clientY - rect.top) / rect.height) * 100;
 
     const newAnnotation: Annotation = {
       id: -Date.now(),
@@ -97,15 +95,15 @@ export function AnnotationTool({
 
     setCurrentAnnotation(newAnnotation);
     setIsDrawing(true);
-    startPosRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    startPosRef.current = { x: clientX - rect.left, y: clientY - rect.top };
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const updateDrawing = (clientX: number, clientY: number, element: HTMLElement) => {
     if (!isDrawing || !currentAnnotation) return;
 
-    const rect = e.currentTarget.getBoundingClientRect();
-    const currentPX = e.clientX - rect.left;
-    const currentPY = e.clientY - rect.top;
+    const rect = element.getBoundingClientRect();
+    const currentPX = clientX - rect.left;
+    const currentPY = clientY - rect.top;
 
     const dx = (currentPX - startPosRef.current.x) / zoom;
     const dy = (currentPY - startPosRef.current.y) / zoom;
@@ -117,7 +115,7 @@ export function AnnotationTool({
     });
   };
 
-  const handleMouseUp = async () => {
+  const finishDrawing = async () => {
     if (isDrawing && currentAnnotation && versionId) {
       setSaving(true);
       try {
@@ -148,6 +146,46 @@ export function AnnotationTool({
     setIsDrawing(false);
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!interactive || displayOnly) return;
+    if (e.target !== e.currentTarget) return;
+    startDrawing(e.clientX, e.clientY, e.currentTarget as HTMLDivElement);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDrawing || !currentAnnotation) return;
+    updateDrawing(e.clientX, e.clientY, e.currentTarget as HTMLDivElement);
+  };
+
+  const handleMouseUp = async () => {
+    await finishDrawing();
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!interactive || displayOnly) return;
+    if (e.target !== e.currentTarget) return;
+    const touch = e.changedTouches[0];
+    if (!touch) return;
+    drawingTouchIdRef.current = touch.identifier;
+    startDrawing(touch.clientX, touch.clientY, e.currentTarget);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!isDrawing || !currentAnnotation || drawingTouchIdRef.current == null) return;
+    const touch = Array.from(e.changedTouches).find((t) => t.identifier === drawingTouchIdRef.current);
+    if (!touch) return;
+    e.preventDefault();
+    updateDrawing(touch.clientX, touch.clientY, e.currentTarget);
+  };
+
+  const handleTouchEnd = async (e: React.TouchEvent<HTMLDivElement>) => {
+    if (drawingTouchIdRef.current == null) return;
+    const touchEnded = Array.from(e.changedTouches).some((t) => t.identifier === drawingTouchIdRef.current);
+    if (!touchEnded) return;
+    drawingTouchIdRef.current = null;
+    await finishDrawing();
+  };
+
   const handleDeleteAnnotation = async (annotationId: number) => {
     setDeletingId(annotationId);
     try {
@@ -172,14 +210,26 @@ export function AnnotationTool({
     setIsResizing(true);
   };
 
-  const handleDocumentMouseMove = (e: MouseEvent) => {
+  const handleAnnotationTouchDragStart = (e: React.TouchEvent, id: number) => {
+    e.stopPropagation();
+    setSelectedAnnotation(id);
+    setIsDragging(true);
+  };
+
+  const handleAnnotationTouchResizeStart = (e: React.TouchEvent, id: number) => {
+    e.stopPropagation();
+    setSelectedAnnotation(id);
+    setIsResizing(true);
+  };
+
+  const updateSelectedAnnotationByPoint = (clientX: number, clientY: number) => {
     if (!selectedAnnotation) return;
     const annotation = annotations.find((a) => a.id === selectedAnnotation);
     if (!annotation || !containerRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
-    const px = e.clientX - rect.left;
-    const py = e.clientY - rect.top;
+    const px = clientX - rect.left;
+    const py = clientY - rect.top;
 
     if (isDragging) {
       setAnnotations(
@@ -200,7 +250,24 @@ export function AnnotationTool({
     }
   };
 
+  const handleDocumentMouseMove = (e: MouseEvent) => {
+    updateSelectedAnnotationByPoint(e.clientX, e.clientY);
+  };
+
+  const handleDocumentTouchMove = (e: TouchEvent) => {
+    if (e.touches.length === 0) return;
+    const touch = e.touches[0];
+    e.preventDefault();
+    updateSelectedAnnotationByPoint(touch.clientX, touch.clientY);
+  };
+
   const handleDocumentMouseUp = () => {
+    setIsDragging(false);
+    setIsResizing(false);
+    setSelectedAnnotation(null);
+  };
+
+  const handleDocumentTouchEnd = () => {
     setIsDragging(false);
     setIsResizing(false);
     setSelectedAnnotation(null);
@@ -210,12 +277,18 @@ export function AnnotationTool({
     if (isDragging || isResizing) {
       document.addEventListener('mousemove', handleDocumentMouseMove);
       document.addEventListener('mouseup', handleDocumentMouseUp);
+      document.addEventListener('touchmove', handleDocumentTouchMove, { passive: false });
+      document.addEventListener('touchend', handleDocumentTouchEnd);
+      document.addEventListener('touchcancel', handleDocumentTouchEnd);
       return () => {
         document.removeEventListener('mousemove', handleDocumentMouseMove);
         document.removeEventListener('mouseup', handleDocumentMouseUp);
+        document.removeEventListener('touchmove', handleDocumentTouchMove);
+        document.removeEventListener('touchend', handleDocumentTouchEnd);
+        document.removeEventListener('touchcancel', handleDocumentTouchEnd);
       };
     }
-  }, [isDragging, isResizing, selectedAnnotation, annotations, zoom]);
+  }, [isDragging, isResizing, selectedAnnotation, annotations, zoom, containerRef]);
 
   return (
     <div
@@ -223,6 +296,10 @@ export function AnnotationTool({
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
       style={{ zIndex: interactive && !displayOnly ? 40 : 1 }}
     >
       {annotations.map((annotation) => (
@@ -253,6 +330,7 @@ export function AnnotationTool({
               <div
                 className="bg-stone-900 dark:bg-stone-100 rounded-full border-2 border-white shadow-lg"
                 onMouseDown={(e) => interactive && handleAnnotationDragStart(e, annotation.id)}
+                onTouchStart={(e) => interactive && handleAnnotationTouchDragStart(e, annotation.id)}
                 style={{
                   position: 'absolute',
                   left: -6,
@@ -267,6 +345,7 @@ export function AnnotationTool({
               <div
                 className="bg-white rounded-full border-2 border-stone-800 dark:border-stone-200 shadow-lg"
                 onMouseDown={(e) => interactive && handleAnnotationResize(e, annotation.id)}
+                onTouchStart={(e) => interactive && handleAnnotationTouchResizeStart(e, annotation.id)}
                 style={{
                   position: 'absolute',
                   left: annotation.radius - 6,

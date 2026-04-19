@@ -87,6 +87,8 @@ const translations: Record<string, Record<string, string>> = {
     // Comments translation (employee feedback)
     'comments.translate': 'Traduire',
     'comments.originalText': 'Texte original',
+    'comments.showTranslation': 'Voir traduction',
+    'comments.showOriginal': "Voir l'original",
     
     // Validation
     'validation.title': 'Confirmer la validation',
@@ -446,6 +448,8 @@ const translations: Record<string, Record<string, string>> = {
     // Comments translation (employee feedback)
     'comments.translate': 'Translate',
     'comments.originalText': 'Original text',
+    'comments.showTranslation': 'Show translation',
+    'comments.showOriginal': 'Show original',
     
     // Validation
     'validation.title': 'Confirm Validation',
@@ -796,6 +800,8 @@ const translations: Record<string, Record<string, string>> = {
     "review.versionDeleted": "تم حذف النسخة.",
     "comments.translate": "ترجمة",
     "comments.originalText": "النص الأصلي",
+    "comments.showTranslation": "عرض الترجمة",
+    "comments.showOriginal": "عرض النص الأصلي",
     "validation.title": "تأكيد التحقق",
     "validation.message": "هل أنت متأكد من رغبتك في التحقق من هذا المشروع؟",
     "validation.description": "سيؤكد هذا الإجراء نهائياً موافقتك على هذا العمل. ستتغير الحالة إلى \"تم التحقق\" وسيتم إخطار الفريق.",

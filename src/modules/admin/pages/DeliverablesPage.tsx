@@ -261,6 +261,7 @@ export function AdminDeliverablesPage() {
                       latestVersionId={item.latestVersionId}
                       fichierUrl={item.latestVersion?.fichierUrl}
                       dateCreation={item.dateCreation}
+                      disablePreview
                       onClick={(id) => navigate(`/admin/deliverables/${id}`)}
                     />
                   </motion.div>
@@ -299,6 +300,7 @@ export function AdminDeliverablesPage() {
                         fichierUrl={item.latestVersion?.fichierUrl}
                         dateCreation={item.dateCreation}
                         layout="list"
+                        disablePreview
                         onClick={(id) => navigate(`/admin/deliverables/${id}`)}
                       />
                     ))}
