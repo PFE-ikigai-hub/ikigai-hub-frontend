@@ -28,6 +28,14 @@ export function ResetPasswordPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const passwordRulesMessage = "Le mot de passe doit contenir au moins 6 caractères, avec au moins 1 lettre et 1 chiffre.";
+
+  const isPasswordValid = (value: string) => {
+    if (value.length < 6) return false;
+    const hasLetter = /[A-Za-z]/.test(value);
+    const hasDigit = /\d/.test(value);
+    return hasLetter && hasDigit;
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,8 +51,8 @@ export function ResetPasswordPage() {
       return;
     }
 
-    if (password.length < 6) {
-      setError("Le mot de passe doit contenir au moins 6 caractères.");
+    if (!isPasswordValid(password)) {
+      setError(passwordRulesMessage);
       return;
     }
 
@@ -54,7 +62,20 @@ export function ResetPasswordPage() {
       setSuccess(true);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || "Le lien a expiré ou est invalide. Veuillez recommencer la procédure.");
+        const backendMessage = err.response?.data?.message as string | undefined;
+        const normalized = backendMessage?.toLowerCase() ?? "";
+        const passwordRelated =
+          normalized.includes("mot de passe") ||
+          normalized.includes("password") ||
+          normalized.includes("weak") ||
+          normalized.includes("short") ||
+          normalized.includes("min");
+
+        if (passwordRelated) {
+          setError(passwordRulesMessage);
+        } else {
+          setError(backendMessage || "Le lien a expiré ou est invalide. Veuillez recommencer la procédure.");
+        }
       } else {
         setError("Une erreur est survenue lors de la réinitialisation.");
       }
@@ -142,6 +163,9 @@ export function ResetPasswordPage() {
                           {showPassword ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
                       </div>
+                      <p className="mt-1.5 text-[11px] text-stone-400">
+                        {passwordRulesMessage}
+                      </p>
                     </div>
 
                     <div>
