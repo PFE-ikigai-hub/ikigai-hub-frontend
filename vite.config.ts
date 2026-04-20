@@ -4,12 +4,14 @@ import tailwindcss from "@tailwindcss/vite";
 import mkcert from "vite-plugin-mkcert";
 import path from "path";
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const proxyTarget = env.VITE_PROXY_TARGET || "http://127.0.0.1:3000";
 
   return {
-  plugins: [tailwindcss(), react(), mkcert()],
+  plugins: [tailwindcss(), react(), mkcert(), cloudflare()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
