@@ -247,10 +247,10 @@ export function LoginPage() {
                         whileHover={{ scale: isSubmitting ? 1 : 1.015 }}
                         whileTap={{ scale: isSubmitting ? 1 : 0.985 }}
                         disabled={isSubmitting}
-                        className="w-full flex items-center justify-center gap-2.5 px-4 py-3.5 ikg-gradient-btn rounded-xl  transition-colors shadow-lg shadow-stone-900/10 disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="w-full flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-xl bg-white text-black hover:bg-stone-200 transition-colors shadow-lg shadow-stone-900/10 disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         {isSubmitting ? (
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
                         ) : (
                           <SignIn className="w-4 h-4" />
                         )}
@@ -303,10 +303,10 @@ export function LoginPage() {
                         whileHover={{ scale: 1.015 }}
                         whileTap={{ scale: 0.985 }}
                         disabled={isForgotSubmitting}
-                        className="w-full flex items-center justify-center gap-2.5 px-4 py-3.5 ikg-gradient-btn rounded-xl  transition-colors shadow-lg shadow-stone-900/10 disabled:opacity-60"
+                        className="w-full flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-xl bg-white text-black hover:bg-stone-200 transition-colors shadow-lg shadow-stone-900/10 disabled:opacity-60"
                       >
                         {isForgotSubmitting ? (
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
                         ) : (
                           <PaperPlaneTilt className="w-4 h-4" />
                         )}

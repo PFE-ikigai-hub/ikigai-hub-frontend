@@ -11,7 +11,7 @@ export const PreloaderIndicator: React.FC<PreloaderIndicatorProps> = ({ classNam
   return (
     <div className={`flex items-center justify-center ${className}`}>
       <div
-        className="rounded-full border-[3px] border-black/20 border-t-black dark:border-white/25 dark:border-t-white animate-spin"
+        className="rounded-full border-[3px] border-white/30 border-t-white animate-spin"
         style={{
           width: px,
           height: px,
