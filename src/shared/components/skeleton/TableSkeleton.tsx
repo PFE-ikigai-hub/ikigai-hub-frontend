@@ -9,7 +9,7 @@ type TableSkeletonProps = {
   rows?: number;
 };
 
-export function TableSkeleton({ rows = 7 }: TableSkeletonProps) {
+export function TableSkeleton({ rows = 5 }: TableSkeletonProps) {
   return (
     <div className={`${skeletonSurfaceClass} overflow-hidden`}>
       <div className="hidden lg:block overflow-x-auto">
@@ -26,15 +26,13 @@ export function TableSkeleton({ rows = 7 }: TableSkeletonProps) {
               <div className="grid grid-cols-6 gap-4 items-center">
                 <div className="flex items-center gap-3">
                   <SkeletonBlock className="h-9 w-9 rounded-full" />
-                  <div className="space-y-2 w-full">
+                  <div className="w-full">
                     <SkeletonBlock className="h-3 w-3/4" />
-                    <SkeletonBlock className="h-3 w-1/2" />
                   </div>
                 </div>
                 <SkeletonBlock className="h-3 w-11/12" />
                 <SkeletonBlock className="h-3 w-10/12" />
-                <SkeletonBlock className="h-6 w-20 rounded-full" />
-                <SkeletonBlock className="h-6 w-16 rounded-full" />
+                <SkeletonBlock className="h-3 w-8/12" />
                 <SkeletonBlock className="h-3 w-2/3" />
               </div>
             </div>
@@ -43,14 +41,10 @@ export function TableSkeleton({ rows = 7 }: TableSkeletonProps) {
       </div>
 
       <div className={`lg:hidden divide-y ${skeletonDividerClass}`}>
-        {Array.from({ length: Math.max(4, Math.floor(rows / 2)) }).map((_, rowIndex) => (
+        {Array.from({ length: Math.max(3, Math.floor(rows / 2)) }).map((_, rowIndex) => (
           <div key={rowIndex} className="p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <SkeletonBlock className="h-4 w-40" />
-              <SkeletonBlock className="h-5 w-20 rounded-full" />
-            </div>
+            <SkeletonBlock className="h-4 w-40" />
             <SkeletonBlock className="h-3 w-2/3" />
-            <SkeletonBlock className="h-3 w-1/2" />
           </div>
         ))}
       </div>

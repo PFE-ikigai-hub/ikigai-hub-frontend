@@ -10,19 +10,16 @@ export function ProjectDetailSkeleton({ showHistoryTab = true }: ProjectDetailSk
       <div className="mb-10 flex items-start justify-between gap-6">
         <div className="min-w-0 flex-1">
           <SkeletonBlock className="h-4 w-28 rounded-md" />
-          <div className="mt-4 flex items-center gap-3">
+          <div className="mt-4">
             <SkeletonBlock className="h-10 w-80 rounded-lg" />
-            <SkeletonBlock className="h-6 w-24 rounded-full" />
           </div>
           <SkeletonBlock className="h-4 w-52 rounded-md mt-3" />
         </div>
       </div>
 
       <div className="mb-10">
-        <div className="inline-flex items-center gap-1 bg-white/60 dark:bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-stone-200/60 dark:border-white/[0.10] p-1.5">
-          <SkeletonBlock className="h-3 w-24 rounded-md mx-2 my-2" />
-          {showHistoryTab ? <SkeletonBlock className="h-3 w-20 rounded-md mx-2 my-2" /> : null}
-        </div>
+        <SkeletonBlock className="h-3 w-28 rounded-md" />
+        {showHistoryTab ? <SkeletonBlock className="h-3 w-20 rounded-md mt-2" /> : null}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -61,10 +58,7 @@ export function ProjectDetailSkeleton({ showHistoryTab = true }: ProjectDetailSk
                 >
                   <SkeletonBlock className="h-36 w-full rounded-none" />
                   <div className="p-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <SkeletonBlock className="h-5 w-24 rounded-md" />
-                      <SkeletonBlock className="h-5 w-14 rounded-full" />
-                    </div>
+                    <SkeletonBlock className="h-5 w-24 rounded-md" />
                     <SkeletonBlock className="h-4 w-3/4 rounded-md" />
                     <SkeletonBlock className="h-3 w-1/2 rounded-md" />
                     <div className="flex items-center justify-between pt-1">

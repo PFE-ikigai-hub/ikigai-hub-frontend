@@ -4,25 +4,16 @@ export function DeliverableDetailSkeleton() {
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background dark:bg-[#0a0a0b]">
       <div className="lg:hidden bg-white/70 dark:bg-[#0d0d0f]/70 border-b border-stone-200/50 dark:border-stone-800/40 px-6 py-3.5">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 min-w-0 flex-1">
-            <SkeletonBlock className="h-9 w-9 rounded-lg" />
-            <div className="space-y-2 min-w-0 flex-1">
-              <SkeletonBlock className="h-4 w-40 max-w-full" />
-              <SkeletonBlock className="h-3 w-28" />
-            </div>
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="space-y-2 min-w-0 flex-1">
+            <SkeletonBlock className="h-4 w-40 max-w-full" />
+            <SkeletonBlock className="h-3 w-28" />
           </div>
-          <SkeletonBlock className="h-9 w-9 rounded-lg" />
         </div>
       </div>
 
       <div className="flex flex-1 overflow-hidden min-h-0">
         <div className="flex-1 lg:w-[62%] lg:flex-none lg:order-2 min-w-0 flex flex-col overflow-hidden bg-stone-50/30 dark:bg-[#0c0c0e]">
-          <div className="h-12 px-6 py-2 border-b border-stone-100/30 dark:border-stone-800/30 flex items-center justify-center gap-4">
-            <SkeletonBlock className="h-8 w-36 rounded-xl" />
-            <SkeletonBlock className="h-8 w-8 rounded-md" />
-          </div>
-
           <div className="flex-1 overflow-auto p-6 md:p-8 lg:p-12 flex items-center justify-center">
             <div className={`${skeletonSurfaceClass} w-full max-w-4xl h-[62vh] rounded-2xl p-6`}>
               <SkeletonBlock className="h-full w-full rounded-xl" />
@@ -38,17 +29,7 @@ export function DeliverableDetailSkeleton() {
               <SkeletonBlock className="h-3 w-36" />
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <SkeletonBlock key={i} className="h-7 w-16 rounded-lg" />
-              ))}
-            </div>
-
             <SkeletonBlock className="h-4 w-52" />
-            <div className="flex gap-2">
-              <SkeletonBlock className="h-8 w-24 rounded-lg" />
-              <SkeletonBlock className="h-8 w-28 rounded-lg" />
-            </div>
           </div>
 
           <div className="flex-1 p-4 space-y-6 overflow-hidden">

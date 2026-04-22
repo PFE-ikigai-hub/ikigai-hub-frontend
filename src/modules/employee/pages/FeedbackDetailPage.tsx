@@ -46,6 +46,9 @@ export function EmployeeFeedbackDetailPage() {
   
   // PDF page navigation state
   const [currentPdfPage, setCurrentPdfPage] = useState(1);
+  const [isMobileViewport, setIsMobileViewport] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(max-width: 1023px)").matches : false
+  );
   
   // Secure delete modal state
   const [deleteVersionModalOpen, setDeleteVersionModalOpen] = useState(false);
@@ -82,6 +85,25 @@ export function EmployeeFeedbackDetailPage() {
     },
     defaultFallback: '/employee/feedback',
   });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(max-width: 1023px)");
+
+    const onChange = (event: MediaQueryListEvent) => {
+      setIsMobileViewport(event.matches);
+    };
+
+    setIsMobileViewport(mediaQuery.matches);
+    mediaQuery.addEventListener("change", onChange);
+    return () => mediaQuery.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobileViewport && showCommentsSidebar) {
+      setShowCommentsSidebar(false);
+    }
+  }, [isMobileViewport, showCommentsSidebar]);
 
   useEffect(() => {
     if (Number.isNaN(livrableId)) {
@@ -253,6 +275,10 @@ export function EmployeeFeedbackDetailPage() {
     if (!currentVersion) return;
     setDownloadModalOpen(true);
   };
+
+  const shouldRenderMobileFeedback = isMobileViewport && showCommentsSidebar;
+  const shouldRenderPreviewArea = !isMobileViewport || !showCommentsSidebar;
+  const shouldRenderDesktopSidebar = !isMobileViewport;
 
   const canDeleteVersion =
     !!user &&
@@ -434,6 +460,7 @@ export function EmployeeFeedbackDetailPage() {
     if (type === 'PDF' || previewMimeType === 'application/pdf') {
       return (
         <motion.div
+          key={`pdf-preview-${currentVersion?.id ?? "none"}-${previewRefreshKey}`}
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.1 }}
@@ -595,6 +622,7 @@ export function EmployeeFeedbackDetailPage() {
 
         <div className="flex flex-1 overflow-hidden min-h-0">
           {/* Main preview area */}
+          {shouldRenderPreviewArea && (
           <div className="flex-1 lg:w-[62%] lg:flex-none lg:order-2 min-w-0 flex flex-col overflow-hidden bg-stone-50/30 dark:bg-[#0c0c0e]">
             {livrable.type === 'IMAGE' && (
               <div className="bg-white/40 dark:bg-stone-900/40 backdrop-blur-md border-b border-stone-100/30 dark:border-stone-800/30 px-6 py-2 flex items-center justify-center gap-4">
@@ -636,8 +664,10 @@ export function EmployeeFeedbackDetailPage() {
               {renderPreview()}
             </div>
           </div>
+          )}
 
           {/* Right Sidebar - Desktop */}
+          {shouldRenderDesktopSidebar && (
           <div className="hidden lg:flex lg:order-1 w-[38%] min-w-0 flex-col bg-white/60 dark:bg-[#0d0d0f]/60 backdrop-blur-xl border-r border-stone-200/40 dark:border-stone-800/30 shadow-xl shadow-stone-100/20 dark:shadow-none z-10 overflow-hidden">
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <div className="p-5 border-b border-stone-200/40 dark:border-stone-800/30 space-y-4">
@@ -786,10 +816,11 @@ export function EmployeeFeedbackDetailPage() {
               </div>
             </div>
           </div>
+          )}
 
           {/* Comments sidebar - Mobile (Overlay) */}
           <AnimatePresence>
-            {showCommentsSidebar && (
+            {shouldRenderMobileFeedback && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

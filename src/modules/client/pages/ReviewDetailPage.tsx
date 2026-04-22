@@ -62,6 +62,9 @@ export function ClientReviewDetailPage() {
   const [pendingSeekSeconds, setPendingSeekSeconds] = useState<number | null>(null);
   
   const [currentPdfPage, setCurrentPdfPage] = useState(1);
+  const [isMobileViewport, setIsMobileViewport] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(max-width: 1023px)").matches : false
+  );
 
   const { goBack: handleBack } = useSmartBackNavigation({
     role,
@@ -72,6 +75,25 @@ export function ClientReviewDetailPage() {
     },
     defaultFallback: '/client/dashboard',
   });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(max-width: 1023px)");
+
+    const onChange = (event: MediaQueryListEvent) => {
+      setIsMobileViewport(event.matches);
+    };
+
+    setIsMobileViewport(mediaQuery.matches);
+    mediaQuery.addEventListener("change", onChange);
+    return () => mediaQuery.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobileViewport && showCommentsSidebar) {
+      setShowCommentsSidebar(false);
+    }
+  }, [isMobileViewport, showCommentsSidebar]);
 
   // 1) Fetch deliverable + versions
   useEffect(() => {
@@ -270,6 +292,10 @@ export function ClientReviewDetailPage() {
     setDownloadModalOpen(true);
   };
 
+  const shouldRenderMobileFeedback = isMobileViewport && showCommentsSidebar;
+  const shouldRenderPreviewArea = !isMobileViewport || !showCommentsSidebar;
+  const shouldRenderDesktopSidebar = !isMobileViewport;
+
   const renderPreview = () => {
     if (previewError) {
       return (
@@ -396,6 +422,7 @@ export function ClientReviewDetailPage() {
     if (isPdfPreview) {
       return (
         <motion.div
+          key={`pdf-preview-${currentVersion?.id ?? "none"}-${previewRefreshKey}`}
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.1 }}
@@ -527,6 +554,22 @@ export function ClientReviewDetailPage() {
                 <History className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               </button>
 
+              {/* Mobile actions */}
+              <div className="flex md:hidden items-center gap-2">
+                {livrable.statut === 'EN_REVUE' && (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleValidate}
+                    className="flex items-center gap-1.5 px-3 py-2 bg-green-600 text-white hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 rounded-lg transition-colors text-xs font-medium shadow-sm"
+                    type="button"
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    {t('deliverables.validate')}
+                  </motion.button>
+                )}
+              </div>
+
               {/* Desktop Actions */}
               <div className="hidden md:flex items-center gap-3">
                 {livrable.statut === 'EN_REVUE' && (
@@ -576,6 +619,7 @@ export function ClientReviewDetailPage() {
 
         <div className="flex flex-1 overflow-hidden min-h-0 lg:min-h-screen">
           {/* Main preview area */}
+          {shouldRenderPreviewArea && (
           <div className="flex-1 lg:w-[62%] lg:flex-none lg:order-2 min-w-0 flex flex-col overflow-hidden bg-stone-50/30 dark:bg-[#0c0c0e]">
             {/* Zoom controls + Annotation toggle (Image only) */}
             {livrable.type === 'IMAGE' && (
@@ -632,8 +676,10 @@ export function ClientReviewDetailPage() {
               {renderPreview()}
             </div>
           </div>
+          )}
 
           {/* Right Sidebar - Desktop */}
+          {shouldRenderDesktopSidebar && (
           <div className="hidden lg:flex lg:order-1 w-[38%] min-w-0 flex-col bg-white/60 dark:bg-[#0d0d0f]/60 backdrop-blur-xl border-r border-stone-200/40 dark:border-stone-800/30 shadow-xl shadow-stone-100/20 dark:shadow-none z-10 overflow-hidden">
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <div className="p-5 border-b border-stone-200/40 dark:border-stone-800/30 space-y-4">
@@ -731,10 +777,11 @@ export function ClientReviewDetailPage() {
               </div>
             </div>
           </div>
+          )}
 
           {/* Comments sidebar - Mobile (Overlay) */}
           <AnimatePresence>
-            {showCommentsSidebar && (
+            {shouldRenderMobileFeedback && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
