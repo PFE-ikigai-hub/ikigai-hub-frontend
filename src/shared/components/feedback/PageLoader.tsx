@@ -13,7 +13,7 @@ export function PageLoader({ minHeightClassName = "min-h-[60vh]", variant = "car
   if (variant === "table") {
     return (
       <div className={`${minHeightClassName} w-full`}>
-        <TableSkeleton rows={8} />
+        <TableSkeleton rows={4} />
       </div>
     );
   }
@@ -28,8 +28,7 @@ export function PageLoader({ minHeightClassName = "min-h-[60vh]", variant = "car
 
   return (
     <div className={`${minHeightClassName} w-full`}>
-      <CardSkeleton count={8} />
+      <CardSkeleton count={4} />
     </div>
   );
 }
-

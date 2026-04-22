@@ -9,7 +9,7 @@ type TableSkeletonProps = {
   rows?: number;
 };
 
-export function TableSkeleton({ rows = 5 }: TableSkeletonProps) {
+export function TableSkeleton({ rows = 4 }: TableSkeletonProps) {
   return (
     <div className={`${skeletonSurfaceClass} overflow-hidden`}>
       <div className="hidden lg:block overflow-x-auto">
@@ -41,7 +41,7 @@ export function TableSkeleton({ rows = 5 }: TableSkeletonProps) {
       </div>
 
       <div className={`lg:hidden divide-y ${skeletonDividerClass}`}>
-        {Array.from({ length: Math.max(3, Math.floor(rows / 2)) }).map((_, rowIndex) => (
+        {Array.from({ length: Math.max(2, Math.floor(rows / 2)) }).map((_, rowIndex) => (
           <div key={rowIndex} className="p-4 space-y-3">
             <SkeletonBlock className="h-4 w-40" />
             <SkeletonBlock className="h-3 w-2/3" />

@@ -5,7 +5,7 @@ type CardSkeletonProps = {
   layout?: "grid" | "list";
 };
 
-export function CardSkeleton({ count = 6, layout = "grid" }: CardSkeletonProps) {
+export function CardSkeleton({ count = 4, layout = "grid" }: CardSkeletonProps) {
   if (layout === "list") {
     return (
       <div className={`${skeletonSurfaceClass} overflow-hidden`}>

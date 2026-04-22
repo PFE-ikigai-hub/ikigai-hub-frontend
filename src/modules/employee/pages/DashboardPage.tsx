@@ -159,7 +159,7 @@ function EmployeeAssignedProjects() {
         <SearchBar filterType="projects" onSearch={handleSearch} />
       </div>
 
-      <Loadable isLoading={loading} skeleton={<TableSkeleton rows={7} />}>
+      <Loadable isLoading={loading} skeleton={<TableSkeleton rows={4} />}>
         <AnimatePresence mode="wait">
           {filtered.length > 0 ? (
             <motion.div

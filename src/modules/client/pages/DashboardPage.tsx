@@ -244,7 +244,7 @@ function DeliverablesView({ viewType, titleKey }: DeliverablesViewProps) {
 
       <Loadable
         isLoading={loading}
-        skeleton={layout === "list" ? <PageLoader variant="table" /> : <CardSkeleton count={8} layout="grid" />}
+        skeleton={layout === "list" ? <PageLoader variant="table" /> : <CardSkeleton count={4} layout="grid" />}
       >
         <AnimatePresence mode="wait">
           {filteredItems.length > 0 ? (

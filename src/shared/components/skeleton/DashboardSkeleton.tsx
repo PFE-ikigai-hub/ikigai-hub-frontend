@@ -7,7 +7,7 @@ type DashboardSkeletonProps = {
   withTable?: boolean;
 };
 
-export function DashboardSkeleton({ cardsCount = 8, withTable = false }: DashboardSkeletonProps) {
+export function DashboardSkeleton({ cardsCount = 4, withTable = false }: DashboardSkeletonProps) {
   return (
     <div className="p-8 md:p-12 max-w-[1600px] mx-auto min-h-screen space-y-8">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -22,7 +22,7 @@ export function DashboardSkeleton({ cardsCount = 8, withTable = false }: Dashboa
         <SkeletonBlock className="h-4 w-56 rounded-md" />
       </div>
 
-      {withTable ? <TableSkeleton rows={8} /> : <CardSkeleton count={cardsCount} />}
+      {withTable ? <TableSkeleton rows={4} /> : <CardSkeleton count={cardsCount} />}
     </div>
   );
 }

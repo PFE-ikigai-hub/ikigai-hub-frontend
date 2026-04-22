@@ -1094,7 +1094,7 @@ export function AdminUsersPage() {
         transition={{ duration: 0.3, delay: 0.1 }}
         className="bg-white dark:bg-stone-900/50 rounded-2xl border border-stone-200/70 dark:border-stone-800/50 overflow-hidden"
       >
-        <Loadable isLoading={loading} skeleton={<TableSkeleton rows={8} />}>
+        <Loadable isLoading={loading} skeleton={<TableSkeleton rows={4} />}>
           <>
             <div className="hidden lg:block overflow-x-auto">
               <table className="w-full min-w-[980px]">
