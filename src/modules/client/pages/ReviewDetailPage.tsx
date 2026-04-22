@@ -534,7 +534,7 @@ export function ClientReviewDetailPage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleValidate}
-                    className="flex items-center gap-2 px-4 py-2 ikg-gradient-btn  rounded-lg transition-colors text-sm font-medium shadow-sm"
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 rounded-lg transition-colors text-sm font-medium shadow-sm"
                   >
                     <Check className="w-4 h-4" />
                     {t('deliverables.validate')}
@@ -697,7 +697,7 @@ export function ClientReviewDetailPage() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={handleValidate}
-                      className="flex items-center gap-2 px-3 py-2 ikg-gradient-btn rounded-lg transition-colors text-xs font-medium shadow-sm"
+                      className="flex items-center gap-2 px-3 py-2 bg-green-600 text-white hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 rounded-lg transition-colors text-xs font-medium shadow-sm"
                       type="button"
                     >
                       <Check className="w-3.5 h-3.5" />

@@ -555,7 +555,7 @@ export function CommentsList({
       {/* Floating Add Comment Button - Fixed at bottom right */}
       {canCreateComment && !isAdding && (
         <div
-          className={`z-[150] animate-in fade-in slide-in-from-bottom-4 duration-300 ${
+          className={`z-[150] ${
             floatingButtonMode === 'fixed'
               ? 'fixed bottom-6 right-6 sm:bottom-8 sm:right-8'
               : 'absolute bottom-6 right-6 sm:bottom-8 sm:right-8'
@@ -563,11 +563,10 @@ export function CommentsList({
         >
           <button
             onClick={() => setIsAdding(true)}
-            className="w-14 h-14 rounded-full ikg-gradient-btn shadow-2xl shadow-stone-900/20 dark:shadow-white/10 flex items-center justify-center hover:scale-110 hover:-translate-y-1 active:scale-95 transition-all duration-300 group"
+            className="w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 shadow-lg shadow-blue-900/20 dark:shadow-blue-300/10 flex items-center justify-center transition-colors"
             title={t('review.addComment')}
           >
-            <Plus className="w-7 h-7 text-white dark:text-black drop-shadow-sm group-hover:rotate-90 transition-transform" />
-            <div className="absolute inset-0 rounded-full bg-white/20 dark:bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Plus className="w-7 h-7 text-white" />
           </button>
         </div>
       )}

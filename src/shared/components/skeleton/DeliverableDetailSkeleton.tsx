@@ -2,50 +2,66 @@ import { SkeletonBlock, skeletonSurfaceClass } from "@/shared/components/skeleto
 
 export function DeliverableDetailSkeleton() {
   return (
-    <div className="p-6 md:p-8 lg:p-10 max-w-[1300px] mx-auto min-h-screen space-y-6">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div className="space-y-3">
-          <SkeletonBlock className="h-4 w-28" />
-          <SkeletonBlock className="h-9 w-72 max-w-[80vw]" />
-          <SkeletonBlock className="h-4 w-96 max-w-[85vw]" />
+    <div className="flex flex-col h-screen overflow-hidden bg-background dark:bg-[#0a0a0b]">
+      <div className="lg:hidden bg-white/70 dark:bg-[#0d0d0f]/70 border-b border-stone-200/50 dark:border-stone-800/40 px-6 py-3.5">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4 min-w-0 flex-1">
+            <SkeletonBlock className="h-9 w-9 rounded-lg" />
+            <div className="space-y-2 min-w-0 flex-1">
+              <SkeletonBlock className="h-4 w-40 max-w-full" />
+              <SkeletonBlock className="h-3 w-28" />
+            </div>
+          </div>
+          <SkeletonBlock className="h-9 w-9 rounded-lg" />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
-        <div className={`${skeletonSurfaceClass} p-4`}>
-          <div className="flex items-center justify-between mb-3">
-            <SkeletonBlock className="h-5 w-28" />
-            <SkeletonBlock className="h-4 w-8" />
+      <div className="flex flex-1 overflow-hidden min-h-0">
+        <div className="flex-1 lg:w-[62%] lg:flex-none lg:order-2 min-w-0 flex flex-col overflow-hidden bg-stone-50/30 dark:bg-[#0c0c0e]">
+          <div className="h-12 px-6 py-2 border-b border-stone-100/30 dark:border-stone-800/30 flex items-center justify-center gap-4">
+            <SkeletonBlock className="h-8 w-36 rounded-xl" />
+            <SkeletonBlock className="h-8 w-8 rounded-md" />
           </div>
 
-          <div className="space-y-2">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="w-full p-3 rounded-xl border border-stone-100 dark:border-white/[0.08] space-y-2"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <SkeletonBlock className="h-4 w-16" />
-                  <SkeletonBlock className="h-4 w-4 rounded-full" />
-                </div>
-                <SkeletonBlock className="h-3 w-24" />
-              </div>
-            ))}
+          <div className="flex-1 overflow-auto p-6 md:p-8 lg:p-12 flex items-center justify-center">
+            <div className={`${skeletonSurfaceClass} w-full max-w-4xl h-[62vh] rounded-2xl p-6`}>
+              <SkeletonBlock className="h-full w-full rounded-xl" />
+            </div>
           </div>
         </div>
 
-        <div className={`${skeletonSurfaceClass} p-5`}>
-          <div className="space-y-5">
-            <SkeletonBlock className="h-6 w-48" />
+        <div className="hidden lg:flex lg:order-1 w-[38%] min-w-0 flex-col bg-white/60 dark:bg-[#0d0d0f]/60 border-r border-stone-200/40 dark:border-stone-800/30 overflow-hidden">
+          <div className="p-5 border-b border-stone-200/40 dark:border-stone-800/30 space-y-4">
+            <SkeletonBlock className="h-4 w-28" />
+            <div className="space-y-2">
+              <SkeletonBlock className="h-5 w-48 max-w-full" />
+              <SkeletonBlock className="h-3 w-36" />
+            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="space-y-2">
-                  <SkeletonBlock className="h-3 w-24" />
-                  <SkeletonBlock className="h-5 w-40 max-w-full" />
-                </div>
+            <div className="flex flex-wrap gap-2">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <SkeletonBlock key={i} className="h-7 w-16 rounded-lg" />
               ))}
             </div>
+
+            <SkeletonBlock className="h-4 w-52" />
+            <div className="flex gap-2">
+              <SkeletonBlock className="h-8 w-24 rounded-lg" />
+              <SkeletonBlock className="h-8 w-28 rounded-lg" />
+            </div>
+          </div>
+
+          <div className="flex-1 p-4 space-y-6 overflow-hidden">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex gap-3">
+                <SkeletonBlock className="h-10 w-10 rounded-full shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <SkeletonBlock className="h-4 w-36" />
+                  <SkeletonBlock className="h-4 w-full" />
+                  <SkeletonBlock className="h-4 w-3/4" />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
