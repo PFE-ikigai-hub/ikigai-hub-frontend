@@ -12,11 +12,27 @@ type SecureValidationModalProps = {
 
 export function SecureValidationModal({ isOpen, onClose, onConfirm, deliverableName }: SecureValidationModalProps) {
   const { t } = useI18n();
+  const [isMobileViewport, setIsMobileViewport] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(max-width: 1023px)").matches : false
+  );
   const [password, setPassword] = useState("");
   const [confirmA, setConfirmA] = useState(false);
   const [confirmB, setConfirmB] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(max-width: 1023px)");
+
+    const onChange = (event: MediaQueryListEvent) => {
+      setIsMobileViewport(event.matches);
+    };
+
+    setIsMobileViewport(mediaQuery.matches);
+    mediaQuery.addEventListener("change", onChange);
+    return () => mediaQuery.removeEventListener("change", onChange);
+  }, []);
 
   useEffect(() => {
     if (!isOpen) {
@@ -50,20 +66,24 @@ export function SecureValidationModal({ isOpen, onClose, onConfirm, deliverableN
       {isOpen && (
         <>
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+            initial={isMobileViewport ? false : { opacity: 0 }}
+            animate={isMobileViewport ? undefined : { opacity: 1 }}
+            exit={isMobileViewport ? undefined : { opacity: 0 }}
+            transition={isMobileViewport ? undefined : { duration: 0.2 }}
+            className={`fixed inset-0 z-50 ${isMobileViewport ? "bg-black/45" : "bg-black/40 backdrop-blur-sm"}`}
             onClick={onClose}
           />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
             <motion.div
-              initial={{ opacity: 0, scale: 0.96, y: 16 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: 16 }}
-              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="bg-white/95 dark:bg-[#111113]/95 backdrop-blur-xl border border-stone-200/70 dark:border-stone-800/60 rounded-2xl shadow-2xl shadow-stone-200/40 dark:shadow-black/60 w-full max-w-lg pointer-events-auto"
+              initial={isMobileViewport ? false : { opacity: 0, scale: 0.96, y: 16 }}
+              animate={isMobileViewport ? undefined : { opacity: 1, scale: 1, y: 0 }}
+              exit={isMobileViewport ? undefined : { opacity: 0, scale: 0.96, y: 16 }}
+              transition={isMobileViewport ? undefined : { duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className={`w-full max-w-lg pointer-events-auto border rounded-2xl ${
+                isMobileViewport
+                  ? "bg-white dark:bg-[#111113] border-stone-200 dark:border-stone-800 shadow-lg"
+                  : "bg-white/95 dark:bg-[#111113]/95 backdrop-blur-xl border-stone-200/70 dark:border-stone-800/60 shadow-2xl shadow-stone-200/40 dark:shadow-black/60"
+              }`}
             >
               <div className="flex items-center justify-between px-6 pt-6 pb-5 border-b border-stone-100 dark:border-stone-800/60">
                 <div className="flex items-center gap-3">
