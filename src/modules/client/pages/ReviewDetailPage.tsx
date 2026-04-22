@@ -292,8 +292,10 @@ export function ClientReviewDetailPage() {
     setDownloadModalOpen(true);
   };
 
+  const isCurrentPreviewPdf = livrable?.type === "PDF" || previewMimeType === "application/pdf";
+  const isMobileValidationOverlayOpen = isMobileViewport && validationModalOpen && isCurrentPreviewPdf;
   const shouldRenderMobileFeedback = isMobileViewport && showCommentsSidebar;
-  const shouldRenderPreviewArea = !isMobileViewport || !showCommentsSidebar;
+  const shouldRenderPreviewArea = (!isMobileViewport || !showCommentsSidebar) && !isMobileValidationOverlayOpen;
   const shouldRenderDesktopSidebar = !isMobileViewport;
 
   const renderPreview = () => {
