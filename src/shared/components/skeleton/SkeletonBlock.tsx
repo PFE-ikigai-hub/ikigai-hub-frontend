@@ -1,5 +1,6 @@
-import type { CSSProperties, ElementType } from "react";
+﻿import type { CSSProperties, ElementType } from "react";
 import { cn } from "@/shared/utils/cn";
+
 
 export const skeletonSurfaceClass =
   "bg-white rounded-2xl border border-stone-200/70 dark:bg-white/[0.04] dark:border-white/[0.10] dark:backdrop-blur-md dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]";

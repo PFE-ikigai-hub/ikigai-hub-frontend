@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { deliverablesApi, projectsApi, usersApi } from "@/core/api/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/components/ui/card";
 import { motion } from "framer-motion";
-import { UsersThree, Briefcase, File, ShieldCheck, CheckCircle, XCircle } from "@phosphor-icons/react";
+import { UsersThreeIcon as UsersThree, BriefcaseIcon as Briefcase, FileIcon as File, ShieldCheckIcon as ShieldCheck, CheckCircleIcon as CheckCircle, XCircleIcon as XCircle } from "@phosphor-icons/react";
 import { useI18n } from "@/core/i18n/I18nProvider";
+
 
 export function AdminDashboardPage() {
   const { t } = useI18n();

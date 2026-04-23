@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { MessageCircle, FileText, Image, Video, FileType, File, Music } from 'lucide-react';
 import { useI18n } from '@/core/i18n/I18nProvider';
 import { versionsApi } from '@/core/api/client';
@@ -6,6 +6,7 @@ import BorderGlow from '../effects/BorderGlow';
 import { getStatusIcon } from '@/shared/utils/status';
 import { isLikelyPdfBlob } from '@/shared/utils/preview';
 import { useLocation } from 'react-router-dom';
+
 
 interface DeliverableCardProps {
   id: string;

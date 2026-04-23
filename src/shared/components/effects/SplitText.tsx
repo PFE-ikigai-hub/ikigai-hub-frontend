@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useRef } from "react";
+﻿import React, { useEffect, useMemo, useRef } from "react";
 import { gsap } from "gsap";
+
 
 export interface SplitTextProps {
   text: string;

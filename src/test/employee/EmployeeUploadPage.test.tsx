@@ -1,10 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+﻿import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { EmployeeUploadPage } from "@/modules/employee/pages/DashboardPage";
 import { renderWithRouter } from "@/test/test-utils";
 import { useAuth } from "@/core/auth/AuthProvider";
 import { affectationsApi, deliverablesApi, projectsApi, versionsApi } from "@/core/api/client";
+
 
 vi.mock("@/core/auth/AuthProvider", () => ({
   useAuth: vi.fn(),

@@ -6,12 +6,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Card } from "@/shared/components/ui/card";
 import { SearchBar } from "@/shared/components/ui/SearchBar";
-import { PageLoader } from "@/shared/components/feedback/PageLoader";
 import { Loadable, TableSkeleton } from "@/shared/components/skeleton";
-import { FolderSimple, UploadSimple, UsersThree } from "@phosphor-icons/react";
+import { FolderSimpleIcon as FolderSimple, UploadSimpleIcon as UploadSimple, UsersThreeIcon as UsersThree } from "@phosphor-icons/react";
 import type { ApiAffectation, ApiDeliverable, ApiProject, DeliverableType, ProjectStatus } from "@/types/index";
 import { getStatusIcon } from "@/shared/utils/status";
-
 export function EmployeeDashboardPage() {
   return <EmployeeAssignedProjects />;
 }
@@ -350,7 +348,7 @@ export function EmployeeUploadPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  // When coming from the Feedback page ("Gérer versions"), preselect the project + deliverable.
+  // Quand on vient de Feedback, preselectionne projet et livrable.
   useEffect(() => {
     const state = location.state as { projectId?: number | string; deliverableId?: number | string } | null;
     if (!state?.projectId || !state?.deliverableId) return;

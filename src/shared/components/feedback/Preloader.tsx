@@ -1,5 +1,6 @@
 ﻿import { PreloaderIndicator } from "@/shared/components/ui/PreloaderIndicator";
 
+
 export type PreloaderProps = {
   className?: string;
   size?: number;

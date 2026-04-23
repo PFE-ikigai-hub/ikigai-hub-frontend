@@ -3,6 +3,7 @@ import { Search, X, Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useI18n } from '@/core/i18n/I18nProvider';
 
+
 type FilterType = 'projects' | 'deliverables' | 'versions';
 
 interface SearchBarProps {

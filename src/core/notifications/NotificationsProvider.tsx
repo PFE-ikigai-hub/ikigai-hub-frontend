@@ -1,8 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+﻿import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Client, type IMessage } from "@stomp/stompjs";
 import { getApiBaseUrl, notificationsApi } from "@/core/api/client";
 import { useAuth } from "@/core/auth/AuthProvider";
 import type { ApiNotification } from "@/types/index";
+
 
 type NotificationsContextValue = {
   notifications: ApiNotification[];

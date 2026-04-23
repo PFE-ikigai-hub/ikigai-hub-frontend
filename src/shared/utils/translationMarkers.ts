@@ -1,4 +1,4 @@
-const REFERENCE_REGEX = /\[Page\s+\d+\]|\[\d{1,2}:[0-5]\d\]|\b\d{1,2}:[0-5]\d\b/g;
+﻿const REFERENCE_REGEX = /\[Page\s+\d+\]|\[\d{1,2}:[0-5]\d\]|\b\d{1,2}:[0-5]\d\b/g;
 
 type ProtectedReferencesResult = {
   protectedText: string;

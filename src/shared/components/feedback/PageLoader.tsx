@@ -1,6 +1,7 @@
-import { CardSkeleton } from "@/shared/components/skeleton/CardSkeleton";
+﻿import { CardSkeleton } from "@/shared/components/skeleton/CardSkeleton";
 import { DashboardSkeleton } from "@/shared/components/skeleton/DashboardSkeleton";
 import { TableSkeleton } from "@/shared/components/skeleton/TableSkeleton";
+
 
 type PageLoaderVariant = "cards" | "table" | "detail";
 

@@ -1,15 +1,16 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+﻿import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { deliverablesApi, projectsApi, versionsApi } from "@/core/api/client";
 import { useI18n } from "@/core/i18n/I18nProvider";
 import { motion, AnimatePresence } from "motion/react";
-import { SquaresFour, List as ListIcon, CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { SquaresFourIcon as SquaresFour, ListIcon, CaretLeftIcon as CaretLeft, CaretRightIcon as CaretRight } from "@phosphor-icons/react";
 import { SearchBar } from "@/shared/components/ui/SearchBar";
 import { DeliverableCard } from "@/shared/components/ui/DeliverableCard";
 import { PageLoader } from "@/shared/components/feedback/PageLoader";
 import { CardSkeleton, Loadable } from "@/shared/components/skeleton";
 import type { ApiDeliverable, ApiProject, ApiVersion, ProjectStatus } from "@/types/index";
 import { normalizeVersions } from "@/shared/utils/versions";
+
 
 type ViewType = "mes-projets" | "en-revue" | "valides" | "archives";
 

@@ -1,4 +1,5 @@
-import { SkeletonBlock, skeletonDividerClass, skeletonSurfaceClass } from "@/shared/components/skeleton/SkeletonBlock";
+﻿import { SkeletonBlock, skeletonDividerClass, skeletonSurfaceClass } from "@/shared/components/skeleton/SkeletonBlock";
+
 
 type CardSkeletonProps = {
   count?: number;

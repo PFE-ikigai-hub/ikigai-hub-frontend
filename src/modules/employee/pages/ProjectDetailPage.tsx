@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ProjectDetailView } from "@/shared/components/project/ProjectDetailView";
+
 
 export function EmployeeProjectDetailPage() {
   const { projectId } = useParams();

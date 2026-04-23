@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, CalendarBlank, Pencil, Plus, Trash, Users, UsersThree, Archive, ArrowClockwise, CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { ArrowLeftIcon as ArrowLeft, CalendarBlankIcon as CalendarBlank, PencilIcon as Pencil, PlusIcon as Plus, TrashIcon as Trash, UsersIcon as Users, UsersThreeIcon as UsersThree, ArchiveIcon as Archive, ArrowClockwiseIcon as ArrowClockwise, CaretLeftIcon as CaretLeft, CaretRightIcon as CaretRight } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
 import { X } from "lucide-react";
 import { useAuth } from "@/core/auth/AuthProvider";
@@ -15,6 +15,7 @@ import { ProjectHistoryTimeline } from "@/shared/components/project/ProjectHisto
 import type { ApiAffectation, ApiProject, ApiDeliverable, ApiProjectHistoryEvent, ApiUser, ApiVersion, ProjectStatus } from "@/types/index";
 import { normalizeVersions } from "@/shared/utils/versions";
 import { getStatusIcon } from "@/shared/utils/status";
+
 
 type EnrichedDeliverable = ApiDeliverable & {
   latestVersion?: ApiVersion;

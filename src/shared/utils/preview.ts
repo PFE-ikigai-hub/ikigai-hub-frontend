@@ -1,4 +1,4 @@
-export function isTextLikeMimeType(contentType?: string | null): boolean {
+﻿export function isTextLikeMimeType(contentType?: string | null): boolean {
   if (!contentType) return false;
   const normalized = contentType.toLowerCase();
   return (

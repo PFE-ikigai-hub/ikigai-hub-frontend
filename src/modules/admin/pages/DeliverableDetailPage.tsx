@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Check, History, Trash2 } from "lucide-react";
 import { deliverablesApi, versionsApi } from "@/core/api/client";
@@ -8,6 +8,7 @@ import { DeliverableDetailSkeleton } from "@/shared/components/skeleton";
 import { SecureDeleteModal } from "@/modules/admin/components/SecureDeleteModal";
 import type { ApiDeliverable, ApiVersion } from "@/types/index";
 import { normalizeVersions } from "@/shared/utils/versions";
+
 
 export function AdminDeliverableDetailPage() {
   const { deliverableId } = useParams();

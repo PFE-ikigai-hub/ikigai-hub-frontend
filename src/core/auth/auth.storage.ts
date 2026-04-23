@@ -1,4 +1,5 @@
-import type { UserRole } from "@/types/auth";
+﻿import type { UserRole } from "@/types/auth";
+
 
 const STORAGE_KEY = "ikigai:lastRole";
 

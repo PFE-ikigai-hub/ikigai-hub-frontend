@@ -1,4 +1,4 @@
-export interface ApiPage<T> {
+﻿export interface ApiPage<T> {
   content: T[];
   totalElements: number;
   totalPages: number;

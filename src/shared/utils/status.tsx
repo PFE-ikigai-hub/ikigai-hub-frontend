@@ -1,15 +1,16 @@
-import {
-  Pulse,
-  Archive,
-  SealCheck,
-  CalendarBlank,
-  Circle,
-  Eye,
-  ChatText,
-  PauseCircle,
-  CheckCircle,
-  UserCheck,
-  UserMinus,
+﻿import {
+
+  PulseIcon as Pulse,
+  ArchiveIcon as Archive,
+  SealCheckIcon as SealCheck,
+  CalendarBlankIcon as CalendarBlank,
+  CircleIcon as Circle,
+  EyeIcon as Eye,
+  ChatTextIcon as ChatText,
+  PauseCircleIcon as PauseCircle,
+  CheckCircleIcon as CheckCircle,
+  UserCheckIcon as UserCheck,
+  UserMinusIcon as UserMinus,
 } from "@phosphor-icons/react";
 import type { ElementType } from "react";
 

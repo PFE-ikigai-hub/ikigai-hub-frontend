@@ -1,4 +1,5 @@
-import type { ApiVersion } from "@/types/index";
+﻿import type { ApiVersion } from "@/types/index";
+
 
 function includesFinal(label: unknown): boolean {
   if (typeof label !== "string") return false;

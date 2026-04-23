@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { MessageCircle, Send, Trash2, Loader2, Clock, FileText, Plus } from 'lucide-react';
 import { useAuth } from '@/core/auth/AuthProvider';
 import { useI18n } from '@/core/i18n/I18nProvider';
@@ -6,6 +6,7 @@ import { commentsApi, translationApi } from '@/core/api/client';
 import { useToast } from '@/shared/components/ui/toast';
 import { protectCommentReferences } from '@/shared/utils/translationMarkers';
 import type { ApiCommentaire } from '@/types/index';
+
 
 interface CommentsListProps {
   versionId: number;

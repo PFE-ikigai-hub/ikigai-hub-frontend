@@ -1,4 +1,5 @@
-import { SkeletonBlock, skeletonSurfaceClass } from "@/shared/components/skeleton/SkeletonBlock";
+﻿import { SkeletonBlock, skeletonSurfaceClass } from "@/shared/components/skeleton/SkeletonBlock";
+
 
 export function DeliverableDetailSkeleton() {
   return (

@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { AlertTriangle, ShieldAlert, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useI18n } from "@/core/i18n/I18nProvider";
 import { useAuth } from "@/core/auth/AuthProvider";
+
 
 type SecureDeleteModalProps = {
   isOpen: boolean;

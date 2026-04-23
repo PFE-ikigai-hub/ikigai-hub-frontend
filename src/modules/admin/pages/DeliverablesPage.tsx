@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+﻿import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { LayoutGrid, List as ListIcon, ChevronLeft, ChevronRight } from "lucide-react";
@@ -9,6 +9,7 @@ import { DeliverableCard } from "@/shared/components/ui/DeliverableCard";
 import { PageLoader } from "@/shared/components/feedback/PageLoader";
 import type { ApiDeliverable, ApiVersion } from "@/types/index";
 import { normalizeVersions } from "@/shared/utils/versions";
+
 
 type EnrichedDeliverable = ApiDeliverable & {
   latestVersion?: ApiVersion;

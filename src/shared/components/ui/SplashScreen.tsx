@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import SplitText from "@/shared/components/effects/SplitText";
 import Prism from "@/shared/components/effects/Prism";
 import { PreloaderIndicator } from "./PreloaderIndicator";
 import { useI18n } from "@/core/i18n/I18nProvider";
+
 
 interface SplashScreenProps {
   isLoading: boolean;

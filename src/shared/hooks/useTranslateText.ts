@@ -1,7 +1,8 @@
-import { useCallback, useState } from "react";
+﻿import { useCallback, useState } from "react";
 import { useI18n } from "@/core/i18n/I18nProvider";
 import { translationApi } from "@/core/api/client";
 import { protectCommentReferences } from "@/shared/utils/translationMarkers";
+
 
 const LANG_MAP: Record<string, string> = {
   FR: "fr",

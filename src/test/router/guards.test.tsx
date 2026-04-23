@@ -1,8 +1,9 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+﻿import { describe, expect, it, vi, beforeEach } from "vitest";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { render, screen } from "@testing-library/react";
 import { RequireAuth, RequireRole } from "@/app/router/guards";
 import { useAuth } from "@/core/auth/AuthProvider";
+
 
 vi.mock("@/core/auth/AuthProvider", () => ({
   useAuth: vi.fn(),

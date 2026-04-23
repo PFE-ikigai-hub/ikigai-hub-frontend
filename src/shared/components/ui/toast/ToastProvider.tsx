@@ -2,6 +2,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { CheckCircle2, CircleAlert, Info, TriangleAlert, X } from "lucide-react";
 
+
 type PopupType = "default" | "success" | "error" | "warning" | "info";
 type PopupId = string | number;
 

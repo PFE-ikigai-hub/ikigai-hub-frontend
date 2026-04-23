@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+﻿import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import type { Language, LanguageContextType } from "@/types/index";
+
 
 const translations: Record<string, Record<string, string>> = {
   fr: {

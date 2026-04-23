@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Download, ShieldAlert, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useI18n } from "@/core/i18n/I18nProvider";
 import type { DownloadConfirmationPayload } from "@/core/api/client";
+
 
 type SecureDownloadModalProps = {
   isOpen: boolean;

@@ -1,17 +1,17 @@
 import { useState, useEffect, useRef } from "react";
-import { List, X, SignOut, GearSix, Bell } from "@phosphor-icons/react";
+import { ListIcon as List, XIcon as X, SignOutIcon as SignOut, GearSixIcon as GearSix, BellIcon as Bell } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "motion/react";
-import type { UserRole, Notification as NotificationType } from "@/types/index";
-import { GlassIcon } from "@/shared/components/ui/GlassIcon";
+import type { ApiNotification, UserRole } from "@/types/index";
 import { DefaultAvatar } from "@/shared/components/ui/DefaultAvatar";
-
 type MobileMenuItem = { to: string; label: string; icon: React.ElementType };
 
 type MobileSidebarUser = {
+  id?: string;
   firstName: string;
   lastName: string;
   email: string;
   role: UserRole;
+  photoUrl?: string | null;
 };
 
 interface MobileSidebarProps {
@@ -23,7 +23,7 @@ interface MobileSidebarProps {
   onOpenSettings: () => void;
   onLogout: () => void;
   t: (key: string) => string;
-  notifications?: NotificationType[];
+  notifications?: ApiNotification[];
   unreadCount?: number;
   onNotificationClick?: (id: number, routePath?: string) => void;
   onDeleteNotification?: (id: number) => void;
@@ -177,8 +177,6 @@ export function MobileSidebar({
   // Get avatar with cache busting timestamp
   const avatarUrl = useAvatarWithTimestamp(user?.id, user?.photoUrl);
 
-  const initials = `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
-
   return (
     <>
       <button
@@ -217,8 +215,8 @@ export function MobileSidebar({
             >
               <div className="p-5 pb-2">
                 <div className="flex items-center justify-between mb-8">
-                  {/* Brand â€” text removed */}
-                  <img src="/IH.png" alt="Logo" className="h-10 w-auto object-contain bg-transparent select-none" />                  <div className="flex items-center gap-2">
+                  <img src="/IH.png" alt="Logo" className="h-10 w-auto object-contain bg-transparent select-none" />
+                  <div className="flex items-center gap-2">
                     {canUseNotifications && (
                     <div className="relative" ref={notificationsButtonRef}>
                       <button
@@ -309,7 +307,8 @@ export function MobileSidebar({
                       )}
                     </div>
                     )}
-                  </div>                  <button
+                  </div>
+                  <button
                     onClick={() => setIsOpen(false)}
                     className="p-2 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-full transition-colors"
                     type="button"

@@ -1,4 +1,4 @@
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+﻿import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/core/auth/AuthProvider";
 import { useI18n } from "@/core/i18n/I18nProvider";
 import { useNotifications } from "@/core/notifications/NotificationsProvider";
@@ -6,19 +6,20 @@ import type { UserRole } from "@/types/index";
 import { motion } from "motion/react";
 import { useState, useEffect, useRef } from "react";
 import {
-  UsersThree,
-  FolderSimple,
-  FileText,
-  FolderOpen,
-  Eye,
-  CheckCircle,
-  UploadSimple,
-  ChatsCircle,
-  SignOut,
-  GearSix,
-  Swap,
-  Bell,
-  X,
+
+  UsersThreeIcon as UsersThree,
+  FolderSimpleIcon as FolderSimple,
+  FileTextIcon as FileText,
+  FolderOpenIcon as FolderOpen,
+  EyeIcon as Eye,
+  CheckCircleIcon as CheckCircle,
+  UploadSimpleIcon as UploadSimple,
+  ChatsCircleIcon as ChatsCircle,
+  SignOutIcon as SignOut,
+  GearSixIcon as GearSix,
+  SwapIcon as Swap,
+  BellIcon as Bell,
+  XIcon as X,
 } from "@phosphor-icons/react";
 import { MobileSidebar } from "./MobileSidebar";
 import { DefaultAvatar } from "@/shared/components/ui/DefaultAvatar";

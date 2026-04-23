@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/core/auth/AuthProvider";
 import { projectsApi } from "@/core/api/client";
 import { SplashScreen } from "@/shared/components/ui/SplashScreen";
 import { PreloaderIndicator } from "@/shared/components/ui/PreloaderIndicator";
 import { forceRelogin, hasIdentityMismatch } from "./deepLinkRedirect";
+
 
 const REDIRECT_GUARD_TIMEOUT_MS = 10000;
 

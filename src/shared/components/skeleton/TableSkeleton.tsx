@@ -1,4 +1,5 @@
-import {
+﻿import {
+
   SkeletonBlock,
   skeletonBorderClass,
   skeletonDividerClass,

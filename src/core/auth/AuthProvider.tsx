@@ -1,7 +1,8 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+﻿import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { authApi, setApiRoleHeader, setAppInitializing } from "@/core/api/client";
 import type { AuthResponse, AuthUser, CurrentUserResponse, UserRole } from "@/types/auth";
 import { readLastRole, writeLastRole } from "@/core/auth/auth.storage";
+
 
 type AuthContextValue = {
   user: AuthUser | null;

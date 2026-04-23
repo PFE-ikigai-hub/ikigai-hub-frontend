@@ -1,4 +1,4 @@
-// Unified TypeScript Types for Ikigai Dashboard
+﻿// Unified TypeScript Types for Ikigai Dashboard
 // Mirroring backend DTOs (Spring Boot)
 
 // ═══════════════════════════════════════════════════════════════════════════════

@@ -1,6 +1,7 @@
-import { CardSkeleton } from "@/shared/components/skeleton/CardSkeleton";
+﻿import { CardSkeleton } from "@/shared/components/skeleton/CardSkeleton";
 import { SkeletonBlock } from "@/shared/components/skeleton/SkeletonBlock";
 import { TableSkeleton } from "@/shared/components/skeleton/TableSkeleton";
+
 
 type DashboardSkeletonProps = {
   cardsCount?: number;

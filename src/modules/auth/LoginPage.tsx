@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import axios from "axios";
 import { 
-  SignIn, 
-  ArrowLeft, 
-  EnvelopeSimple, 
-  Lock, 
-  PaperPlaneTilt, 
-  Eye, 
-  EyeSlash 
+
+  SignInIcon as SignIn, 
+  ArrowLeftIcon as ArrowLeft, 
+  EnvelopeSimpleIcon as EnvelopeSimple, 
+  LockIcon as Lock, 
+  PaperPlaneTiltIcon as PaperPlaneTilt, 
+  EyeIcon as Eye, 
+  EyeSlashIcon as EyeSlash 
 } from "@phosphor-icons/react";
 import { useAuth } from "@/core/auth/AuthProvider";
 import { useI18n } from "@/core/i18n/I18nProvider";

@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+﻿import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { LayoutGrid, List as ListIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import {
+
   affectationsApi,
   annotationsApi,
   commentsApi,

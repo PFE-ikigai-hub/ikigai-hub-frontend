@@ -6,6 +6,7 @@ import { annotationsApi } from '@/core/api/client';
 import { useToast } from '@/shared/components/ui/toast';
 import type { ApiAnnotation } from '@/types/index';
 
+
 interface Annotation {
   id: number;
   x: number;

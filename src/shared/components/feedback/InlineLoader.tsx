@@ -1,5 +1,6 @@
-import type { CSSProperties } from "react";
+﻿import type { CSSProperties } from "react";
 import { SkeletonBlock } from "@/shared/components/skeleton/SkeletonBlock";
+
 
 type InlineLoaderProps = {
   className?: string;

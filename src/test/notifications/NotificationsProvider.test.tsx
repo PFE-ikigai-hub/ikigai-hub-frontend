@@ -1,9 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+﻿import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { NotificationsProvider, useNotifications } from "@/core/notifications/NotificationsProvider";
 import { useAuth } from "@/core/auth/AuthProvider";
 import { setMockNotifications } from "@/test/msw/handlers";
 import type { ApiNotification } from "@/types/index";
+
 
 vi.mock("@/core/auth/AuthProvider", () => ({
   useAuth: vi.fn(),

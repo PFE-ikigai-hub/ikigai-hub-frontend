@@ -1,5 +1,3 @@
-import type { UserRole } from "@/types/auth";
-
 const LOGOUT_WAIT_TIMEOUT_MS = 1500;
 
 export function normalizeRole(value: string | null | undefined) {
@@ -65,8 +63,3 @@ export async function forceRelogin(logout: () => Promise<void>, goToLogin: () =>
   goToLogin();
 }
 
-export function roleHomePath(role: UserRole | null) {
-  if (role === "ADMIN") return "/admin/dashboard";
-  if (role === "CLIENT") return "/client/dashboard";
-  return "/employee/dashboard";
-}

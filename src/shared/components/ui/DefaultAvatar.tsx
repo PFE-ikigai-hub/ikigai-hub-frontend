@@ -1,4 +1,5 @@
-import { User } from "lucide-react";
+﻿import { User } from "lucide-react";
+
 
 interface DefaultAvatarProps {
   src?: string;

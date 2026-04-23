@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useTranslateText } from "@/shared/hooks/useTranslateText";
 import { useI18n } from "@/core/i18n/I18nProvider";
+
 
 type TranslatedTextProps = {
   text: string;

@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, type ReactElement } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "@/core/auth/AuthProvider";
 import { RequireAuth, RequireRole } from "./guards";
@@ -7,7 +7,6 @@ import { SplashScreen } from "@/shared/components/ui/SplashScreen";
 import { PreloaderIndicator } from "@/shared/components/ui/PreloaderIndicator";
 import Prism from "@/shared/components/effects/Prism";
 import type { UserRole } from "@/types/auth";
-
 const AppShell = lazy(() => import("@/shared/layout/AppShell").then((m) => ({ default: m.AppShell })));
 const LoginPage = lazy(() => import("@/modules/auth/LoginPage").then((m) => ({ default: m.LoginPage })));
 const ResetPasswordPage = lazy(() => import("@/modules/auth/ResetPasswordPage").then((m) => ({ default: m.ResetPasswordPage })));
@@ -120,7 +119,7 @@ function LoginRoute() {
   return <LoginPage />;
 }
 
-function ProtectedRoute({ role, element }: { role: UserRole; element: JSX.Element }) {
+function ProtectedRoute({ role, element }: { role: UserRole; element: ReactElement }) {
   return <RequireRole role={role}>{element}</RequireRole>;
 }
 

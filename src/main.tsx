@@ -1,4 +1,4 @@
-import { createRoot } from "react-dom/client";
+﻿import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { App } from "./app/App";
 import { AuthProvider } from "./core/auth/AuthProvider";
@@ -7,6 +7,7 @@ import { I18nProvider } from "./core/i18n/I18nProvider";
 import { ToastProvider } from "./shared/components/ui/toast";
 import { NotificationsProvider } from "./core/notifications/NotificationsProvider";
 import "./styles/globals.css";
+
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Missing root element");
