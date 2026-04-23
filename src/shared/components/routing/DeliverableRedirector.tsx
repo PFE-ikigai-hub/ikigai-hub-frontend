@@ -4,9 +4,9 @@ import { useAuth } from "@/core/auth/AuthProvider";
 import { deliverablesApi } from "@/core/api/client";
 import { SplashScreen } from "@/shared/components/ui/SplashScreen";
 import { PreloaderIndicator } from "@/shared/components/ui/PreloaderIndicator";
+import { forceRelogin, hasIdentityMismatch } from "./deepLinkRedirect";
 
 const REDIRECT_GUARD_TIMEOUT_MS = 10000;
-const LOGOUT_WAIT_TIMEOUT_MS = 1500;
 
 export function DeliverableRedirector() {
   const { deliverableId } = useParams();
@@ -17,10 +17,6 @@ export function DeliverableRedirector() {
   useEffect(() => {
     let cancelled = false;
     let resolved = false;
-    const normalizeRole = (value: string | null | undefined) => {
-      const upper = value?.toString().toUpperCase();
-      return upper === "EMPLOYEE" ? "EMPLOYE" : upper;
-    };
     const currentPath = `${location.pathname}${location.search}${location.hash}`;
     const loginUrl = `/login?redirect=${encodeURIComponent(currentPath)}`;
     const goToLogin = () => {
@@ -33,46 +29,16 @@ export function DeliverableRedirector() {
       resolved = true;
       navigate(to, { replace: true, state });
     };
-    const setWrongAccountNotice = () => {
-      try {
-        sessionStorage.setItem(
-          "ikigai:authNotice",
-          "This link requires login with the correct account. You will be redirected to sign in."
-        );
-      } catch {
-        // ignore
-      }
-    };
-
     const hardTimeoutId = window.setTimeout(() => {
       goToLogin();
     }, REDIRECT_GUARD_TIMEOUT_MS);
-
-    const sleep = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
     const run = async () => {
       if (isLoading) return;
 
       const params = new URLSearchParams(location.search);
       const versionId = params.get("versionId");
-      const expectedRole = normalizeRole(params.get("expectedRole"));
-      const expectedUserIdRaw = params.get("expectedUserId");
-      const expectedUserId = expectedUserIdRaw ? Number.parseInt(expectedUserIdRaw, 10) : null;
-
-      const forceReLogin = async () => {
-        setWrongAccountNotice();
-        // Start logout but never let navigation depend on network completion.
-        const logoutTask = Promise.race([logout(), sleep(LOGOUT_WAIT_TIMEOUT_MS)]);
-        void logoutTask.finally(() => {
-          goToLogin();
-        });
-        try {
-          await logoutTask;
-        } catch {
-          // ignore
-        }
-        goToLogin();
-      };
+      const { roleMismatch, userMismatch, normalizedRole } = hasIdentityMismatch(params, role ?? null, user?.id);
 
       if (!isAuthenticated) {
         goToLogin();
@@ -84,18 +50,8 @@ export function DeliverableRedirector() {
         return;
       }
 
-      const normalizedRole = normalizeRole(role ?? null);
-      const currentUserId = user?.id ? Number.parseInt(user.id, 10) : null;
-      const roleMismatch = Boolean(expectedRole && normalizedRole && expectedRole !== normalizedRole);
-      const userMismatch =
-        typeof expectedUserId === "number" &&
-        Number.isFinite(expectedUserId) &&
-        typeof currentUserId === "number" &&
-        Number.isFinite(currentUserId) &&
-        expectedUserId !== currentUserId;
-
       if (roleMismatch || userMismatch) {
-        await forceReLogin();
+        await forceRelogin(logout, goToLogin);
         return;
       }
 
@@ -104,7 +60,7 @@ export function DeliverableRedirector() {
       } catch (error) {
         const status = (error as { response?: { status?: number } })?.response?.status;
         if (status === 401 || status === 403) {
-          await forceReLogin();
+          await forceRelogin(logout, goToLogin);
           return;
         }
         goTo("/");

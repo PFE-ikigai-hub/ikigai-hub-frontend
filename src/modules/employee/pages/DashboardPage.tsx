@@ -26,6 +26,24 @@ type ProjectWithRole = {
   affectationId: number;
 };
 
+const ACCEPTED_MIME_PREFIXES = ["image/", "video/", "audio/", "text/"];
+const ACCEPTED_EXACT_MIME_TYPES = ["application/pdf"];
+const ACCEPTED_EXTENSIONS = [
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".gif",
+  ".webp",
+  ".pdf",
+  ".txt",
+  ".md",
+  ".mp4",
+  ".mp3",
+  ".wav",
+  ".ogg",
+  ".m4a",
+];
+
 function statusPill(status: ProjectStatus): string {
   switch (status) {
     case "EN_COURS":
@@ -41,6 +59,71 @@ function statusPill(status: ProjectStatus): string {
     default:
       return "bg-sky-50 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300 border-sky-200 dark:border-sky-800/50";
   }
+}
+
+function mapAffectationsToProjects(affectations: ApiAffectation[], projects: ApiProject[]): ProjectWithRole[] {
+  const projectById = new Map<number, ApiProject>(projects.map((project) => [project.id, project]));
+  return affectations
+    .map((affectation) => {
+      const project = projectById.get(affectation.projetId);
+      if (!project) return null;
+      return {
+        project,
+        role: affectation.roleDansProjet || "EMPLOYE",
+        affectationId: affectation.id,
+      } satisfies ProjectWithRole;
+    })
+    .filter(Boolean) as ProjectWithRole[];
+}
+
+function buildDateRange(filters: Record<string, string>) {
+  return {
+    from: filters.dateFrom ? new Date(filters.dateFrom) : null,
+    to: filters.dateTo ? new Date(filters.dateTo) : null,
+  };
+}
+
+function matchProjectDate(project: ApiProject, from: Date | null, to: Date | null) {
+  const itemDate = project.dateDebut ? new Date(project.dateDebut) : null;
+  if (from && itemDate && itemDate < from) return false;
+  if (to && itemDate) {
+    const end = new Date(to);
+    end.setHours(23, 59, 59, 999);
+    if (itemDate > end) return false;
+  }
+  return true;
+}
+
+function matchProjectSearch(item: ProjectWithRole, searchQuery: string) {
+  if (!searchQuery) return true;
+  const query = searchQuery.toLowerCase();
+  return (
+    item.project.nom.toLowerCase().includes(query) ||
+    item.project.clientNom.toLowerCase().includes(query) ||
+    item.role.toLowerCase().includes(query)
+  );
+}
+
+// Filtre la liste des projets affectes avec les memes regles qu'avant.
+function filterAssignedProjects(items: ProjectWithRole[], searchQuery: string, filters: Record<string, string>) {
+  const statusFilter = filters.status && filters.status !== "all" ? filters.status : "";
+  const { from, to } = buildDateRange(filters);
+
+  return items.filter((item) => {
+    if (statusFilter && item.project.statut !== statusFilter) return false;
+    if (!matchProjectDate(item.project, from, to)) return false;
+    if (!matchProjectSearch(item, searchQuery)) return false;
+    return true;
+  });
+}
+
+function isAcceptedFile(candidate: File) {
+  const lowerName = candidate.name.toLowerCase();
+  const isAcceptedByExtension = ACCEPTED_EXTENSIONS.some((ext) => lowerName.endsWith(ext));
+  const isAcceptedByMime =
+    ACCEPTED_EXACT_MIME_TYPES.includes(candidate.type) ||
+    ACCEPTED_MIME_PREFIXES.some((prefix) => candidate.type.startsWith(prefix));
+  return isAcceptedByMime || isAcceptedByExtension;
 }
 
 function EmployeeAssignedProjects() {
@@ -60,6 +143,7 @@ function EmployeeAssignedProjects() {
     const load = async () => {
       setLoading(true);
       try {
+        // Charge les affectations puis les projets associes.
         const affectationsPage = await affectationsApi.byEmployee(Number(user.id));
         const affectations = (affectationsPage.content ?? []) as ApiAffectation[];
         const projectIds = [...new Set(affectations.map((a) => a.projetId).filter(Boolean))];
@@ -70,19 +154,7 @@ function EmployeeAssignedProjects() {
         }
 
         const projects = await projectsApi.batch(projectIds);
-        const projectById = new Map<number, ApiProject>(projects.map((p) => [p.id, p]));
-
-        const mapped = affectations
-          .map((a) => {
-            const project = projectById.get(a.projetId);
-            if (!project) return null;
-            return {
-              project,
-              role: a.roleDansProjet || "EMPLOYE",
-              affectationId: a.id,
-            } satisfies ProjectWithRole;
-          })
-          .filter(Boolean) as ProjectWithRole[];
+        const mapped = mapAffectationsToProjects(affectations, projects);
 
         if (!cancelled) setItems(mapped);
       } catch {
@@ -104,33 +176,8 @@ function EmployeeAssignedProjects() {
   };
 
   const filtered = useMemo(() => {
-    const statusFilter = filters.status && filters.status !== "all" ? filters.status : "";
-    const from = filters.dateFrom ? new Date(filters.dateFrom) : null;
-    const to = filters.dateTo ? new Date(filters.dateTo) : null;
-
-    return items.filter((i) => {
-      if (statusFilter && i.project.statut !== statusFilter) return false;
-      const itemDate = i.project.dateDebut ? new Date(i.project.dateDebut) : null;
-      if (from && itemDate && itemDate < from) return false;
-      if (to && itemDate) {
-        const end = new Date(to);
-        end.setHours(23, 59, 59, 999);
-        if (itemDate > end) return false;
-      }
-
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        if (
-          !i.project.nom.toLowerCase().includes(q) &&
-          !i.project.clientNom.toLowerCase().includes(q) &&
-          !i.role.toLowerCase().includes(q)
-        ) {
-          return false;
-        }
-      }
-
-      return true;
-    });
+    // Prepare la liste affichee avec recherche + filtres.
+    return filterAssignedProjects(items, searchQuery, filters);
   }, [filters.dateFrom, filters.dateTo, filters.status, items, searchQuery]);
 
   return (
@@ -398,15 +445,7 @@ export function EmployeeUploadPage() {
       setFile(null);
       return;
     }
-    const acceptedMimePrefixes = ["image/", "video/", "audio/", "text/"];
-    const acceptedExact = ["application/pdf"];
-    const acceptedExtensions = [".png", ".jpg", ".jpeg", ".gif", ".webp", ".pdf", ".txt", ".md", ".mp4", ".mp3", ".wav", ".ogg", ".m4a"];
-
-    const lowerName = candidate.name.toLowerCase();
-    const isAcceptedByExtension = acceptedExtensions.some((ext) => lowerName.endsWith(ext));
-    const isAcceptedByMime = acceptedExact.includes(candidate.type) || acceptedMimePrefixes.some((prefix) => candidate.type.startsWith(prefix));
-
-    if (!isAcceptedByMime && !isAcceptedByExtension) {
+    if (!isAcceptedFile(candidate)) {
       setError("Type de fichier non supporte pour cet upload.");
       setFile(null);
       return;

@@ -6,6 +6,7 @@ import Preloader from "@/shared/components/feedback/Preloader";
 import { SplashScreen } from "@/shared/components/ui/SplashScreen";
 import { PreloaderIndicator } from "@/shared/components/ui/PreloaderIndicator";
 import Prism from "@/shared/components/effects/Prism";
+import type { UserRole } from "@/types/auth";
 
 const AppShell = lazy(() => import("@/shared/layout/AppShell").then((m) => ({ default: m.AppShell })));
 const LoginPage = lazy(() => import("@/modules/auth/LoginPage").then((m) => ({ default: m.LoginPage })));
@@ -20,45 +21,23 @@ const AdminProjectDetailPage = lazy(() => import("@/modules/admin/pages/ProjectD
 const AdminDeliverablesPage = lazy(() => import("@/modules/admin/pages/DeliverablesPage").then((m) => ({ default: m.AdminDeliverablesPage })));
 const AdminDeliverableDetailPage = lazy(() => import("@/modules/admin/pages/DeliverableDetailPage").then((m) => ({ default: m.AdminDeliverableDetailPage })));
 
-const ClientDashboardPage = lazy(() =>
-  import("@/modules/client/pages/DashboardPage").then((m) => ({ default: m.ClientDashboardPage }))
-);
-const ClientReviewPage = lazy(() =>
-  import("@/modules/client/pages/DashboardPage").then((m) => ({ default: m.ClientReviewPage }))
-);
-const ClientReviewDetailPage = lazy(() =>
-  import("@/modules/client/pages/ReviewDetailPage").then((m) => ({ default: m.ClientReviewDetailPage }))
-);
-const ClientValidatedPage = lazy(() =>
-  import("@/modules/client/pages/DashboardPage").then((m) => ({ default: m.ClientValidatedPage }))
-);
-const ClientArchivedPage = lazy(() =>
-  import("@/modules/client/pages/DashboardPage").then((m) => ({ default: m.ClientArchivedPage }))
-);
+const ClientDashboardPage = lazy(() => import("@/modules/client/pages/DashboardPage").then((m) => ({ default: m.ClientDashboardPage })));
+const ClientReviewPage = lazy(() => import("@/modules/client/pages/DashboardPage").then((m) => ({ default: m.ClientReviewPage })));
+const ClientReviewDetailPage = lazy(() => import("@/modules/client/pages/ReviewDetailPage").then((m) => ({ default: m.ClientReviewDetailPage })));
+const ClientValidatedPage = lazy(() => import("@/modules/client/pages/DashboardPage").then((m) => ({ default: m.ClientValidatedPage })));
+const ClientArchivedPage = lazy(() => import("@/modules/client/pages/DashboardPage").then((m) => ({ default: m.ClientArchivedPage })));
 
-const EmployeeDashboardPage = lazy(() =>
-  import("@/modules/employee/pages/DashboardPage").then((m) => ({ default: m.EmployeeDashboardPage }))
-);
-const EmployeeProjectsPage = lazy(() =>
-  import("@/modules/employee/pages/DashboardPage").then((m) => ({ default: m.EmployeeProjectsPage }))
-);
-const EmployeeUploadPage = lazy(() =>
-  import("@/modules/employee/pages/DashboardPage").then((m) => ({ default: m.EmployeeUploadPage }))
-);
-const EmployeeFeedbackPage = lazy(() =>
-  import("@/modules/employee/pages/FeedbackPage").then((m) => ({ default: m.EmployeeFeedbackPage }))
-);
-const EmployeeProjectDetailPage = lazy(() =>
-  import("@/modules/employee/pages/ProjectDetailPage").then((m) => ({ default: m.EmployeeProjectDetailPage }))
-);
-const EmployeeFeedbackDetailPage = lazy(() =>
-  import("@/modules/employee/pages/FeedbackDetailPage").then((m) => ({ default: m.EmployeeFeedbackDetailPage }))
-);
+const EmployeeDashboardPage = lazy(() => import("@/modules/employee/pages/DashboardPage").then((m) => ({ default: m.EmployeeDashboardPage })));
+const EmployeeProjectsPage = lazy(() => import("@/modules/employee/pages/DashboardPage").then((m) => ({ default: m.EmployeeProjectsPage })));
+const EmployeeUploadPage = lazy(() => import("@/modules/employee/pages/DashboardPage").then((m) => ({ default: m.EmployeeUploadPage })));
+const EmployeeFeedbackPage = lazy(() => import("@/modules/employee/pages/FeedbackPage").then((m) => ({ default: m.EmployeeFeedbackPage })));
+const EmployeeProjectDetailPage = lazy(() => import("@/modules/employee/pages/ProjectDetailPage").then((m) => ({ default: m.EmployeeProjectDetailPage })));
+const EmployeeFeedbackDetailPage = lazy(() => import("@/modules/employee/pages/FeedbackDetailPage").then((m) => ({ default: m.EmployeeFeedbackDetailPage })));
 
-function LoadingBackgroundScreen() {
+function FullScreenLoader({ size = 0.9 }: { size?: number }) {
   return (
     <div className="min-h-screen flex items-center justify-center p-12 bg-[#0a0a0b] relative overflow-hidden">
-      <Preloader size={0.9} />
+      <Preloader size={size} />
     </div>
   );
 }
@@ -67,14 +46,12 @@ function AuthInitializingScreen() {
   const { isLoading } = useAuth();
   return (
     <SplashScreen isLoading={isLoading}>
-      <div className="min-h-screen flex items-center justify-center p-12 bg-[#0a0a0b] relative overflow-hidden">
-        <Preloader size={0.9} />
-      </div>
+      <FullScreenLoader size={0.9} />
     </SplashScreen>
   );
 }
 
-// Simple loading screen for login page - no SplashScreen, just Prism + colored spinner
+// Affiche un loader leger pour la page login.
 function LoginLoadingScreen() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0a0a0b]">
@@ -98,20 +75,17 @@ function LoginLoadingScreen() {
   );
 }
 
-function RootRedirect() {
-  const { role, isAuthenticated, isLoading, isFullyReady } = useAuth();
-  if (isLoading || (isAuthenticated && !isFullyReady)) return <AuthInitializingScreen />;
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
-  return <PostLoginSplashGate role={role} />;
+function roleDefaultPath(role: UserRole | null) {
+  if (role === "ADMIN") return "/admin/users";
+  if (role === "CLIENT") return "/client/dashboard";
+  return "/employee/dashboard";
 }
 
-function RoleRedirect({ role }: { role: "ADMIN" | "CLIENT" | "EMPLOYE" | null }) {
-  if (role === "ADMIN") return <Navigate to="/admin/users" replace />;
-  if (role === "CLIENT") return <Navigate to="/client/dashboard" replace />;
-  return <Navigate to="/employee/dashboard" replace />;
+function RoleRedirect({ role }: { role: UserRole | null }) {
+  return <Navigate to={roleDefaultPath(role)} replace />;
 }
 
-function PostLoginSplashGate({ role }: { role: "ADMIN" | "CLIENT" | "EMPLOYE" | null }) {
+function PostLoginSplashGate({ role }: { role: UserRole | null }) {
   let shouldShow = false;
   try {
     shouldShow = sessionStorage.getItem("ikigai:postLoginSplash") === "1";
@@ -122,9 +96,7 @@ function PostLoginSplashGate({ role }: { role: "ADMIN" | "CLIENT" | "EMPLOYE" | 
     shouldShow = false;
   }
 
-  if (!shouldShow) {
-    return <RoleRedirect role={role} />;
-  }
+  if (!shouldShow) return <RoleRedirect role={role} />;
 
   return (
     <SplashScreen isLoading={false}>
@@ -133,24 +105,28 @@ function PostLoginSplashGate({ role }: { role: "ADMIN" | "CLIENT" | "EMPLOYE" | 
   );
 }
 
+function RootRedirect() {
+  const { role, isAuthenticated, isLoading, isFullyReady } = useAuth();
+  if (isLoading || (isAuthenticated && !isFullyReady)) return <AuthInitializingScreen />;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  return <PostLoginSplashGate role={role} />;
+}
+
 function LoginRoute() {
   const { isLoading, isAuthenticated, isFullyReady } = useAuth();
-  // For login page, show simple Prism background + spinner (NOT the SplashScreen with "Ikigai Hub")
   if (isLoading) return <LoginLoadingScreen />;
   if (isAuthenticated && !isFullyReady) return <AuthInitializingScreen />;
   if (isAuthenticated) return <RootRedirect />;
   return <LoginPage />;
 }
 
+function ProtectedRoute({ role, element }: { role: UserRole; element: JSX.Element }) {
+  return <RequireRole role={role}>{element}</RequireRole>;
+}
+
 export function AppRouter() {
   const { isLoading } = useAuth();
-  const suspenseFallback = isLoading
-    ? <AuthInitializingScreen />
-    : (
-      <div className="min-h-screen flex items-center justify-center p-12 bg-[#0a0a0b]">
-        <Preloader size={0.8} />
-      </div>
-    );
+  const suspenseFallback = isLoading ? <AuthInitializingScreen /> : <FullScreenLoader size={0.8} />;
 
   return (
     <Suspense fallback={suspenseFallback}>
@@ -162,28 +138,25 @@ export function AppRouter() {
         <Route path="/" element={<RootRedirect />} />
 
         <Route element={<RequireAuth><AppShell /></RequireAuth>}>
-          {/* Admin */}
           <Route path="/admin/dashboard" element={<Navigate to="/admin/users" replace />} />
-          <Route path="/admin/users" element={<RequireRole role="ADMIN"><AdminUsersPage /></RequireRole>} />
-          <Route path="/admin/projects" element={<RequireRole role="ADMIN"><AdminProjectsPage /></RequireRole>} />
-          <Route path="/admin/projects/:projectId" element={<RequireRole role="ADMIN"><AdminProjectDetailPage /></RequireRole>} />
-          <Route path="/admin/deliverables" element={<RequireRole role="ADMIN"><AdminDeliverablesPage /></RequireRole>} />
-          <Route path="/admin/deliverables/:deliverableId" element={<RequireRole role="ADMIN"><AdminDeliverableDetailPage /></RequireRole>} />
+          <Route path="/admin/users" element={<ProtectedRoute role="ADMIN" element={<AdminUsersPage />} />} />
+          <Route path="/admin/projects" element={<ProtectedRoute role="ADMIN" element={<AdminProjectsPage />} />} />
+          <Route path="/admin/projects/:projectId" element={<ProtectedRoute role="ADMIN" element={<AdminProjectDetailPage />} />} />
+          <Route path="/admin/deliverables" element={<ProtectedRoute role="ADMIN" element={<AdminDeliverablesPage />} />} />
+          <Route path="/admin/deliverables/:deliverableId" element={<ProtectedRoute role="ADMIN" element={<AdminDeliverableDetailPage />} />} />
 
-          {/* Client */}
-          <Route path="/client/dashboard" element={<RequireRole role="CLIENT"><ClientDashboardPage /></RequireRole>} />
-          <Route path="/client/review" element={<RequireRole role="CLIENT"><ClientReviewPage /></RequireRole>} />
-          <Route path="/client/review/:deliverableId" element={<RequireRole role="CLIENT"><ClientReviewDetailPage /></RequireRole>} />
-          <Route path="/client/validated" element={<RequireRole role="CLIENT"><ClientValidatedPage /></RequireRole>} />
-          <Route path="/client/archived" element={<RequireRole role="CLIENT"><ClientArchivedPage /></RequireRole>} />
+          <Route path="/client/dashboard" element={<ProtectedRoute role="CLIENT" element={<ClientDashboardPage />} />} />
+          <Route path="/client/review" element={<ProtectedRoute role="CLIENT" element={<ClientReviewPage />} />} />
+          <Route path="/client/review/:deliverableId" element={<ProtectedRoute role="CLIENT" element={<ClientReviewDetailPage />} />} />
+          <Route path="/client/validated" element={<ProtectedRoute role="CLIENT" element={<ClientValidatedPage />} />} />
+          <Route path="/client/archived" element={<ProtectedRoute role="CLIENT" element={<ClientArchivedPage />} />} />
 
-          {/* Employee */}
-          <Route path="/employee/dashboard" element={<RequireRole role="EMPLOYE"><EmployeeDashboardPage /></RequireRole>} />
-          <Route path="/employee/projects" element={<RequireRole role="EMPLOYE"><EmployeeProjectsPage /></RequireRole>} />
-          <Route path="/employee/projects/:projectId" element={<RequireRole role="EMPLOYE"><EmployeeProjectDetailPage /></RequireRole>} />
-          <Route path="/employee/upload" element={<RequireRole role="EMPLOYE"><EmployeeUploadPage /></RequireRole>} />
-          <Route path="/employee/feedback" element={<RequireRole role="EMPLOYE"><EmployeeFeedbackPage /></RequireRole>} />
-          <Route path="/employee/feedback/:deliverableId" element={<RequireRole role="EMPLOYE"><EmployeeFeedbackDetailPage /></RequireRole>} />
+          <Route path="/employee/dashboard" element={<ProtectedRoute role="EMPLOYE" element={<EmployeeDashboardPage />} />} />
+          <Route path="/employee/projects" element={<ProtectedRoute role="EMPLOYE" element={<EmployeeProjectsPage />} />} />
+          <Route path="/employee/projects/:projectId" element={<ProtectedRoute role="EMPLOYE" element={<EmployeeProjectDetailPage />} />} />
+          <Route path="/employee/upload" element={<ProtectedRoute role="EMPLOYE" element={<EmployeeUploadPage />} />} />
+          <Route path="/employee/feedback" element={<ProtectedRoute role="EMPLOYE" element={<EmployeeFeedbackPage />} />} />
+          <Route path="/employee/feedback/:deliverableId" element={<ProtectedRoute role="EMPLOYE" element={<EmployeeFeedbackDetailPage />} />} />
 
           <Route path="/settings" element={<SettingsPage />} />
         </Route>

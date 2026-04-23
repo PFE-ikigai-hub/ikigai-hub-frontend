@@ -31,6 +31,15 @@ interface MobileSidebarProps {
   formatTimeAgo?: (date: string) => string;
 }
 
+function buildAvatarUrl(storedUrl: string | null, timestamp: string | null, fallback?: string | null) {
+  // Construit l'URL avatar avec anti-cache si necessaire.
+  if (storedUrl) {
+    if (storedUrl.startsWith("data:")) return storedUrl;
+    return `${storedUrl}?t=${timestamp || Date.now()}`;
+  }
+  return fallback || undefined;
+}
+
 // Hook to get avatar URL with cache busting timestamp
 function useAvatarWithTimestamp(userId: string | undefined, photoUrl: string | undefined | null) {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(photoUrl || undefined);
@@ -44,20 +53,7 @@ function useAvatarWithTimestamp(userId: string | undefined, photoUrl: string | u
     try {
       const stored = localStorage.getItem(avatarKey);
       const timestamp = localStorage.getItem(timestampKey);
-
-      if (stored) {
-        // For data URLs, don't append timestamp (breaks the URL)
-        if (stored.startsWith('data:')) {
-          setAvatarUrl(stored);
-        } else {
-          const cacheBuster = timestamp || Date.now().toString();
-          setAvatarUrl(`${stored}?t=${cacheBuster}`);
-        }
-      } else if (photoUrl) {
-        setAvatarUrl(photoUrl);
-      } else {
-        setAvatarUrl(undefined);
-      }
+      setAvatarUrl(buildAvatarUrl(stored, timestamp, photoUrl));
     } catch {
       setAvatarUrl(photoUrl || undefined);
     }
@@ -67,16 +63,7 @@ function useAvatarWithTimestamp(userId: string | undefined, photoUrl: string | u
         try {
           const newStored = localStorage.getItem(avatarKey);
           const newTimestamp = localStorage.getItem(timestampKey);
-          if (newStored) {
-            // Don't append timestamp to data URLs
-            if (newStored.startsWith('data:')) {
-              setAvatarUrl(newStored);
-            } else {
-              setAvatarUrl(`${newStored}?t=${newTimestamp || Date.now()}`);
-            }
-          } else {
-            setAvatarUrl(photoUrl || undefined);
-          }
+          setAvatarUrl(buildAvatarUrl(newStored, newTimestamp, photoUrl));
         } catch {
           setAvatarUrl(photoUrl || undefined);
         }
@@ -88,16 +75,7 @@ function useAvatarWithTimestamp(userId: string | undefined, photoUrl: string | u
       try {
         const newStored = localStorage.getItem(avatarKey);
         const newTimestamp = localStorage.getItem(timestampKey);
-        if (newStored) {
-          // Don't append timestamp to data URLs
-          if (newStored.startsWith('data:')) {
-            setAvatarUrl(newStored);
-          } else {
-            setAvatarUrl(`${newStored}?t=${newTimestamp || Date.now()}`);
-          }
-        } else {
-          setAvatarUrl(photoUrl || undefined);
-        }
+        setAvatarUrl(buildAvatarUrl(newStored, newTimestamp, photoUrl));
       } catch {
         setAvatarUrl(photoUrl || undefined);
       }

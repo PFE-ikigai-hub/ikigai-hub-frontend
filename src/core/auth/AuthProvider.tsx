@@ -15,6 +15,58 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+const OBSOLETE_AUTH_KEYS = [
+  "ikigai:justLoggedIn",
+  "ikigai:splitSeen",
+  "ikigai:loginIntroSeen",
+  "ikigai:bootSplashSeen",
+  "ikigai:postLoginSplash",
+];
+
+function toAuthUserFromMe(me: CurrentUserResponse): AuthUser {
+  return {
+    id: String(me.id),
+    email: me.email,
+    firstName: me.prenom,
+    lastName: me.nom,
+    role: me.role,
+  };
+}
+
+function toAuthUserFromAuth(auth: AuthResponse): AuthUser {
+  return {
+    id: String(auth.userId),
+    email: auth.email,
+    firstName: auth.prenom,
+    lastName: auth.nom,
+    role: auth.role,
+  };
+}
+
+function removeKeysFromStorage(storage: Storage, keys: string[]) {
+  keys.forEach((key) => {
+    storage.removeItem(key);
+  });
+}
+
+function removeLegacyHistoryKeys() {
+  const toDelete: string[] = [];
+  for (let i = 0; i < localStorage.length; i += 1) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith("ikigai:history:project:")) {
+      toDelete.push(key);
+    }
+  }
+  toDelete.forEach((key) => localStorage.removeItem(key));
+}
+
+function isNetworkError(error: unknown) {
+  if (!error || typeof error !== "object") return false;
+  const axiosErr = error as { response?: unknown; code?: string };
+  if (!axiosErr.response) return true;
+  return axiosErr.code === "ECONNABORTED";
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -22,11 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const cleanupObsoleteSessionKeys = useCallback(() => {
     try {
-      sessionStorage.removeItem("ikigai:justLoggedIn");
-      sessionStorage.removeItem("ikigai:splitSeen");
-      sessionStorage.removeItem("ikigai:loginIntroSeen");
-      sessionStorage.removeItem("ikigai:bootSplashSeen");
-      sessionStorage.removeItem("ikigai:postLoginSplash");
+      removeKeysFromStorage(sessionStorage, OBSOLETE_AUTH_KEYS);
     } catch {
       // ignore
     }
@@ -34,62 +82,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const cleanupObsoleteLocalKeys = useCallback(() => {
     try {
-      localStorage.removeItem("ikigai:justLoggedIn");
-      localStorage.removeItem("ikigai:splitSeen");
-      localStorage.removeItem("ikigai:loginIntroSeen");
-      localStorage.removeItem("ikigai:bootSplashSeen");
-      localStorage.removeItem("ikigai:postLoginSplash");
-      // History moved to backend storage; remove old local history keys once.
-      const toDelete: string[] = [];
-      for (let i = 0; i < localStorage.length; i += 1) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith("ikigai:history:project:")) {
-          toDelete.push(key);
-        }
-      }
-      toDelete.forEach((key) => localStorage.removeItem(key));
+      removeKeysFromStorage(localStorage, OBSOLETE_AUTH_KEYS);
+      // Nettoie les anciennes cles d'historique local.
+      removeLegacyHistoryKeys();
     } catch {
       // ignore
     }
   }, []);
 
-  const isNetworkError = useCallback((error: unknown) => {
-    if (!error || typeof error !== "object") return false;
-    const axiosErr = error as { response?: unknown; code?: string };
-    if (!axiosErr.response) return true;
-    return axiosErr.code === "ECONNABORTED";
-  }, []);
-
-  const toAuthUserFromMe = useCallback((me: CurrentUserResponse): AuthUser => ({
-    id: String(me.id),
-    email: me.email,
-    firstName: me.prenom,
-    lastName: me.nom,
-    role: me.role,
-  }), []);
-
-  const toAuthUserFromAuth = useCallback((auth: AuthResponse): AuthUser => ({
-    id: String(auth.userId),
-    email: auth.email,
-    firstName: auth.prenom,
-    lastName: auth.nom,
-    role: auth.role,
-  }), []);
-
-  const logout = useCallback(async () => {
-    // Clear local state immediately to unblock account switching even if the network is slow.
+  const applySignedOutState = useCallback(() => {
     setUser(null);
     setApiRoleHeader(null);
     setIsFullyReady(true);
     writeLastRole(null);
+  }, []);
+
+  const logout = useCallback(async () => {
+    // Nettoie l'etat local tout de suite pour fluidifier le changement de compte.
+    applySignedOutState();
     cleanupObsoleteSessionKeys();
     cleanupObsoleteLocalKeys();
+
     try {
       await authApi.logout();
     } catch {
-      // Even if API logout fails, we intentionally keep the local state cleared.
+      // On garde volontairement l'etat local vide meme si l'API echoue.
     }
-  }, [cleanupObsoleteLocalKeys, cleanupObsoleteSessionKeys]);
+  }, [applySignedOutState, cleanupObsoleteLocalKeys, cleanupObsoleteSessionKeys]);
 
   useEffect(() => {
     const onForceLogout = () => logout();
@@ -101,63 +120,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     cleanupObsoleteSessionKeys();
     cleanupObsoleteLocalKeys();
 
+    const hydrateFromMe = async () => {
+      const me = await authApi.me();
+      setApiRoleHeader(me.role);
+      writeLastRole(me.role);
+      setUser(toAuthUserFromMe(me));
+      setIsFullyReady(true);
+    };
+
+    const refreshAndHydrate = async () => {
+      const refresh = await authApi.refreshWithFallback(readLastRole());
+      setApiRoleHeader(refresh.role);
+      writeLastRole(refresh.role);
+
+      try {
+        await hydrateFromMe();
+      } catch {
+        // Fallback si /me est temporairement indisponible.
+        setUser(toAuthUserFromAuth(refresh));
+        setIsFullyReady(true);
+      }
+    };
+
     const init = async () => {
       try {
         setAppInitializing(true);
+
         const lastRole = readLastRole();
         if (lastRole) setApiRoleHeader(lastRole);
-
-        const hydrateFromMe = async () => {
-          const me = await authApi.me();
-          setApiRoleHeader(me.role);
-          writeLastRole(me.role);
-          setUser(toAuthUserFromMe(me));
-          setIsFullyReady(true);
-        };
 
         try {
           await hydrateFromMe();
           return;
         } catch {
-          // access token expired, try refresh flow below
+          // Token access expire, on tente refresh ensuite.
         }
-
-        const tryRefreshAndHydrate = async () => {
-          const refresh = await authApi.refreshWithFallback(readLastRole());
-          setApiRoleHeader(refresh.role);
-          writeLastRole(refresh.role);
-          try {
-            await hydrateFromMe();
-          } catch {
-            // Fallback: use refresh payload if /me is temporarily unavailable
-            setUser(toAuthUserFromAuth(refresh));
-            setIsFullyReady(true);
-          }
-        };
 
         try {
-          await tryRefreshAndHydrate();
+          await refreshAndHydrate();
           return;
-        } catch (e) {
-          // Retry only for temporary network/backend startup hiccups, not for real 401.
-          if (!isNetworkError(e)) throw e;
+        } catch (error) {
+          // Retry uniquement sur erreur reseau temporaire.
+          if (!isNetworkError(error)) throw error;
           await new Promise((resolve) => window.setTimeout(resolve, 400));
-          await tryRefreshAndHydrate();
+          await refreshAndHydrate();
         }
       } catch {
-        // Do not force server logout on init failure (page refresh resilience).
-        setUser(null);
-        setApiRoleHeader(null);
-        // Auth has settled to signed-out state.
-        setIsFullyReady(true);
-        writeLastRole(null);
+        // Ne pas forcer logout serveur en cas d'echec d'init.
+        applySignedOutState();
       } finally {
         setAppInitializing(false);
         setIsLoading(false);
       }
     };
-    init();
-  }, [cleanupObsoleteLocalKeys, cleanupObsoleteSessionKeys, isNetworkError, toAuthUserFromAuth, toAuthUserFromMe]);
+
+    void init();
+  }, [applySignedOutState, cleanupObsoleteLocalKeys, cleanupObsoleteSessionKeys]);
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -167,22 +185,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     setIsFullyReady(false);
+
     const auth = await authApi.login(email, password);
     setApiRoleHeader(auth.role);
     writeLastRole(auth.role);
+
     try {
       sessionStorage.setItem("ikigai:postLoginSplash", "1");
     } catch {
       // ignore
     }
+
     try {
       const me = await authApi.me();
       setUser(toAuthUserFromMe(me));
     } catch {
       setUser(toAuthUserFromAuth(auth));
     }
+
     setIsFullyReady(true);
-  }, [toAuthUserFromAuth, toAuthUserFromMe]);
+  }, []);
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -192,7 +214,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isFullyReady,
       isAuthenticated: !!user,
       login,
-      logout
+      logout,
     }),
     [user, isLoading, isFullyReady, login, logout]
   );
