@@ -4,7 +4,6 @@ import {
 
   Archive,
   Calendar,
-  Check,
   Eye,
   Filter,
   FolderKanban,
@@ -590,7 +589,6 @@ function AssignEmployeeModal({
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [projectRole, setProjectRole] = useState("");
   const [errors, setErrors] = useState<{ employee?: string; role?: string }>({});
-  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;

@@ -1,10 +1,10 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeftIcon as ArrowLeft, CalendarBlankIcon as CalendarBlank, PencilIcon as Pencil, PlusIcon as Plus, TrashIcon as Trash, UsersIcon as Users, UsersThreeIcon as UsersThree, ArchiveIcon as Archive, ArrowClockwiseIcon as ArrowClockwise, CaretLeftIcon as CaretLeft, CaretRightIcon as CaretRight } from "@phosphor-icons/react";
+import { ArrowLeftIcon as ArrowLeft, CalendarBlankIcon as CalendarBlank, PencilIcon as Pencil, TrashIcon as Trash, UsersIcon as Users, UsersThreeIcon as UsersThree, ArchiveIcon as Archive, ArrowClockwiseIcon as ArrowClockwise, CaretLeftIcon as CaretLeft, CaretRightIcon as CaretRight } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
 import { X } from "lucide-react";
 import { useAuth } from "@/core/auth/AuthProvider";
-import { affectationsApi, deliverablesApi, projectsApi, usersApi, versionsApi, getApiBaseUrl } from "@/core/api/client";
+import { affectationsApi, deliverablesApi, projectsApi, usersApi, versionsApi } from "@/core/api/client";
 import { useI18n } from "@/core/i18n/I18nProvider";
 import { DeliverableCard } from "@/shared/components/ui/DeliverableCard";
 import { ProjectDetailSkeleton } from "@/shared/components/skeleton";
@@ -1052,7 +1052,7 @@ export function ProjectDetailView({
     navigate(backHref, { replace: true });
   };
 
-  const executeDeleteDeliverable = async (adminPassword?: string) => {
+  const executeDeleteDeliverable = async () => {
     if (!deleteDeliverableState.deliverable || !project) return;
     const deliverable = deleteDeliverableState.deliverable;
     try {

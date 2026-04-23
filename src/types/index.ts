@@ -74,6 +74,7 @@ export interface ApiUser {
   telephone: string;
   derniereConnexion: string | null;
   dateCreation: string;
+  photoUrl?: string | null;
 }
 
 export type UserStatus = "actif" | "inactif";

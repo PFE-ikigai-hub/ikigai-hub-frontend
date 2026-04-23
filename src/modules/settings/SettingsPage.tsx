@@ -5,7 +5,6 @@ import {
   User,
   Shield,
   SlidersHorizontal,
-  Camera,
   Check,
   Eye,
   EyeOff,
@@ -17,7 +16,6 @@ import {
   Pencil,
   Trash2,
   X as CloseIcon,
-  XCircle,
 } from "lucide-react";
 
 import { DefaultAvatar } from "@/shared/components/ui/DefaultAvatar";

@@ -6,12 +6,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Filter,
-  Loader2,
   MoreHorizontal,
   Plus,
   Search,
   Trash2,
-  Users,
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";

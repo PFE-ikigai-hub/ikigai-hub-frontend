@@ -1,6 +1,6 @@
 ﻿import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, type Variants } from "motion/react";
 import axios from "axios";
 import { 
 
@@ -14,7 +14,6 @@ import {
 import { useI18n } from "@/core/i18n/I18nProvider";
 import { authApi } from "@/core/api/client";
 import Prism from "@/shared/components/effects/Prism";
-import BorderGlow from "@/shared/components/effects/BorderGlow";
 import SplitText from "@/shared/components/effects/SplitText";
 
 export function ResetPasswordPage() {
@@ -85,9 +84,9 @@ export function ResetPasswordPage() {
     }
   };
 
-  const pageVariants = {
+  const pageVariants: Variants = {
     initial: { opacity: 0, scale: 0.97, y: 20 },
-    animate: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+    animate: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
   };
 
   return (

@@ -23,7 +23,6 @@ import {
 } from "@phosphor-icons/react";
 import { MobileSidebar } from "./MobileSidebar";
 import { DefaultAvatar } from "@/shared/components/ui/DefaultAvatar";
-import { GlassIcon } from "@/shared/components/ui/GlassIcon";
 
 type MenuItem = { to: string; labelKey: string; icon: React.ElementType };
 
@@ -49,10 +48,6 @@ function shouldHideNavigation(pathname: string): boolean {
   // Client review detail: sidebar is hidden in the reference dashboard.
   if (/^\/client\/review\/[^/]+$/.test(pathname)) return true;
   return false;
-}
-
-function getInitials(firstName: string, lastName: string) {
-  return `${firstName?.[0] ?? ""}${lastName?.[0] ?? ""}`.toUpperCase();
 }
 
 // Hook to get avatar URL with cache busting timestamp

@@ -1,6 +1,6 @@
 ﻿import { useState, useRef, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, ZoomIn, ZoomOut, Check, Download, Sparkles, RefreshCw, File, Pencil, History, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ZoomIn, ZoomOut, Check, Download, Sparkles, RefreshCw, File, Pencil, History } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { deliverablesApi, triggerBrowserDownload, versionsApi } from '@/core/api/client';
 import type { DownloadConfirmationPayload } from '@/core/api/client';
@@ -9,7 +9,6 @@ import { useI18n } from '@/core/i18n/I18nProvider';
 import { InlineLoader } from '@/shared/components/feedback/InlineLoader';
 import { DeliverableDetailSkeleton } from '@/shared/components/skeleton';
 import { CommentsList } from '@/shared/components/review/CommentsList';
-import { VersionsList } from '@/shared/components/review/VersionsList';
 import { AnnotationTool } from '@/shared/components/review/AnnotationTool';
 import { SecureDownloadModal } from '@/shared/components/ui/SecureDownloadModal';
 import { SecureValidationModal } from '@/shared/components/ui/SecureValidationModal';
@@ -34,7 +33,6 @@ export function ClientReviewDetailPage() {
   const [zoom, setZoom] = useState(1);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showCommentsSidebar, setShowCommentsSidebar] = useState(false);
-  const [isValidating, setIsValidating] = useState(false);
   const [annotateMode, setAnnotateMode] = useState(false);
   const [downloadModalOpen, setDownloadModalOpen] = useState(false);
   const [validationModalOpen, setValidationModalOpen] = useState(false);
@@ -239,7 +237,6 @@ export function ClientReviewDetailPage() {
 
   const handleConfirmValidation = async (_password: string) => {
     if (!currentVersion) return;
-    setIsValidating(true);
     try {
       await versionsApi.validate(currentVersion.id);
       setShowSuccessMessage(true);
@@ -257,7 +254,6 @@ export function ClientReviewDetailPage() {
       const backendMessage = e?.response?.data?.message;
       toast.error(typeof backendMessage === "string" ? backendMessage : t('common.error'));
     } finally {
-      setIsValidating(false);
     }
   };
 

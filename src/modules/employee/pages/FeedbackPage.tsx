@@ -8,7 +8,6 @@ import {
   annotationsApi,
   commentsApi,
   deliverablesApi,
-  getApiBaseUrl,
   projectsApi,
   versionsApi,
 } from "@/core/api/client";

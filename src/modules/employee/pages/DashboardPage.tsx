@@ -323,7 +323,6 @@ function EmployeeAssignedProjects() {
 export function EmployeeUploadPage() {
   const { user } = useAuth();
   const { t } = useI18n();
-  const navigate = useNavigate();
   const location = useLocation();
   const preselectRef = useRef<{ projectId: string; deliverableId: string } | null>(null);
 

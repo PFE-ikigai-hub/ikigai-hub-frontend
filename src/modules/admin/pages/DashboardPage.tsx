@@ -98,7 +98,6 @@ export function AdminDashboardPage() {
 export function AdminUsersPage() {
   const { t } = useI18n();
   const [rows, setRows] = useState<{ id: number; name: string; email: string; role: string; actif: boolean }[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     usersApi.list({ size: 100 }).then((res) => {
@@ -111,7 +110,6 @@ export function AdminUsersPage() {
           actif: u.actif
         }))
       );
-      setLoading(false);
     });
   }, []);
 

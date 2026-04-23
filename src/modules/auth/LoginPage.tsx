@@ -16,7 +16,6 @@ import { useAuth } from "@/core/auth/AuthProvider";
 import { useI18n } from "@/core/i18n/I18nProvider";
 import { authApi } from "@/core/api/client";
 import Prism from "@/shared/components/effects/Prism";
-import BorderGlow from "@/shared/components/effects/BorderGlow";
 
 type PageState = 'login' | 'forgot' | 'reset-success';
 

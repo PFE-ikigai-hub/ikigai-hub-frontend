@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { LayoutGrid, List as ListIcon, ChevronLeft, ChevronRight } from "lucide-react";
-import { deliverablesApi, versionsApi, getApiBaseUrl } from "@/core/api/client";
+import { deliverablesApi, versionsApi } from "@/core/api/client";
 import { useI18n } from "@/core/i18n/I18nProvider";
 import { SearchBar } from "@/shared/components/ui/SearchBar";
 import { DeliverableCard } from "@/shared/components/ui/DeliverableCard";

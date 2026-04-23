@@ -44,8 +44,7 @@ export function CommentsList({
     {}
   );
   const [translatingId, setTranslatingId] = useState<number | null>(null);
-  const [currentTime, setCurrentTime] = useState<number>(0);
-  const [avatarVersion, setAvatarVersion] = useState<number>(0);
+  const [, setAvatarVersion] = useState<number>(0);
 
   const supportsTimestamps = deliverableType === 'VIDEO' || deliverableType === 'AUDIO';
   const supportsPageRefs = deliverableType === 'PDF';
@@ -342,8 +341,6 @@ export function CommentsList({
     const avatarUrl = getAvatarUrl(comment);
     // Bigger sizes for better visibility
     const sizeClasses = size === 'sm' ? 'w-11 h-11' : 'w-12 h-12';
-    const iconSize = size === 'sm' ? 'w-6 h-6' : 'w-7 h-7';
-    
     if (avatarUrl) {
       return (
         <img 

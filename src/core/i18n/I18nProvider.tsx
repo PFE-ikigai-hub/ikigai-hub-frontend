@@ -1033,8 +1033,6 @@ const translations: Record<string, Record<string, string>> = {
     'validation.strongCheck2': 'أفهم أن هذا التحقق نهائي وسيتم إخطار الفريق.',
     'review.deleteCommentConfirm': 'هل تريد حقاً حذف هذا التعليق؟',
     'review.commentDeleted': 'تم حذف التعليق.',
-    'review.deleteAnnotation': 'حذف',
-    'review.deleteComment': 'حذف',
     "user": "المستخدم",
     "email": "البريد الإلكتروني",
     "organisation": "المؤسسة",
@@ -1051,8 +1049,6 @@ const translations: Record<string, Record<string, string>> = {
     "active": "نشط",
     "inactive": "غير نشط",
     "search_placeholder": "بحث...",
-    "filter.reset": "إعادة تعيين",
-    "total": "إجمالي",
   }
 };
 
