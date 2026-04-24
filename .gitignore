@@ -28,3 +28,9 @@ Thumbs.db
 
 # Misc generated artifacts
 vite.config.ts.timestamp-*.mjs
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
