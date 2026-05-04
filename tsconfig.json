@@ -10,7 +10,8 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
       "lucide-react": ["src/shared/icons/lucide-compat.tsx"]

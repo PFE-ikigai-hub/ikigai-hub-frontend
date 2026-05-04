@@ -186,8 +186,6 @@ describe("LoginPage", () => {
   });
 
   it("navigates to redirect route after role becomes available", async () => {
-    window.history.pushState({}, "", "/login?redirect=/client/dashboard");
-
     mockedUseAuth.mockReturnValue({
       user: { id: "1", firstName: "Admin", lastName: "A", email: "admin@ikigai.com", role: "ADMIN" },
       role: "ADMIN",
@@ -199,7 +197,7 @@ describe("LoginPage", () => {
     });
 
     render(
-      <MemoryRouter initialEntries={["/login"]}>
+      <MemoryRouter initialEntries={["/login?redirect=/client/dashboard"]}>
         <LoginPage />
       </MemoryRouter>
     );

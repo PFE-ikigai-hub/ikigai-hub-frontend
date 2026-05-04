@@ -49,6 +49,7 @@ type NewUserData = {
   role: UserRole;
   company: string;
   status: "actif" | "inactif";
+  password: string;
 };
 
 function getApiErrorMessage(err: any, fallback: string) {
@@ -73,6 +74,7 @@ function AddUserModal({
     lastName: "",
     role: "EMPLOYE" as UserRole,
     company: "",
+    password: "",
   });
 
   const [errors, setErrors] = useState<Partial<typeof formData>>({});
@@ -80,6 +82,7 @@ function AddUserModal({
   const validate = () => {
     const next: Partial<typeof formData> = {};
     if (!formData.email) next.email = t("error_email_required");
+    if (!formData.password) next.password = t("account.password");
     return next;
   };
 
@@ -101,6 +104,7 @@ function AddUserModal({
       lastName: "",
       role: "EMPLOYE",
       company: "",
+      password: "",
     });
     setErrors({});
     onClose();
@@ -113,6 +117,7 @@ function AddUserModal({
       lastName: "",
       role: "EMPLOYE",
       company: "",
+      password: "",
     });
     setErrors({});
     onClose();
@@ -243,6 +248,28 @@ function AddUserModal({
                     placeholder={t("organisation")}
                     className="w-full px-4 py-3 border border-stone-200 dark:border-stone-700 rounded-xl bg-stone-50 dark:bg-stone-900/50 text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-stone-900/20 dark:focus:ring-stone-100/20 focus:bg-white dark:focus:bg-stone-900 transition-all text-sm"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-stone-500 dark:text-stone-400 mb-1.5 uppercase tracking-wide">
+                    {t("account.password")}
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    value={formData.password}
+                    onChange={(e) => {
+                      setFormData({ ...formData, password: e.target.value });
+                      if (errors.password) setErrors({ ...errors, password: undefined });
+                    }}
+                    placeholder={t("account.password")}
+                    className={`hide-password-reveal w-full px-4 py-3 border rounded-xl bg-stone-50 dark:bg-stone-900/50 text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-stone-900/20 dark:focus:ring-stone-100/20 focus:bg-white dark:focus:bg-stone-900 transition-all text-sm ${
+                      errors.password ? "border-red-300 dark:border-red-800" : "border-stone-200 dark:border-stone-700"
+                    }`}
+                  />
+                  {errors.password && (
+                    <p className="text-xs text-red-500 dark:text-red-400 mt-1">{errors.password}</p>
+                  )}
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -768,7 +795,7 @@ export function AdminUsersPage() {
     try {
       await authApi.register({
         email: userData.email,
-        motDePasse: "Temp1234!",
+        motDePasse: userData.password,
         nom: userData.lastName,
         prenom: userData.firstName,
         role: userData.role,
