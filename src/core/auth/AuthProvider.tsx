@@ -16,14 +16,6 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-const OBSOLETE_AUTH_KEYS = [
-  "ikigai:justLoggedIn",
-  "ikigai:splitSeen",
-  "ikigai:loginIntroSeen",
-  "ikigai:bootSplashSeen",
-  "ikigai:postLoginSplash",
-];
-
 // Cette fonction adapte la reponse /me au format utilisateur du frontend.
 function toAuthUserFromMe(me: CurrentUserResponse): AuthUser {
   return {
@@ -46,25 +38,6 @@ function toAuthUserFromAuth(auth: AuthResponse): AuthUser {
   };
 }
 
-// Cette fonction supprime une liste de cles dans un storage.
-function removeKeysFromStorage(storage: Storage, keys: string[]) {
-  keys.forEach((key) => {
-    storage.removeItem(key);
-  });
-}
-
-// Cette fonction nettoie les anciennes cles d'historique local.
-function removeLegacyHistoryKeys() {
-  const toDelete: string[] = [];
-  for (let i = 0; i < localStorage.length; i += 1) {
-    const key = localStorage.key(i);
-    if (key && key.startsWith("ikigai:history:project:")) {
-      toDelete.push(key);
-    }
-  }
-  toDelete.forEach((key) => localStorage.removeItem(key));
-}
-
 // Cette fonction detecte les erreurs reseau temporaires.
 function isNetworkError(error: unknown) {
   if (!error || typeof error !== "object") return false;
@@ -78,23 +51,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isFullyReady, setIsFullyReady] = useState(false);
 
-  // Ce nettoyage retire les anciennes cles de session.
-  const cleanupObsoleteSessionKeys = useCallback(() => {
-    try {
-      removeKeysFromStorage(sessionStorage, OBSOLETE_AUTH_KEYS);
-    } catch {
-    }
-  }, []);
-
-  // Ce nettoyage retire les anciennes cles locales.
-  const cleanupObsoleteLocalKeys = useCallback(() => {
-    try {
-      removeKeysFromStorage(localStorage, OBSOLETE_AUTH_KEYS);
-      removeLegacyHistoryKeys();
-    } catch {
-    }
-  }, []);
-
   // Cet etat represente un utilisateur totalement deconnecte.
   const applySignedOutState = useCallback(() => {
     setUser(null);
@@ -106,14 +62,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Cette action vide l'etat local puis demande la deconnexion au backend.
   const logout = useCallback(async () => {
     applySignedOutState();
-    cleanupObsoleteSessionKeys();
-    cleanupObsoleteLocalKeys();
 
     try {
       await authApi.logout();
     } catch {
     }
-  }, [applySignedOutState, cleanupObsoleteLocalKeys, cleanupObsoleteSessionKeys]);
+  }, [applySignedOutState]);
 
   // Cet effet ecoute une demande globale de deconnexion.
   useEffect(() => {
@@ -124,9 +78,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Cet effet restaure la session au demarrage de l'application.
   useEffect(() => {
-    cleanupObsoleteSessionKeys();
-    cleanupObsoleteLocalKeys();
-
     // Cette fonction recharge le profil complet de l'utilisateur.
     const hydrateFromMe = async () => {
       const me = await authApi.me();
@@ -181,7 +132,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     void init();
-  }, [applySignedOutState, cleanupObsoleteLocalKeys, cleanupObsoleteSessionKeys]);
+  }, [applySignedOutState]);
 
   // Cet effet oublie le dernier role si personne n'est connecte.
   useEffect(() => {
