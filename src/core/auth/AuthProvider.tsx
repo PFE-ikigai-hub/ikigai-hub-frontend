@@ -1,4 +1,3 @@
-// Ce fichier gere une partie du frontend.
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { authApi, setApiRoleHeader, setAppInitializing } from "@/core/api/client";
 import type { AuthResponse, AuthUser, CurrentUserResponse, UserRole } from "@/types/auth";
