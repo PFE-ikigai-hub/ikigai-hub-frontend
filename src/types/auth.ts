@@ -1,4 +1,5 @@
-﻿export type UserRole = "ADMIN" | "CLIENT" | "EMPLOYE";
+// Ce fichier gere une partie du frontend.
+export type UserRole = "ADMIN" | "CLIENT" | "EMPLOYE";
 
 export interface AuthUser {
   id: string;

@@ -1,4 +1,5 @@
-﻿import { useCallback, useMemo } from "react";
+// Ce fichier gere une partie du frontend.
+import { useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { UserRole } from "@/types/auth";
 

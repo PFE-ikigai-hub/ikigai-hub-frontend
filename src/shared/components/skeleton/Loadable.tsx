@@ -1,4 +1,5 @@
-﻿import { memo, type ReactNode } from "react";
+// Ce fichier gere une partie du frontend.
+import { memo, type ReactNode } from "react";
 
 
 type LoadableProps = {
@@ -12,4 +13,3 @@ function LoadableImpl({ isLoading, skeleton, children }: LoadableProps) {
 }
 
 export const Loadable = memo(LoadableImpl);
-

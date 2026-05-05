@@ -1,4 +1,5 @@
-﻿import { CardSkeleton } from "@/shared/components/skeleton/CardSkeleton";
+// Ce fichier gere une partie du frontend.
+import { CardSkeleton } from "@/shared/components/skeleton/CardSkeleton";
 import { SkeletonBlock } from "@/shared/components/skeleton/SkeletonBlock";
 import { TableSkeleton } from "@/shared/components/skeleton/TableSkeleton";
 

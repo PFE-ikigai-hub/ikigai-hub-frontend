@@ -1,4 +1,5 @@
-﻿import { useEffect, useState } from "react";
+// Ce fichier gere une partie du frontend.
+import { useEffect, useState } from "react";
 import { deliverablesApi, projectsApi, usersApi } from "@/core/api/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/components/ui/card";
 import { motion } from "framer-motion";

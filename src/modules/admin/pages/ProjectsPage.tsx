@@ -1,4 +1,5 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react";
+// Ce fichier gere une partie du frontend.
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
 
@@ -598,7 +599,6 @@ function AssignEmployeeModal({
         setIsLoading(true);
         const resp = await usersApi.list({ role: "EMPLOYE", actif: true, size: 500 });
         setEmployees((resp.content ?? []).map((u: ApiUser) => {
-          // Get avatar from localStorage
           let avatar: string | undefined;
           try {
             const saved = localStorage.getItem(`ikigai-avatar-${u.id}`);
@@ -972,8 +972,6 @@ export function AdminProjectsPage() {
   const [clients, setClients] = useState<AvailableClient[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Handle sessionStorage action from ProjectDetailView
   useEffect(() => {
     const stored = sessionStorage.getItem("ikg:projectAction");
     if (!stored) {
@@ -982,7 +980,7 @@ export function AdminProjectsPage() {
 
     try {
       const { action, project, projectId } = JSON.parse(stored);
-      sessionStorage.removeItem("ikg:projectAction"); // Clear immediately
+      sessionStorage.removeItem("ikg:projectAction");
 
       if (action === "assign" && projectId) {
         setAssignModalState({ isOpen: true, projectId });
@@ -1006,8 +1004,7 @@ export function AdminProjectsPage() {
       console.error("[ProjectsPage] Error parsing sessionStorage:", e);
       sessionStorage.removeItem("ikg:projectAction");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Run once on mount
+  }, []);
 
   useEffect(() => {
     if (!isFullyReady || !user) return;
@@ -1032,7 +1029,6 @@ export function AdminProjectsPage() {
           setClients(mappedClients);
           userDataCache.current[clientsCacheKey] = mappedClients;
         } catch {
-          // ignore
         }
       };
 
@@ -1249,7 +1245,7 @@ export function AdminProjectsPage() {
 
   const openArchiveProjectModal = (project: ProjectCard) => {
     if (project.status !== "TERMINE") {
-      toast.error("Archivage autorisé uniquement pour les projets TERMINÉS.");
+      toast.error("Archivage autoris� uniquement pour les projets TERMIN�S.");
       return;
     }
     setArchiveProjectState({ isOpen: true, project });
@@ -1587,7 +1583,7 @@ export function AdminProjectsPage() {
                                     <button
                                       key={emp.affectationId}
                                       className={`w-7 h-7 rounded-full border-2 border-white dark:border-stone-900 overflow-hidden ${index > 0 ? "-ml-2" : ""} transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-stone-500`}
-                                      title={`${emp.name} • ${emp.role}`}
+                                      title={`${emp.name} � ${emp.role}`}
                                       onClick={() =>
                                         setAffectationModalState({
                                           isOpen: true,
@@ -1673,7 +1669,7 @@ export function AdminProjectsPage() {
                                   })
                                 }
                                 className="px-2.5 py-1 rounded-full border border-stone-200 dark:border-stone-700 text-[10px] text-stone-600 dark:text-stone-300 bg-stone-50 dark:bg-stone-800/40"
-                                title={`${emp.name} • ${emp.role}`}
+                                title={`${emp.name} � ${emp.role}`}
                               >
                                 {emp.name}
                               </button>
@@ -1715,7 +1711,7 @@ export function AdminProjectsPage() {
               className="px-3 py-1.5 rounded-lg text-xs border border-stone-200 dark:border-stone-700 disabled:opacity-50"
               type="button"
             >
-              â€¹
+              ‹
             </button>
             <span className="text-xs text-stone-500 dark:text-stone-400">
               {currentPage} / {totalPages}
@@ -1726,7 +1722,7 @@ export function AdminProjectsPage() {
               className="px-3 py-1.5 rounded-lg text-xs border border-stone-200 dark:border-stone-700 disabled:opacity-50"
               type="button"
             >
-              â€º
+              ›
             </button>
           </div>
         </div>
@@ -1774,12 +1770,12 @@ export function AdminProjectsPage() {
       <SecureDeleteModal
         isOpen={archiveProjectState.isOpen}
         onClose={() => setArchiveProjectState({ isOpen: false, project: null })}
-        title={`${t("archive")} • ${archiveProjectState.project?.name ?? ""}`}
-        description="Double vérification + mot de passe administrateur requis."
+        title={`${t("archive")} � ${archiveProjectState.project?.name ?? ""}`}
+        description="Double v�rification + mot de passe administrateur requis."
         strongMode={true}
         confirmLabel={t("archive")}
         confirmButtonClassName="bg-stone-800 text-white hover:bg-stone-900 dark:bg-stone-700 dark:hover:bg-stone-600"
-        checkTextA="Je confirme que ce projet est terminé."
+        checkTextA="Je confirme que ce projet est termin�."
         checkTextB="Je comprends que l'archivage limite les modifications."
         onConfirm={handleArchiveProject}
       />

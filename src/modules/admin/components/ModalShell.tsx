@@ -1,4 +1,5 @@
-﻿import { motion, AnimatePresence } from "motion/react";
+// Ce fichier gere une partie du frontend.
+import { motion, AnimatePresence } from "motion/react";
 import { X } from "lucide-react";
 
 
@@ -61,4 +62,3 @@ export function ModalShell({
     </AnimatePresence>
   );
 }
-

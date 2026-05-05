@@ -1,4 +1,5 @@
-﻿import { useEffect } from "react";
+// Ce fichier gere une partie du frontend.
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ProjectDetailView } from "@/shared/components/project/ProjectDetailView";
 

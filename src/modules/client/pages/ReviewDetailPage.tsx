@@ -1,4 +1,5 @@
-﻿import { useState, useRef, useEffect, useCallback, lazy, Suspense } from 'react';
+// Ce fichier gere une partie du frontend.
+import { useState, useRef, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, ZoomIn, ZoomOut, Check, Download, Sparkles, RefreshCw, File, Pencil, History } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -13,15 +14,13 @@ import { AnnotationTool } from '@/shared/components/review/AnnotationTool';
 import { SecureDownloadModal } from '@/shared/components/ui/SecureDownloadModal';
 import { SecureValidationModal } from '@/shared/components/ui/SecureValidationModal';
 import { useToast } from '@/shared/components/ui/toast';
-
-
-// Lazy load PdfViewer to reduce initial bundle size
 const PdfViewer = lazy(() => import('@/shared/components/review/PdfViewer'));
 import type { ApiDeliverable, ApiVersion } from '@/types/index';
 import { normalizeVersions } from '@/shared/utils/versions';
 import { isLikelyPdfBlob, shouldReadTextPreview } from '@/shared/utils/preview';
 import { useSmartBackNavigation } from '@/shared/hooks/useSmartBackNavigation';
 
+// Cette page permet au client de consulter, commenter et valider un livrable.
 export function ClientReviewDetailPage() {
   const { deliverableId } = useParams();
   const navigate = useNavigate();
@@ -48,18 +47,15 @@ export function ClientReviewDetailPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [errorNotFound, setErrorNotFound] = useState(false);
-
-  // Preview states
   const [previewBlobUrl, setPreviewBlobUrl] = useState<string | null>(null);
   const [previewMimeType, setPreviewMimeType] = useState<string>('');
   const [previewText, setPreviewText] = useState<string>('');
   const [previewError, setPreviewError] = useState('');
-
-  // Media refs for timestamp support in comments
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [pendingSeekSeconds, setPendingSeekSeconds] = useState<number | null>(null);
   
+  // Ces etats gerent la lecture des PDF et l'adaptation mobile.
   const [currentPdfPage, setCurrentPdfPage] = useState(1);
   const [isMobileViewport, setIsMobileViewport] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia("(max-width: 1023px)").matches : false
@@ -75,6 +71,7 @@ export function ClientReviewDetailPage() {
     defaultFallback: '/client/dashboard',
   });
 
+  // Cet effet suit la taille d'ecran pour adapter la sidebar mobile.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mediaQuery = window.matchMedia("(max-width: 1023px)");
@@ -88,13 +85,14 @@ export function ClientReviewDetailPage() {
     return () => mediaQuery.removeEventListener("change", onChange);
   }, []);
 
+  // Cet effet ferme automatiquement la sidebar mobile hors petit ecran.
   useEffect(() => {
     if (!isMobileViewport && showCommentsSidebar) {
       setShowCommentsSidebar(false);
     }
   }, [isMobileViewport, showCommentsSidebar]);
 
-  // 1) Fetch deliverable + versions
+  // Cet effet charge le livrable puis la liste de ses versions.
   useEffect(() => {
     if (Number.isNaN(livrableId)) {
       navigate('/client/dashboard', { replace: true });
@@ -123,8 +121,6 @@ export function ClientReviewDetailPage() {
                 : [];
           const normalized = normalizeVersions(apiVersions);
           setVersions(normalized);
-          
-          // Respect versionId from search params if present
           const searchParams = new URLSearchParams(location.search);
           const vId = searchParams.get('versionId');
           if (vId) {
@@ -155,12 +151,12 @@ export function ClientReviewDetailPage() {
     return () => { cancelled = true; };
   }, [livrableId, navigate]);
 
-  // 2) Current version
+  // Cette variable calcule la version actuellement affichee.
   const currentVersion = selectedVersionId
     ? versions.find(v => v.id === selectedVersionId) || versions[0]
     : versions[0];
 
-  // 3) Fetch preview (stable, revoked only on version change)
+  // Cet effet charge la previsualisation de la version selectionnee.
   useEffect(() => {
     if (!currentVersion || !currentVersion.id || !livrable) return;
 
@@ -220,10 +216,12 @@ export function ClientReviewDetailPage() {
     };
   }, [currentVersion?.id, livrable?.type, previewRefreshKey, t]);
 
+  // Cette action change la version courante dans l'interface.
   const handleVersionSelect = useCallback((versionId: number) => {
     setSelectedVersionId(versionId);
   }, []);
 
+  // Ces actions pilotent le zoom et le rafraichissement de l'aperçu.
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.25, 3));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.25, 0.5));
   const handleRefreshImage = () => {
@@ -231,10 +229,12 @@ export function ClientReviewDetailPage() {
     setPreviewRefreshKey((prev) => prev + 1);
   };
 
+  // Cette action ouvre la confirmation avant validation finale.
   const handleValidate = () => {
     setValidationModalOpen(true);
   };
 
+  // Cette action valide la version et met a jour l'etat local.
   const handleConfirmValidation = async (_password: string) => {
     if (!currentVersion) return;
     try {
@@ -257,6 +257,7 @@ export function ClientReviewDetailPage() {
     }
   };
 
+  // Cette action telecharge la version courante apres confirmation.
   const handleDownload = async (payload: DownloadConfirmationPayload) => {
     if (!currentVersion) return;
     const blob = await versionsApi.download(currentVersion.id, payload);
@@ -265,6 +266,7 @@ export function ClientReviewDetailPage() {
     triggerBrowserDownload(blob, `${base}_${version}`);
   };
 
+  // Cette action deplace la lecture audio ou video vers un horodatage.
   const seekToTimestamp = useCallback((seconds: number) => {
     setPendingSeekSeconds(seconds);
     const media = livrable?.type === 'VIDEO' ? videoRef.current : livrable?.type === 'AUDIO' ? audioRef.current : null;
@@ -328,8 +330,6 @@ export function ClientReviewDetailPage() {
 
     const type = livrable?.type || 'AUTRE';
     const isPdfPreview = type === 'PDF' || previewMimeType === 'application/pdf';
-
-    // IMAGE
     if (type === 'IMAGE' || previewMimeType.startsWith('image/')) {
       return (
         <motion.div
@@ -358,8 +358,6 @@ export function ClientReviewDetailPage() {
         </motion.div>
       );
     }
-
-    // VIDEO
     if (type === 'VIDEO' || previewMimeType.startsWith('video/')) {
       return (
         <motion.div
@@ -379,12 +377,9 @@ export function ClientReviewDetailPage() {
           >
             {t("review.videoUnsupported")}
           </video>
-          {/* Annotations disabled for audio - only IMAGE supports annotations */}
         </motion.div>
       );
     }
-
-    // AUDIO
     if (type === 'AUDIO' || previewMimeType.startsWith('audio/')) {
       return (
         <motion.div
@@ -416,8 +411,6 @@ export function ClientReviewDetailPage() {
         </motion.div>
       );
     }
-
-    // PDF - with scroll-based page detection
     if (isPdfPreview) {
       return (
         <motion.div
@@ -439,8 +432,6 @@ export function ClientReviewDetailPage() {
         </motion.div>
       );
     }
-
-    // TEXTE
     if (type === 'TEXTE' || previewMimeType.startsWith('text/') || previewText) {
       return (
         <motion.div
@@ -452,12 +443,9 @@ export function ClientReviewDetailPage() {
           <pre className="text-sm text-stone-800 dark:text-stone-200 whitespace-pre-wrap font-mono leading-relaxed">
             {previewText}
           </pre>
-          {/* Annotations disabled for audio - only IMAGE supports annotations */}
         </motion.div>
       );
     }
-
-    // AUTRE â€” no preview, just download
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center p-8">
@@ -497,8 +485,6 @@ export function ClientReviewDetailPage() {
       </div>
     );
   }
-
-  // Guard: block full detail render until the preview is ready, to match the reference behavior.
   if (!previewBlobUrl && !previewText && !previewError && !errorNotFound && !!currentVersion) {
     return (
       <DeliverableDetailSkeleton />
@@ -514,7 +500,6 @@ export function ClientReviewDetailPage() {
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="flex flex-col h-full overflow-hidden"
       >
-        {/* Header */}
         <header className="lg:hidden bg-white/70 dark:bg-[#0d0d0f]/70 backdrop-blur-xl border-b border-stone-200/50 dark:border-stone-800/40 px-6 py-3.5 z-20">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4 min-w-0">
@@ -544,7 +529,6 @@ export function ClientReviewDetailPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Mobile comments button */}
               <button
                 onClick={() => setShowCommentsSidebar(!showCommentsSidebar)}
                 className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors relative"
@@ -552,8 +536,6 @@ export function ClientReviewDetailPage() {
               >
                 <History className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               </button>
-
-              {/* Mobile actions */}
               <div className="flex md:hidden items-center gap-2">
                 {livrable.statut === 'EN_REVUE' && (
                   <motion.button
@@ -568,8 +550,6 @@ export function ClientReviewDetailPage() {
                   </motion.button>
                 )}
               </div>
-
-              {/* Desktop Actions */}
               <div className="hidden md:flex items-center gap-3">
                 {livrable.statut === 'EN_REVUE' && (
                   <motion.button
@@ -598,8 +578,6 @@ export function ClientReviewDetailPage() {
             </div>
           </div>
         </header>
-
-        {/* Success Message */}
         <AnimatePresence>
           {showSuccessMessage && (
             <motion.div
@@ -617,10 +595,8 @@ export function ClientReviewDetailPage() {
         </AnimatePresence>
 
         <div className="flex flex-1 overflow-hidden min-h-0 lg:min-h-screen">
-          {/* Main preview area */}
           {shouldRenderPreviewArea && (
           <div className="flex-1 lg:w-[62%] lg:flex-none lg:order-2 min-w-0 flex flex-col overflow-hidden bg-stone-50/30 dark:bg-[#0c0c0e]">
-            {/* Zoom controls + Annotation toggle (Image only) */}
             {livrable.type === 'IMAGE' && (
               <div className="bg-white/40 dark:bg-stone-900/40 backdrop-blur-md border-b border-stone-100/30 dark:border-stone-800/30 px-6 py-2 flex items-center justify-center gap-4">
                 <div className="flex items-center bg-white/80 dark:bg-stone-800/80 rounded-xl shadow-sm border border-stone-200/40 dark:border-stone-700/40 p-0.5">
@@ -664,10 +640,6 @@ export function ClientReviewDetailPage() {
                 </button>
               </div>
             )}
-
-            {/* Annotations are only available for IMAGE deliverables */}
-
-            {/* Canvas */}
             <div 
               ref={containerRef}
               className="flex-1 overflow-auto p-6 md:p-8 lg:p-12 relative flex items-center justify-center"
@@ -676,8 +648,6 @@ export function ClientReviewDetailPage() {
             </div>
           </div>
           )}
-
-          {/* Right Sidebar - Desktop */}
           {shouldRenderDesktopSidebar && (
           <div className="hidden lg:flex lg:order-1 w-[38%] min-w-0 flex-col bg-white/60 dark:bg-[#0d0d0f]/60 backdrop-blur-xl border-r border-stone-200/40 dark:border-stone-800/30 shadow-xl shadow-stone-100/20 dark:shadow-none z-10 overflow-hidden">
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
@@ -777,8 +747,6 @@ export function ClientReviewDetailPage() {
             </div>
           </div>
           )}
-
-          {/* Comments sidebar - Mobile (Overlay) */}
           <AnimatePresence>
             {shouldRenderMobileFeedback && (
               <motion.div
@@ -873,9 +841,6 @@ export function ClientReviewDetailPage() {
     </div>
   );
 }
-
-
-
 
 
 

@@ -1,4 +1,5 @@
-﻿import { useCallback, useState } from "react";
+// Ce fichier gere une partie du frontend.
+import { useCallback, useState } from "react";
 import { useI18n } from "@/core/i18n/I18nProvider";
 import { translationApi } from "@/core/api/client";
 import { protectCommentReferences } from "@/shared/utils/translationMarkers";

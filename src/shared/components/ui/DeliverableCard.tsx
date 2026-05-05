@@ -1,4 +1,5 @@
-﻿import { useState, useEffect, useRef } from 'react';
+// Ce fichier gere une partie du frontend.
+import { useState, useEffect, useRef } from 'react';
 import { MessageCircle, FileText, Image, Video, FileType, File, Music } from 'lucide-react';
 import { useI18n } from '@/core/i18n/I18nProvider';
 import { versionsApi } from '@/core/api/client';
@@ -18,7 +19,7 @@ interface DeliverableCardProps {
   projectName: string;
   thumbnailUrl?: string;
   latestVersionId?: number;
-  fichierUrl?: string;  // Direct file URL for preview
+  fichierUrl?: string;
   dateCreation?: string;
   layout?: 'grid' | 'list';
   showDeleteAction?: boolean;
@@ -86,8 +87,6 @@ export function DeliverableCard({
 
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-
-  // Lazy load: only fetch preview when card is visible
   useEffect(() => {
     if (!cardRef.current) return;
 
@@ -98,7 +97,7 @@ export function DeliverableCard({
           observer.disconnect();
         }
       },
-      { rootMargin: '200px' } // Start loading slightly before it comes into view
+      { rootMargin: '200px' }
     );
 
     observer.observe(cardRef.current);
@@ -106,10 +105,8 @@ export function DeliverableCard({
   }, []);
 
   const [isFetchInProgress, setIsFetchInProgress] = useState(false);
-
-  // Try preview endpoint first (legacy behavior), then fallback to direct URL.
   useEffect(() => {
-    if (!isVisible) return; // Don't fetch until visible
+    if (!isVisible) return;
     if (!canRenderThumbnail) {
       return;
     }
@@ -152,7 +149,6 @@ export function DeliverableCard({
         } catch (err) {
           retries++;
           if (retries <= maxRetries && !cancelled) {
-             // Wait 500ms before retry
              await new Promise(resolve => setTimeout(resolve, 500));
              continue;
           }
@@ -292,15 +288,13 @@ export function DeliverableCard({
                 </button>
               )}
               <div className="text-stone-400 group-hover:text-stone-900 dark:group-hover:text-white transition-colors flex justify-end">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                <svg xmlns="http:
               </div>
            </div>
         </td>
       </tr>
     );
   }
-
-  // GRID LAYOUT
   return (
     <div ref={cardRef} onClick={() => onClick(id)} className="h-full cursor-pointer hover:-translate-y-1 transition-transform duration-300">
       <BorderGlow

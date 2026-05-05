@@ -1,10 +1,4 @@
-﻿// Unified TypeScript Types for Ikigai Dashboard
-// Mirroring backend DTOs (Spring Boot)
-
-// ═══════════════════════════════════════════════════════════════════════════════
-//  USER & AUTH
-// ═══════════════════════════════════════════════════════════════════════════════
-
+// Ce fichier gere une partie du frontend.
 export type UserRole = "ADMIN" | "EMPLOYE" | "CLIENT";
 
 export interface AuthUser {
@@ -44,10 +38,6 @@ export interface ApiUpdateUserProfileRequest {
   organisation?: string;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-//  PAGINATION
-// ═══════════════════════════════════════════════════════════════════════════════
-
 export interface ApiPage<T> {
   content: T[];
   totalElements: number;
@@ -58,10 +48,6 @@ export interface ApiPage<T> {
   last: boolean;
   empty: boolean;
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-//  USERS
-// ═══════════════════════════════════════════════════════════════════════════════
 
 export interface ApiUser {
   id: number;
@@ -99,10 +85,6 @@ export interface NewUserData {
   status: UserStatus;
   password?: string;
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-//  PROJECTS
-// ═══════════════════════════════════════════════════════════════════════════════
 
 export type ProjectStatus =
   | "EN_COURS"
@@ -156,10 +138,6 @@ export interface NewProjectData {
   endDate?: string;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-//  AFFECTATIONS
-// ═══════════════════════════════════════════════════════════════════════════════
-
 export interface ApiAffectation {
   id: number;
   projetId: number;
@@ -184,10 +162,6 @@ export interface ProjectEmployee {
   email?: string;
   affectationId?: number;
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-//  DELIVERABLES
-// ═══════════════════════════════════════════════════════════════════════════════
 
 export type DeliverableStatus = "EN_REVUE" | "VALIDE";
 export type DeliverableType = "IMAGE" | "VIDEO" | "TEXTE" | "PDF" | "AUDIO" | "AUTRE";
@@ -229,10 +203,6 @@ export interface Deliverable {
   thumbnailUrl?: string;
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-//  VERSIONS
-// ═══════════════════════════════════════════════════════════════════════════════
-
 export type VersionStatus = "REVIEWED" | "VALIDATED";
 export type ApiVersionStatut = VersionStatus;
 
@@ -253,10 +223,6 @@ export interface ApiVersion {
   validations: ApiValidation[];
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-//  COMMENTAIRES
-// ═══════════════════════════════════════════════════════════════════════════════
-
 export interface ApiCommentaire {
   id: number;
   versionId: number;
@@ -272,10 +238,6 @@ export interface ApiCreateCommentaireRequest {
   versionId: number;
   texte: string;
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-//  ANNOTATIONS
-// ═══════════════════════════════════════════════════════════════════════════════
 
 export interface ApiAnnotation {
   id: number;
@@ -293,10 +255,6 @@ export interface ApiCreateAnnotationRequest {
   positionJson: Record<string, unknown>;
   rayonJson: Record<string, unknown>;
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-//  VALIDATIONS
-// ═══════════════════════════════════════════════════════════════════════════════
 
 export interface ApiValidation {
   id: number;
@@ -333,10 +291,6 @@ export interface ApiNotification {
   livrableId?: number | null;
   versionId?: number | null;
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-//  THEME & I18N
-// ═══════════════════════════════════════════════════════════════════════════════
 
 export type Theme = "light" | "dark";
 export type Language = "FR" | "EN" | "AR";

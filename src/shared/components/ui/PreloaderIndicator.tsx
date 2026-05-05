@@ -1,4 +1,5 @@
-﻿import React from "react";
+// Ce fichier gere une partie du frontend.
+import React from "react";
 
 
 interface PreloaderIndicatorProps {
@@ -21,4 +22,3 @@ export const PreloaderIndicator: React.FC<PreloaderIndicatorProps> = ({ classNam
     </div>
   );
 };
-

@@ -1,3 +1,4 @@
+// Ce fichier gere une partie du frontend.
 const LOGOUT_WAIT_TIMEOUT_MS = 1500;
 
 export function normalizeRole(value: string | null | undefined) {
@@ -16,8 +17,6 @@ export function parseCurrentUserId(value: string | undefined): number | null {
   const parsed = Number.parseInt(value, 10);
   return Number.isFinite(parsed) ? parsed : null;
 }
-
-// Verifie si le lien doit forcer une reconnexion.
 export function hasIdentityMismatch(params: URLSearchParams, role: string | null | undefined, userId: string | undefined) {
   const expectedRole = normalizeRole(params.get("expectedRole"));
   const expectedUserId = parseExpectedUserId(params.get("expectedUserId"));
@@ -40,15 +39,12 @@ export function setWrongAccountNotice() {
       "This link requires login with the correct account. You will be redirected to sign in."
     );
   } catch {
-    // ignore
   }
 }
 
 function sleep(ms: number) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
-
-// Deconnecte proprement sans bloquer la navigation.
 export async function forceRelogin(logout: () => Promise<void>, goToLogin: () => void) {
   setWrongAccountNotice();
   const logoutTask = Promise.race([logout(), sleep(LOGOUT_WAIT_TIMEOUT_MS)]);
@@ -58,8 +54,6 @@ export async function forceRelogin(logout: () => Promise<void>, goToLogin: () =>
   try {
     await logoutTask;
   } catch {
-    // ignore
   }
   goToLogin();
 }
-

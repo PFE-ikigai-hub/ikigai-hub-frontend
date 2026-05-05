@@ -1,4 +1,5 @@
-﻿import { useCallback, useEffect, useState } from "react";
+// Ce fichier gere une partie du frontend.
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { LayoutGrid, List as ListIcon, ChevronLeft, ChevronRight } from "lucide-react";
@@ -49,16 +50,12 @@ export function AdminDeliverablesPage() {
     try {
       const deliverablesRes = await deliverablesApi.list({ size: 500 });
       const deliverables = deliverablesRes.content ?? [];
-
-      // First, use versions already included in deliverables (from API response)
       let versionsByDeliverableId = new Map<number, ApiVersion[]>();
       for (const item of deliverables) {
         if (item.versions && item.versions.length > 0) {
           versionsByDeliverableId.set(item.id, item.versions);
         }
       }
-
-      // Try API for missing versions (will likely 404)
       const missingIds = deliverables
         .filter((item) => !versionsByDeliverableId.has(item.id))
         .map((d) => d.id);
@@ -72,7 +69,6 @@ export function AdminDeliverablesPage() {
             versionsByDeliverableId.set(v.livrableId, existing);
           }
         } catch {
-          // Silently fail - versions endpoints return 404
         }
       }
 

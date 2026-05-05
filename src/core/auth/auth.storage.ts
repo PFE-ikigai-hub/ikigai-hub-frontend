@@ -1,4 +1,5 @@
-﻿import type { UserRole } from "@/types/auth";
+// Ce fichier gere une partie du frontend.
+import type { UserRole } from "@/types/auth";
 
 
 const STORAGE_KEY = "ikigai:lastRole";
@@ -21,6 +22,5 @@ export function writeLastRole(role: UserRole | null) {
     }
     window.localStorage.setItem(STORAGE_KEY, role);
   } catch {
-    // ignore (private mode / storage disabled)
   }
 }

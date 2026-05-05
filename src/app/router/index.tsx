@@ -1,3 +1,4 @@
+// Ce fichier gere une partie du frontend.
 import { Suspense, lazy, type ReactElement } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "@/core/auth/AuthProvider";
@@ -7,6 +8,8 @@ import { SplashScreen } from "@/shared/components/ui/SplashScreen";
 import { PreloaderIndicator } from "@/shared/components/ui/PreloaderIndicator";
 import Prism from "@/shared/components/effects/Prism";
 import type { UserRole } from "@/types/auth";
+
+// Les pages sont chargees a la demande pour alleger le premier chargement.
 const AppShell = lazy(() => import("@/shared/layout/AppShell").then((m) => ({ default: m.AppShell })));
 const LoginPage = lazy(() => import("@/modules/auth/LoginPage").then((m) => ({ default: m.LoginPage })));
 const ResetPasswordPage = lazy(() => import("@/modules/auth/ResetPasswordPage").then((m) => ({ default: m.ResetPasswordPage })));
@@ -33,6 +36,7 @@ const EmployeeFeedbackPage = lazy(() => import("@/modules/employee/pages/Feedbac
 const EmployeeProjectDetailPage = lazy(() => import("@/modules/employee/pages/ProjectDetailPage").then((m) => ({ default: m.EmployeeProjectDetailPage })));
 const EmployeeFeedbackDetailPage = lazy(() => import("@/modules/employee/pages/FeedbackDetailPage").then((m) => ({ default: m.EmployeeFeedbackDetailPage })));
 
+// Ce loader plein ecran sert pendant les chargements importants.
 function FullScreenLoader({ size = 0.9 }: { size?: number }) {
   return (
     <div className="min-h-screen flex items-center justify-center p-12 bg-[#0a0a0b] relative overflow-hidden">
@@ -41,6 +45,7 @@ function FullScreenLoader({ size = 0.9 }: { size?: number }) {
   );
 }
 
+// Cet ecran couvre la phase d'initialisation de la session.
 function AuthInitializingScreen() {
   const { isLoading } = useAuth();
   return (
@@ -50,7 +55,7 @@ function AuthInitializingScreen() {
   );
 }
 
-// Affiche un loader leger pour la page login.
+// Cet ecran leger est reserve a la page de connexion.
 function LoginLoadingScreen() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[#0a0a0b]">
@@ -74,16 +79,19 @@ function LoginLoadingScreen() {
   );
 }
 
+// Cette fonction choisit la page d'accueil selon le role.
 function roleDefaultPath(role: UserRole | null) {
   if (role === "ADMIN") return "/admin/users";
   if (role === "CLIENT") return "/client/dashboard";
   return "/employee/dashboard";
 }
 
+// Ce composant redirige vers la page par defaut du role.
 function RoleRedirect({ role }: { role: UserRole | null }) {
   return <Navigate to={roleDefaultPath(role)} replace />;
 }
 
+// Ce composant joue l'ecran de transition apres connexion si besoin.
 function PostLoginSplashGate({ role }: { role: UserRole | null }) {
   let shouldShow = false;
   try {
@@ -104,6 +112,7 @@ function PostLoginSplashGate({ role }: { role: UserRole | null }) {
   );
 }
 
+// Cette redirection decide quoi afficher a la racine de l'application.
 function RootRedirect() {
   const { role, isAuthenticated, isLoading, isFullyReady } = useAuth();
   if (isLoading || (isAuthenticated && !isFullyReady)) return <AuthInitializingScreen />;
@@ -111,6 +120,7 @@ function RootRedirect() {
   return <PostLoginSplashGate role={role} />;
 }
 
+// Cette route gere le cas particulier de la page login.
 function LoginRoute() {
   const { isLoading, isAuthenticated, isFullyReady } = useAuth();
   if (isLoading) return <LoginLoadingScreen />;
@@ -119,10 +129,12 @@ function LoginRoute() {
   return <LoginPage />;
 }
 
+// Ce wrapper applique la protection par role.
 function ProtectedRoute({ role, element }: { role: UserRole; element: ReactElement }) {
   return <RequireRole role={role}>{element}</RequireRole>;
 }
 
+// Ce routeur central declare toutes les routes publiques et privees.
 export function AppRouter() {
   const { isLoading } = useAuth();
   const suspenseFallback = isLoading ? <AuthInitializingScreen /> : <FullScreenLoader size={0.8} />;

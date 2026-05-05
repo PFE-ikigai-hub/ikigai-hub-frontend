@@ -1,4 +1,5 @@
-﻿import {
+// Ce fichier gere une partie du frontend.
+import {
 
   SkeletonBlock,
   skeletonBorderClass,

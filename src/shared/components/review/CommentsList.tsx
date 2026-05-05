@@ -1,4 +1,5 @@
-ï»¿import { useState, useEffect, useRef } from 'react';
+// Ce fichier gere une partie du frontend.
+import { useState, useEffect, useRef } from 'react';
 import { MessageCircle, Send, Trash2, Loader2, Clock, FileText, Plus } from 'lucide-react';
 import { useAuth } from '@/core/auth/AuthProvider';
 import { useI18n } from '@/core/i18n/I18nProvider';
@@ -53,8 +54,6 @@ export function CommentsList({
   const currentUserId = user ? Number(user.id) : null;
   const canCreateComment = user?.role === "CLIENT";
   const canTranslateComments = enableTranslation && user?.role !== "CLIENT";
-
-  // Fetch comments for the selected version
   useEffect(() => {
     if (!versionId) return;
     let cancelled = false;
@@ -77,8 +76,6 @@ export function CommentsList({
     fetchComments();
     return () => { cancelled = true; };
   }, [versionId]);
-
-  // Listen for avatar changes from SettingsPage
   useEffect(() => {
     const handleAvatarUpdated = () => {
       setAvatarVersion((v) => v + 1);
@@ -163,8 +160,6 @@ export function CommentsList({
       const end = textarea.selectionEnd;
       const newText = commentText.substring(0, start) + timestamp + commentText.substring(end);
       setCommentText(newText);
-      
-      // Restore cursor position after the inserted timestamp
       setTimeout(() => {
         textarea.selectionStart = textarea.selectionEnd = start + timestamp.length;
         textarea.focus();
@@ -196,7 +191,6 @@ export function CommentsList({
 
   const parseCommentWithTimestamps = (text: string): (string | { type: 'timestamp'; value: string; seconds: number } | { type: 'page'; value: string; page: number })[] => {
     const parts: (string | { type: 'timestamp'; value: string; seconds: number } | { type: 'page'; value: string; page: number })[] = [];
-    // Match [MM:SS], bare MM:SS (ex: "at 2:50 fix"), and [Page N]
     const regex = /\[(\d+):([0-5]\d)\]|\b(\d{1,2}):([0-5]\d)\b|\[Page (\d+)\]/gi;
     let lastIndex = 0;
     let match;
@@ -207,7 +201,6 @@ export function CommentsList({
       }
       
       if ((match[1] && match[2]) || (match[3] && match[4])) {
-        // Timestamp match [MM:SS] or bare MM:SS
         const minGroup = match[1] ?? match[3];
         const secGroup = match[2] ?? match[4];
         if (!minGroup || !secGroup) continue;
@@ -216,7 +209,6 @@ export function CommentsList({
         const totalSeconds = minutes * 60 + seconds;
         parts.push({ type: 'timestamp', value: match[0], seconds: totalSeconds });
       } else if (match[5]) {
-        // Page reference match [Page N]
         const page = parseInt(match[5], 10);
         parts.push({ type: 'page', value: match[0], page });
       }
@@ -231,11 +223,9 @@ export function CommentsList({
   };
 
   const handleTimestampClick = (seconds: number) => {
-    // Always call the callback to update parent state
     if (onTimestampClick) {
       onTimestampClick(seconds);
     }
-    // Navigate the media element if available
     const media = mediaRef?.current;
     if (media) {
       media.currentTime = seconds;
@@ -300,9 +290,6 @@ export function CommentsList({
       </div>
     );
   }
-
-  // Get current user's avatar from localStorage for real-time updates
-  // avatarVersion is used to force re-render when avatar changes
   const getCurrentUserAvatarUrl = () => {
     if (!user?.id) return null;
     try {
@@ -311,20 +298,17 @@ export function CommentsList({
       const stored = localStorage.getItem(avatarKey);
       const timestamp = localStorage.getItem(timestampKey);
       if (stored) {
-        // Don't append timestamp to data URLs (breaks them)
         if (stored.startsWith('data:')) {
           return stored;
         }
         return `${stored}?t=${timestamp || Date.now()}`;
       }
     } catch {
-      // ignore
     }
     return user?.photoUrl || null;
   };
 
   const getAvatarUrl = (comment: ApiCommentaire) => {
-    // If this is the current user's comment, use localStorage avatar for real-time updates
     if (user && comment.utilisateurId.toString() === user.id) {
       const localAvatar = getCurrentUserAvatarUrl();
       if (localAvatar) return localAvatar;
@@ -333,13 +317,11 @@ export function CommentsList({
     if (comment.utilisateurPhotoUrl) {
       return comment.utilisateurPhotoUrl;
     }
-    // Use default avatar - no photo available
     return null;
   };
 
   const renderAvatar = (comment: ApiCommentaire, size: 'sm' | 'md' = 'sm') => {
     const avatarUrl = getAvatarUrl(comment);
-    // Bigger sizes for better visibility
     const sizeClasses = size === 'sm' ? 'w-11 h-11' : 'w-12 h-12';
     if (avatarUrl) {
       return (
@@ -354,16 +336,10 @@ export function CommentsList({
         />
       );
     }
-    
-    // Extract initials
     const prenomInitiale = comment.utilisateurPrenom ? comment.utilisateurPrenom.charAt(0).toUpperCase() : '';
     const nomInitiale = comment.utilisateurNom ? comment.utilisateurNom.charAt(0).toUpperCase() : '';
     const initials = (prenomInitiale + nomInitiale) || '?';
-    
-    // Choose text size based on size flag
     const textClass = size === 'sm' ? 'text-sm' : 'text-base';
-
-    // Default avatar with initials and grey background matching the rest of the app
     return (
       <div 
         className={`${sizeClasses} rounded-full flex items-center justify-center bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 shrink-0 shadow-sm border border-stone-200 dark:border-stone-700`} 
@@ -498,13 +474,12 @@ export function CommentsList({
                 autoFocus
                 disabled={submitting}
               />
-              {/* Timestamp/page buttons only for clients who can add comments */}
               {canCreateComment && supportsTimestamps && (
                 <button
                   onClick={insertTimestamp}
                   type="button"
                   className="absolute bottom-2 right-2 p-1.5 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-md transition-colors"
-                  title="InsÃ©rer le timestamp actuel"
+                  title="Insérer le timestamp actuel"
                 >
                   <Clock className="w-4 h-4 text-stone-600 dark:text-stone-400" />
                 </button>
@@ -514,7 +489,7 @@ export function CommentsList({
                   onClick={insertPageRef}
                   type="button"
                   className="absolute bottom-2 right-2 p-1.5 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-md transition-colors"
-                  title={`InsÃ©rer la page actuelle (${currentPage || 1})`}
+                  title={`Insérer la page actuelle (${currentPage || 1})`}
                 >
                   <FileText className="w-4 h-4 text-stone-600 dark:text-stone-400" />
                 </button>
@@ -549,8 +524,6 @@ export function CommentsList({
           </div>
         )}
       </div>
-
-      {/* Floating Add Comment Button - Fixed at bottom right */}
       {canCreateComment && !isAdding && (
         <div
           className={`z-[150] ${

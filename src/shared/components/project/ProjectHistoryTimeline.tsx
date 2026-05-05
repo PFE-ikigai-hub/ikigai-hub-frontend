@@ -1,4 +1,5 @@
-﻿import { Clock } from "lucide-react";
+// Ce fichier gere une partie du frontend.
+import { Clock } from "lucide-react";
 import type { ApiProjectHistoryEvent } from "@/types/index";
 
 

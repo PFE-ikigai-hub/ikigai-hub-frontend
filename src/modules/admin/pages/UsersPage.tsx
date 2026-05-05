@@ -1,4 +1,5 @@
-﻿import { useEffect, useRef, useState } from "react";
+// Ce fichier gere une partie du frontend.
+import { useEffect, useRef, useState } from "react";
 import {
 
   AlertCircle,
@@ -49,7 +50,6 @@ type NewUserData = {
   role: UserRole;
   company: string;
   status: "actif" | "inactif";
-  password: string;
 };
 
 function getApiErrorMessage(err: any, fallback: string) {
@@ -57,6 +57,7 @@ function getApiErrorMessage(err: any, fallback: string) {
   return typeof message === "string" ? message : fallback;
 }
 
+// Ce modal gere la creation rapide d'un nouvel utilisateur.
 function AddUserModal({
   isOpen,
   onClose,
@@ -74,18 +75,18 @@ function AddUserModal({
     lastName: "",
     role: "EMPLOYE" as UserRole,
     company: "",
-    password: "",
   });
 
   const [errors, setErrors] = useState<Partial<typeof formData>>({});
 
+  // Cette validation verifie les champs minimum avant envoi.
   const validate = () => {
     const next: Partial<typeof formData> = {};
     if (!formData.email) next.email = t("error_email_required");
-    if (!formData.password) next.password = t("account.password");
     return next;
   };
 
+  // Cette action construit le payload puis ferme le modal.
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate();
@@ -104,12 +105,12 @@ function AddUserModal({
       lastName: "",
       role: "EMPLOYE",
       company: "",
-      password: "",
     });
     setErrors({});
     onClose();
   };
 
+  // Cette action reinitialise le formulaire a la fermeture.
   const handleClose = () => {
     setFormData({
       email: "",
@@ -117,7 +118,6 @@ function AddUserModal({
       lastName: "",
       role: "EMPLOYE",
       company: "",
-      password: "",
     });
     setErrors({});
     onClose();
@@ -250,28 +250,6 @@ function AddUserModal({
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-stone-500 dark:text-stone-400 mb-1.5 uppercase tracking-wide">
-                    {t("account.password")}
-                  </label>
-                  <input
-                    type="password"
-                    required
-                    value={formData.password}
-                    onChange={(e) => {
-                      setFormData({ ...formData, password: e.target.value });
-                      if (errors.password) setErrors({ ...errors, password: undefined });
-                    }}
-                    placeholder={t("account.password")}
-                    className={`hide-password-reveal w-full px-4 py-3 border rounded-xl bg-stone-50 dark:bg-stone-900/50 text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-600 focus:outline-none focus:ring-2 focus:ring-stone-900/20 dark:focus:ring-stone-100/20 focus:bg-white dark:focus:bg-stone-900 transition-all text-sm ${
-                      errors.password ? "border-red-300 dark:border-red-800" : "border-stone-200 dark:border-stone-700"
-                    }`}
-                  />
-                  {errors.password && (
-                    <p className="text-xs text-red-500 dark:text-red-400 mt-1">{errors.password}</p>
-                  )}
-                </div>
-
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
                   <button
                     type="button"
@@ -298,6 +276,7 @@ function AddUserModal({
   );
 }
 
+// Ce modal affiche les details d'un utilisateur et ses actions de gestion.
 function UserDetailsModal({
   isOpen,
   onClose,
@@ -326,6 +305,7 @@ function UserDetailsModal({
   const [hasChanges, setHasChanges] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  // Cet effet recharge les donnees du formulaire quand on change d'utilisateur.
   useEffect(() => {
     if (user) {
       setFormData({
@@ -736,6 +716,7 @@ export function AdminUsersPage() {
   const [error, setError] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+  // Cet effet charge la liste des utilisateurs selon la recherche et les filtres.
   useEffect(() => {
     if (!isFullyReady || !user) return;
     const cacheKey = `users-p${currentPage}-q${searchQuery}-r${filters.role}-s${filters.status}`;
@@ -791,11 +772,12 @@ export function AdminUsersPage() {
     return <PageLoader minHeightClassName="min-h-[400px]" variant="table" />;
   }
 
+  // Cette action cree un utilisateur via l'API puis rafraichit la liste.
   const handleAddUser = async (userData: NewUserData) => {
     try {
       await authApi.register({
         email: userData.email,
-        motDePasse: userData.password,
+        motDePasse: "Temp1234!",
         nom: userData.lastName,
         prenom: userData.firstName,
         role: userData.role,
@@ -808,11 +790,13 @@ export function AdminUsersPage() {
     }
   };
 
+  // Cette action met a jour localement les donnees d'un utilisateur modifie.
   const handleUpdateUser = (userId: string, userData: Partial<ManagedUser>) => {
     setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, ...userData } : u)));
     Object.keys(userDataCache.current).forEach((k) => delete userDataCache.current[k]);
   };
 
+  // Cette action active ou desactive un utilisateur puis recharge la liste.
   const handleToggleStatus = async (userId: string, nextStatus: "actif" | "inactif") => {
     try {
       const numericId = Number(userId);
@@ -827,6 +811,7 @@ export function AdminUsersPage() {
     }
   };
 
+  // Cette action supprime definitivement un utilisateur apres confirmation.
   const handleDeleteUserPermanently = async (adminPassword?: string) => {
     if (!deleteUserState.user || !adminPassword) return;
     await usersApi.deletePermanent(Number(deleteUserState.user.id), adminPassword);

@@ -1,4 +1,5 @@
-﻿import { User } from "lucide-react";
+// Ce fichier gere une partie du frontend.
+import { User } from "lucide-react";
 
 
 interface DefaultAvatarProps {

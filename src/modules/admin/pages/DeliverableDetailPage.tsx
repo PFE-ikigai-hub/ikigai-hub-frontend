@@ -1,4 +1,5 @@
-﻿import { useEffect, useMemo, useState } from "react";
+// Ce fichier gere une partie du frontend.
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Check, History, Trash2 } from "lucide-react";
 import { deliverablesApi, versionsApi } from "@/core/api/client";

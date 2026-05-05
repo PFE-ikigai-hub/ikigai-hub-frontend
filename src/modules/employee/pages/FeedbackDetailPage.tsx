@@ -1,4 +1,5 @@
-ï»¿import { useState, useRef, useEffect, useCallback, lazy, Suspense } from 'react';
+// Ce fichier gere une partie du frontend.
+import { useState, useRef, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, ZoomIn, ZoomOut, Download, RefreshCw, File, History, Trash2, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -15,9 +16,6 @@ import { SecureDeleteModal } from '@/modules/admin/components/SecureDeleteModal'
 import { useToast } from '@/shared/components/ui/toast';
 import { isLikelyPdfBlob, shouldReadTextPreview } from '@/shared/utils/preview';
 import { useSmartBackNavigation } from '@/shared/hooks/useSmartBackNavigation';
-
-
-// Lazy load PdfViewer to reduce initial bundle size
 const PdfViewer = lazy(() => import('@/shared/components/review/PdfViewer'));
 import type { ApiDeliverable, ApiVersion } from '@/types/index';
 import { normalizeVersions } from '@/shared/utils/versions';
@@ -26,9 +24,9 @@ function shouldHideEmployeeProjectAccessMessage(message: unknown) {
   if (typeof message !== "string") return false;
   const normalized = message.toLowerCase();
   return (
-    (normalized.includes("pas autorisÃ©") || normalized.includes("not authorized")) &&
+    (normalized.includes("pas autorisé") || normalized.includes("not authorized")) &&
     normalized.includes("projet")
-  ) || normalized.includes("pas affectÃ© Ã  ce projet");
+  ) || normalized.includes("pas affecté à ce projet");
 }
 
 export function EmployeeFeedbackDetailPage() {
@@ -43,14 +41,10 @@ export function EmployeeFeedbackDetailPage() {
   const [showCommentsSidebar, setShowCommentsSidebar] = useState(false);
   const [downloadModalOpen, setDownloadModalOpen] = useState(false);
   const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
-  
-  // PDF page navigation state
   const [currentPdfPage, setCurrentPdfPage] = useState(1);
   const [isMobileViewport, setIsMobileViewport] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia("(max-width: 1023px)").matches : false
   );
-  
-  // Secure delete modal state
   const [deleteVersionModalOpen, setDeleteVersionModalOpen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null!);
@@ -66,8 +60,6 @@ export function EmployeeFeedbackDetailPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [errorNotFound, setErrorNotFound] = useState(false);
-
-  // Preview states
   const [previewBlobUrl, setPreviewBlobUrl] = useState<string | null>(null);
   const [previewMimeType, setPreviewMimeType] = useState<string>('');
   const [previewText, setPreviewText] = useState<string>('');
@@ -133,8 +125,6 @@ export function EmployeeFeedbackDetailPage() {
                 : [];
           const normalized = normalizeVersions(apiVersions);
           setVersions(normalized);
-          
-          // Respect versionId from search params if present
           const searchParams = new URLSearchParams(location.search);
           const vId = searchParams.get('versionId');
           if (vId) {
@@ -365,8 +355,6 @@ export function EmployeeFeedbackDetailPage() {
     }
 
     const type = livrable?.type || 'AUTRE';
-
-    // IMAGE
     if (type === 'IMAGE' || previewMimeType.startsWith('image/')) {
       return (
         <motion.div
@@ -396,8 +384,6 @@ export function EmployeeFeedbackDetailPage() {
         </motion.div>
       );
     }
-
-    // VIDEO
     if (type === 'VIDEO' || previewMimeType.startsWith('video/')) {
       return (
         <motion.div
@@ -417,12 +403,9 @@ export function EmployeeFeedbackDetailPage() {
           >
             {t("review.videoUnsupported")}
           </video>
-          {/* Annotations only for IMAGE */}
         </motion.div>
       );
     }
-
-    // AUDIO
     if (type === 'AUDIO' || previewMimeType.startsWith('audio/')) {
       return (
         <motion.div
@@ -450,13 +433,10 @@ export function EmployeeFeedbackDetailPage() {
             >
               {t("review.audioUnsupported")}
             </audio>
-            {/* Annotations only for IMAGE */}
           </div>
         </motion.div>
       );
     }
-
-    // PDF - with scroll-based page detection
     if (type === 'PDF' || previewMimeType === 'application/pdf') {
       return (
         <motion.div
@@ -478,8 +458,6 @@ export function EmployeeFeedbackDetailPage() {
         </motion.div>
       );
     }
-
-    // TEXTE
     if (type === 'TEXTE' || previewMimeType.startsWith('text/') || previewText) {
       return (
         <motion.div
@@ -491,12 +469,9 @@ export function EmployeeFeedbackDetailPage() {
           <pre className="text-sm text-stone-800 dark:text-stone-200 whitespace-pre-wrap font-mono leading-relaxed">
             {previewText}
           </pre>
-          {/* Annotations only for IMAGE */}
         </motion.div>
       );
     }
-
-    // AUTRE
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center p-8">
@@ -552,7 +527,6 @@ export function EmployeeFeedbackDetailPage() {
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="flex flex-col h-full overflow-hidden"
       >
-        {/* Header */}
         <header className="lg:hidden bg-white/70 dark:bg-[#0d0d0f]/70 backdrop-blur-xl border-b border-stone-200/50 dark:border-stone-800/40 px-6 py-3.5 z-20">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4 min-w-0">
@@ -621,7 +595,6 @@ export function EmployeeFeedbackDetailPage() {
         </header>
 
         <div className="flex flex-1 overflow-hidden min-h-0">
-          {/* Main preview area */}
           {shouldRenderPreviewArea && (
           <div className="flex-1 lg:w-[62%] lg:flex-none lg:order-2 min-w-0 flex flex-col overflow-hidden bg-stone-50/30 dark:bg-[#0c0c0e]">
             {livrable.type === 'IMAGE' && (
@@ -655,8 +628,6 @@ export function EmployeeFeedbackDetailPage() {
                 </button>
               </div>
             )}
-
-            {/* Canvas */}
             <div 
               ref={containerRef}
               className="flex-1 overflow-auto p-6 md:p-8 lg:p-12 relative flex items-center justify-center"
@@ -665,8 +636,6 @@ export function EmployeeFeedbackDetailPage() {
             </div>
           </div>
           )}
-
-          {/* Right Sidebar - Desktop */}
           {shouldRenderDesktopSidebar && (
           <div className="hidden lg:flex lg:order-1 w-[38%] min-w-0 flex-col bg-white/60 dark:bg-[#0d0d0f]/60 backdrop-blur-xl border-r border-stone-200/40 dark:border-stone-800/30 shadow-xl shadow-stone-100/20 dark:shadow-none z-10 overflow-hidden">
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
@@ -731,8 +700,6 @@ export function EmployeeFeedbackDetailPage() {
                     )}
                   </div>
                 )}
-
-                {/* Note interne editing */}
                 <div className="max-w-[520px]">
                   {editingNoteInterne ? (
                     <div className="space-y-2">
@@ -817,8 +784,6 @@ export function EmployeeFeedbackDetailPage() {
             </div>
           </div>
           )}
-
-          {/* Comments sidebar - Mobile (Overlay) */}
           <AnimatePresence>
             {shouldRenderMobileFeedback && (
               <motion.div
@@ -923,8 +888,6 @@ export function EmployeeFeedbackDetailPage() {
     </div>
   );
 }
-
-
 
 
 

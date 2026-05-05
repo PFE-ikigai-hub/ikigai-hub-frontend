@@ -1,4 +1,5 @@
-﻿import { SkeletonBlock, skeletonSurfaceClass } from "@/shared/components/skeleton/SkeletonBlock";
+// Ce fichier gere une partie du frontend.
+import { SkeletonBlock, skeletonSurfaceClass } from "@/shared/components/skeleton/SkeletonBlock";
 
 
 type ProjectDetailSkeletonProps = {

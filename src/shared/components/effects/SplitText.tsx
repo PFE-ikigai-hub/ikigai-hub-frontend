@@ -1,4 +1,5 @@
-﻿import React, { useEffect, useMemo, useRef } from "react";
+// Ce fichier gere une partie du frontend.
+import React, { useEffect, useMemo, useRef } from "react";
 import { gsap } from "gsap";
 
 

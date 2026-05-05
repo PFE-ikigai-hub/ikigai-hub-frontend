@@ -1,4 +1,5 @@
-﻿import type { ComponentType, SVGProps } from "react";
+// Ce fichier gere une partie du frontend.
+import type { ComponentType, SVGProps } from "react";
 import {
   ArchiveIcon as Archive,
   ArrowClockwiseIcon as ArrowClockwise,
@@ -60,8 +61,6 @@ export type LucideProps = SVGProps<SVGSVGElement> & {
   strokeWidth?: number | string;
 };
 export type LucideIcon = ComponentType<LucideProps>;
-
-// direct names used in the app
 export {
   Archive,
   Calendar,
@@ -89,8 +88,6 @@ export {
   X,
   XCircle,
 };
-
-// lucide -> phosphor aliases used in the app
 export { WarningCircle as AlertCircle };
 export { Warning as AlertTriangle };
 export { ArrowLeft };
@@ -122,6 +119,4 @@ export { ClockCounterClockwise as History };
 export { PaperPlaneTilt as Send };
 export { FileText as FileType };
 export { File as FileClock };
-// close enough visual mapping for pointer icon in employee feedback
 export { Circle as MousePointer };
-

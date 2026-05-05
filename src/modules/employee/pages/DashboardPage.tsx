@@ -1,3 +1,4 @@
+// Ce fichier gere une partie du frontend.
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent } from "react";
 import { affectationsApi, deliverablesApi, projectsApi, versionsApi } from "@/core/api/client";
 import { useAuth } from "@/core/auth/AuthProvider";
@@ -101,8 +102,6 @@ function matchProjectSearch(item: ProjectWithRole, searchQuery: string) {
     item.role.toLowerCase().includes(query)
   );
 }
-
-// Filtre la liste des projets affectes avec les memes regles qu'avant.
 function filterAssignedProjects(items: ProjectWithRole[], searchQuery: string, filters: Record<string, string>) {
   const statusFilter = filters.status && filters.status !== "all" ? filters.status : "";
   const { from, to } = buildDateRange(filters);
@@ -141,7 +140,6 @@ function EmployeeAssignedProjects() {
     const load = async () => {
       setLoading(true);
       try {
-        // Charge les affectations puis les projets associes.
         const affectationsPage = await affectationsApi.byEmployee(Number(user.id));
         const affectations = (affectationsPage.content ?? []) as ApiAffectation[];
         const projectIds = [...new Set(affectations.map((a) => a.projetId).filter(Boolean))];
@@ -174,7 +172,6 @@ function EmployeeAssignedProjects() {
   };
 
   const filtered = useMemo(() => {
-    // Prepare la liste affichee avec recherche + filtres.
     return filterAssignedProjects(items, searchQuery, filters);
   }, [filters.dateFrom, filters.dateTo, filters.status, items, searchQuery]);
 
@@ -346,8 +343,6 @@ export function EmployeeUploadPage() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-
-  // Quand on vient de Feedback, preselectionne projet et livrable.
   useEffect(() => {
     const state = location.state as { projectId?: number | string; deliverableId?: number | string } | null;
     if (!state?.projectId || !state?.deliverableId) return;
@@ -791,5 +786,3 @@ export function EmployeeUploadPage() {
     </div>
   );
 }
-
-

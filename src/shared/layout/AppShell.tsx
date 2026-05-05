@@ -1,4 +1,5 @@
-﻿import { Outlet, useNavigate, useLocation } from "react-router-dom";
+// Ce fichier gere une partie du frontend.
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/core/auth/AuthProvider";
 import { useI18n } from "@/core/i18n/I18nProvider";
 import { useNotifications } from "@/core/notifications/NotificationsProvider";
@@ -44,13 +45,13 @@ const menuByRole: Record<UserRole, MenuItem[]> = {
   ],
 };
 
+// Cette fonction masque la navigation sur certaines pages immersives.
 function shouldHideNavigation(pathname: string): boolean {
-  // Client review detail: sidebar is hidden in the reference dashboard.
   if (/^\/client\/review\/[^/]+$/.test(pathname)) return true;
   return false;
 }
 
-// Hook to get avatar URL with cache busting timestamp
+// Ce hook reconstruit l'URL de l'avatar avec anti-cache si necessaire.
 function useAvatarWithTimestamp(userId: string | undefined, photoUrl: string | undefined | null) {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(photoUrl || undefined);
   
@@ -65,8 +66,6 @@ function useAvatarWithTimestamp(userId: string | undefined, photoUrl: string | u
       const timestamp = localStorage.getItem(timestampKey);
       
       if (stored) {
-        // For data URLs, don't append timestamp (breaks the URL)
-        // For HTTP URLs, append timestamp for cache busting
         if (stored.startsWith('data:')) {
           setAvatarUrl(stored);
         } else {
@@ -81,15 +80,12 @@ function useAvatarWithTimestamp(userId: string | undefined, photoUrl: string | u
     } catch {
       setAvatarUrl(photoUrl || undefined);
     }
-    
-    // Listen for storage changes (when avatar is updated in another tab/component)
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === avatarKey || e.key === timestampKey) {
         try {
           const newStored = localStorage.getItem(avatarKey);
           const newTimestamp = localStorage.getItem(timestampKey);
           if (newStored) {
-            // Don't append timestamp to data URLs
             if (newStored.startsWith('data:')) {
               setAvatarUrl(newStored);
             } else {
@@ -103,14 +99,11 @@ function useAvatarWithTimestamp(userId: string | undefined, photoUrl: string | u
         }
       }
     };
-    
-    // Listen for custom avatar-updated event (same tab)
     const handleAvatarUpdated = () => {
       try {
         const newStored = localStorage.getItem(avatarKey);
         const newTimestamp = localStorage.getItem(timestampKey);
         if (newStored) {
-          // Don't append timestamp to data URLs
           if (newStored.startsWith('data:')) {
             setAvatarUrl(newStored);
           } else {
@@ -148,6 +141,7 @@ export function AppShell() {
   const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications();
   const showNotifications = user?.role !== "ADMIN";
   
+  // Cet effet ferme les panneaux ouverts quand on clique a l'exterieur.
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
@@ -168,8 +162,8 @@ export function AppShell() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isNotificationsOpen, isProfileExpanded]);
-  
-  // Get avatar with cache busting timestamp for real-time updates
+
+  // Cet avatar est recalculé avec anti-cache pour refléter les changements en direct.
   const avatarUrl = useAvatarWithTimestamp(user?.id, user?.photoUrl);
 
   const hideNavigation = shouldHideNavigation(location.pathname);
@@ -178,10 +172,12 @@ export function AppShell() {
 
   const menu = menuByRole[user.role as UserRole] || [];
 
+  // Cette action navigue vers une page du menu.
   const handleNavigate = (to: string) => {
     navigate(to);
   };
 
+  // Cette action deconnecte l'utilisateur puis le renvoie au login.
   const handleLogout = async () => {
     setIsProfileExpanded(false);
     setIsNotificationsOpen(false);
@@ -192,11 +188,11 @@ export function AppShell() {
     }
   };
 
+  // Cette action marque une notification comme lue puis ouvre sa destination.
   const handleNotificationClick = async (id: number, routePath?: string | null) => {
     try {
       await markAsRead(id);
     } catch {
-      // ignore read errors to keep navigation smooth
     }
     setIsNotificationsOpen(false);
     if (routePath) {
@@ -204,6 +200,7 @@ export function AppShell() {
     }
   };
 
+  // Cette fonction transforme une date ISO en libelle court pour l'interface.
   const formatTimeAgo = (isoDate: string) => {
     const date = new Date(isoDate);
     const now = new Date();
@@ -224,16 +221,12 @@ export function AppShell() {
 
   return (
     <div className="flex h-screen bg-white dark:bg-[#0a0a0b] transition-colors duration-300 overflow-hidden">
-      {/* Sidebar - Client dashboard reference */}
       {!hideNavigation && (
       <aside className="w-20 h-full bg-[#f3f4f6] dark:bg-[#0d0d0f] border-r border-stone-200/70 dark:border-stone-800/50 hidden md:flex flex-col transition-all z-30 shrink-0">
         <div className="flex flex-col h-full px-4 py-6">
-          {/* Logo */}
           <div className="flex items-center justify-center mb-2">
             <img src="/IH.png" alt="Logo" className="w-11 h-11 object-contain bg-transparent select-none" />
           </div>
-
-          {/* Main Navigation */}
           <div className="flex-1 flex flex-col pt-0">
 
             <nav className="space-y-1">
@@ -267,7 +260,6 @@ export function AppShell() {
                             : "text-stone-500 dark:text-stone-400 group-hover:text-stone-800 dark:group-hover:text-stone-200"
                         }`}
                       />
-                      {/* Tooltip on Hover */}
                       <div
                         className={`absolute px-2 py-1 bg-black dark:bg-white text-white dark:text-black text-[10px] font-semibold rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-lg z-[10001] pointer-events-none ring-1 ring-black dark:ring-white uppercase tracking-wide ${
                           isArabic
@@ -293,8 +285,6 @@ export function AppShell() {
             <div className="mt-auto">
             </div>
           </div>
-
-          {/* User Profile â€” Fixed at Bottom */}
           <div className="pt-4 mt-4">
             {showNotifications && (
             <div className="relative mb-2" ref={notificationsRef}>
@@ -358,7 +348,6 @@ export function AppShell() {
                                 try {
                                   await deleteNotification(item.id);
                                 } catch {
-                                  // ignore
                                 }
                               }}
                               className="inline-flex items-center justify-center w-5 h-5 rounded-md text-stone-400 hover:text-red-500 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
@@ -444,7 +433,6 @@ export function AppShell() {
                     <DefaultAvatar name={`${user.firstName} ${user.lastName}`} size="md" className="w-full h-full" iconClassName="w-6 h-6" />
                   )}
                 </div>
-                {/* Name hidden in collapsed state */}
                 <div className="hidden">
                   <p className="text-[13px] font-semibold text-stone-800 dark:text-white truncate">
                     {user.firstName} {user.lastName}
@@ -457,8 +445,6 @@ export function AppShell() {
         </div>
       </aside>
       )}
-
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         <main className="flex-1 overflow-auto relative scroll-smooth">
           <Outlet />

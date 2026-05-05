@@ -1,3 +1,4 @@
+// Ce fichier gere une partie du frontend.
 import { useState, useEffect, useRef } from "react";
 import { ListIcon as List, XIcon as X, SignOutIcon as SignOut, GearSixIcon as GearSix, BellIcon as Bell } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "motion/react";
@@ -32,15 +33,12 @@ interface MobileSidebarProps {
 }
 
 function buildAvatarUrl(storedUrl: string | null, timestamp: string | null, fallback?: string | null) {
-  // Construit l'URL avatar avec anti-cache si necessaire.
   if (storedUrl) {
     if (storedUrl.startsWith("data:")) return storedUrl;
     return `${storedUrl}?t=${timestamp || Date.now()}`;
   }
   return fallback || undefined;
 }
-
-// Hook to get avatar URL with cache busting timestamp
 function useAvatarWithTimestamp(userId: string | undefined, photoUrl: string | undefined | null) {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(photoUrl || undefined);
 
@@ -69,8 +67,6 @@ function useAvatarWithTimestamp(userId: string | undefined, photoUrl: string | u
         }
       }
     };
-
-    // Listen for custom avatar-updated event (same tab)
     const handleAvatarUpdated = () => {
       try {
         const newStored = localStorage.getItem(avatarKey);
@@ -124,8 +120,6 @@ export function MobileSidebar({
   const notificationsRef = useRef<HTMLDivElement>(null);
   const notificationsButtonRef = useRef<HTMLDivElement>(null);
   const canUseNotifications = Boolean(onNotificationClick);
-
-  // Close notifications when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -173,8 +167,6 @@ export function MobileSidebar({
       onDeleteNotification(notifId);
     }
   };
-
-  // Get avatar with cache busting timestamp
   const avatarUrl = useAvatarWithTimestamp(user?.id, user?.photoUrl);
 
   return (
@@ -344,8 +336,6 @@ export function MobileSidebar({
                     );
                   })}
                 </nav>
-
-                {/* Settings */}
                 <div className="mt-4 pt-4 border-t border-stone-100 dark:border-stone-800/50">
                   <button
                     onClick={handleSettings}
@@ -361,8 +351,6 @@ export function MobileSidebar({
                   </button>
                 </div>
               </div>
-
-              {/* Profile Section at Bottom */}
               <div className="mt-auto p-4 border-t border-stone-100 dark:border-stone-800/50">
                 <div className="bg-stone-100/60 dark:bg-stone-800/30 rounded-xl p-3 border border-stone-200/60 dark:border-stone-700/40">
                   <div className={`flex items-center gap-3 mb-3 ${isArabic ? "flex-row-reverse text-right" : ""}`}>

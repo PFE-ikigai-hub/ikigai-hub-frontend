@@ -1,4 +1,5 @@
-﻿import { useEffect } from "react";
+// Ce fichier gere une partie du frontend.
+import { useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/core/auth/AuthProvider";
 import { projectsApi } from "@/core/api/client";

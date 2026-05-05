@@ -1,4 +1,5 @@
-﻿import {
+// Ce fichier gere une partie du frontend.
+import {
 
   PulseIcon as Pulse,
   ArchiveIcon as Archive,
@@ -16,7 +17,6 @@ import type { ElementType } from "react";
 
 export function getStatusIcon(status: string): ElementType {
   switch (status) {
-    // Project
     case "EN_COURS":
       return Pulse;
     case "TERMINE":
@@ -27,20 +27,14 @@ export function getStatusIcon(status: string): ElementType {
       return PauseCircle;
     case "PLANIFIE":
       return CalendarBlank;
-
-    // Deliverable
     case "EN_REVUE":
       return Eye;
     case "VALIDE":
       return SealCheck;
-
-    // Version
     case "REVIEWED":
       return ChatText;
     case "VALIDATED":
       return SealCheck;
-
-    // User activation (admin)
     case "actif":
     case "ACTIVE":
       return UserCheck;

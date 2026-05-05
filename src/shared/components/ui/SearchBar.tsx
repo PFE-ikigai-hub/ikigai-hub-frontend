@@ -1,4 +1,5 @@
-﻿import { useState } from 'react';
+// Ce fichier gere une partie du frontend.
+import { useState } from 'react';
 import { Search, X, Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useI18n } from '@/core/i18n/I18nProvider';
@@ -223,4 +224,3 @@ export function SearchBar({ filterType, onSearch, endDateLabelKey, showStatusFil
     </div>
   );
 }
-

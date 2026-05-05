@@ -1,4 +1,5 @@
-﻿export { SkeletonBlock } from "./SkeletonBlock";
+// Ce fichier gere une partie du frontend.
+export { SkeletonBlock } from "./SkeletonBlock";
 export { CardSkeleton } from "./CardSkeleton";
 export { TableSkeleton } from "./TableSkeleton";
 export { DashboardSkeleton } from "./DashboardSkeleton";

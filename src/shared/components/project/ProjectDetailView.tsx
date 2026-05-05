@@ -1,4 +1,5 @@
-ï»¿import { useEffect, useMemo, useState } from "react";
+// Ce fichier gere une partie du frontend.
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeftIcon as ArrowLeft, CalendarBlankIcon as CalendarBlank, PencilIcon as Pencil, TrashIcon as Trash, UsersIcon as Users, UsersThreeIcon as UsersThree, ArchiveIcon as Archive, ArrowClockwiseIcon as ArrowClockwise, CaretLeftIcon as CaretLeft, CaretRightIcon as CaretRight } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
@@ -64,9 +65,9 @@ function shouldHideEmployeeProjectAccessMessage(role: string | undefined, messag
   if (role !== "EMPLOYE" || typeof message !== "string") return false;
   const normalized = message.toLowerCase();
   return (
-    (normalized.includes("pas autorisÃ©") || normalized.includes("not authorized")) &&
+    (normalized.includes("pas autorisé") || normalized.includes("not authorized")) &&
     normalized.includes("projet")
-  ) || normalized.includes("pas affectÃ© Ã  ce projet");
+  ) || normalized.includes("pas affecté à ce projet");
 }
 
 function EditProjectModal({
@@ -347,7 +348,6 @@ function AssignEmployeeModal({
         setIsLoading(true);
         const resp = await usersApi.list({ role: "EMPLOYE", actif: true, size: 500 });
         setEmployees((resp.content ?? []).map((u: ApiUser) => {
-          // Get avatar from localStorage
           let avatar: string | undefined;
           try {
             const saved = localStorage.getItem(`ikigai-avatar-${u.id}`);
@@ -726,8 +726,6 @@ export function ProjectDetailView({
     isOpen: false,
     project: null,
   });
-
-  // Secure delete modal state
   const [deleteDeliverableState, setDeleteDeliverableState] = useState<{ isOpen: boolean; deliverable: EnrichedDeliverable | null }>({
     isOpen: false,
     deliverable: null,
@@ -755,15 +753,11 @@ export function ProjectDetailView({
 
         const deliverablesList = d.content ?? [];
         let versionsByDeliverableId = new Map<number, ApiVersion[]>();
-
-        // First, try to use versions already included in deliverables (from API response)
         for (const item of deliverablesList) {
           if (item.versions && item.versions.length > 0) {
             versionsByDeliverableId.set(item.id, item.versions);
           }
         }
-
-        // If no versions were included, try API call (will likely 404 based on logs)
         const missingVersionIds = deliverablesList
           .filter((item) => !versionsByDeliverableId.has(item.id))
           .map((item) => item.id);
@@ -777,7 +771,6 @@ export function ProjectDetailView({
               versionsByDeliverableId.set(v.livrableId, existing);
             }
           } catch (e: any) {
-            // Fallback: try to fetch versions one by one
             for (const item of deliverablesList) {
               if (!versionsByDeliverableId.has(item.id)) {
                 try {
@@ -786,7 +779,6 @@ export function ProjectDetailView({
                     versionsByDeliverableId.set(item.id, versionPage.content);
                   }
                 } catch {
-                  // ignore single-deliverable version lookup errors
                 }
               }
             }
@@ -879,7 +871,6 @@ export function ProjectDetailView({
 
   const employees = useMemo(() => {
     return affectations.map((a) => {
-      // Get avatar from localStorage
       let avatar: string | undefined;
       try {
         const saved = localStorage.getItem(`ikigai-avatar-${a.employeId}`);
@@ -930,7 +921,7 @@ export function ProjectDetailView({
 
   const handleArchiveProject = async (p: ApiProject) => {
     if (p.statut !== "TERMINE") {
-      toast.error("Archivage autorisÃ© uniquement pour les projets TERMINÃ‰S.");
+      toast.error("Archivage autorisé uniquement pour les projets TERMINÉS.");
       return;
     }
     setArchiveProjectState({ isOpen: true, project: p });
@@ -1459,12 +1450,12 @@ export function ProjectDetailView({
       <SecureDeleteModal
         isOpen={archiveProjectState.isOpen}
         onClose={() => setArchiveProjectState({ isOpen: false, project: null })}
-        title={`${t("archive")} â€¢ ${archiveProjectState.project?.nom ?? ""}`}
-        description="Double vÃ©rification + mot de passe administrateur requis."
+        title={`${t("archive")} • ${archiveProjectState.project?.nom ?? ""}`}
+        description="Double vérification + mot de passe administrateur requis."
         strongMode={true}
         confirmLabel={t("archive")}
         confirmButtonClassName="bg-stone-800 text-white hover:bg-stone-900 dark:bg-stone-700 dark:hover:bg-stone-600"
-        checkTextA="Je confirme que ce projet est terminÃ©."
+        checkTextA="Je confirme que ce projet est terminé."
         checkTextB="Je comprends que l'archivage limite les modifications."
         onConfirm={handleArchiveProjectConfirm}
       />
@@ -1493,4 +1484,3 @@ export function ProjectDetailView({
     </div>
   );
 }
-

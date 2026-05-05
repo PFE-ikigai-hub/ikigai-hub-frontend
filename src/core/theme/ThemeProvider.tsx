@@ -1,4 +1,5 @@
-﻿import { createContext, useCallback, useContext, useEffect, useState } from "react";
+// Ce fichier gere une partie du frontend.
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import type { Theme, ThemeContextType } from "@/types/index";
 
 
@@ -13,8 +14,6 @@ function getInitialTheme(): Theme {
   if (stored && (stored === "light" || stored === "dark")) {
     return stored;
   }
-  
-  // Check system preference
   if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
     return "dark";
   }
@@ -44,8 +43,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const toggleTheme = useCallback(() => {
     setThemeState((prev) => (prev === "light" ? "dark" : "light"));
   }, []);
-
-  // Prevent flash during SSR/hydration
   if (!mounted) {
     return <>{children}</>;
   }

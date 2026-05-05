@@ -1,4 +1,5 @@
-﻿import { useEffect, useState, useCallback, useMemo } from "react";
+// Ce fichier gere une partie du frontend.
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { deliverablesApi, projectsApi, versionsApi } from "@/core/api/client";
 import { useI18n } from "@/core/i18n/I18nProvider";
@@ -56,8 +57,6 @@ function getLatestVersion(versions: ApiVersion[]): ApiVersion | undefined {
   if (!versions.length) return undefined;
   return [...versions].sort((a, b) => new Date(b.dateUpload).getTime() - new Date(a.dateUpload).getTime())[0];
 }
-
-// Lit le layout sauvegarde pour garder la preference utilisateur.
 function getInitialLayout(): "grid" | "list" {
   if (typeof window !== "undefined") {
     const saved = localStorage.getItem(LAYOUT_STORAGE_KEY);
@@ -65,23 +64,17 @@ function getInitialLayout(): "grid" | "list" {
   }
   return "grid";
 }
-
-// Sauvegarde le layout choisi entre les sessions.
 function saveLayout(layout: "grid" | "list") {
   if (typeof window !== "undefined") {
     localStorage.setItem(LAYOUT_STORAGE_KEY, layout);
   }
 }
-
-// Construit les parametres API selon la vue active.
 function buildDeliverableParams(viewType: ViewType): Record<string, string | number> {
   const params: Record<string, string | number> = { size: 100 };
   if (viewType === "en-revue") params.statut = "EN_REVUE";
   if (viewType === "valides") params.statut = "VALIDE";
   return params;
 }
-
-// Regroupe les versions par identifiant de livrable.
 function groupVersionsByDeliverable(versions: ApiVersion[]): Map<number, ApiVersion[]> {
   const versionsByDeliverableId = new Map<number, ApiVersion[]>();
   for (const version of versions) {
@@ -129,8 +122,6 @@ function getCardStatus(latestVersion?: ApiVersion): "EN_REVUE" | "VALIDE" {
 function getVersionLabel(item: ApiDeliverable, normalizedVersions: ApiVersion[], latestVersion?: ApiVersion): string {
   return latestVersion?.numero?.trim?.() || item.latestVersionNumero?.trim?.() || (normalizedVersions.length ? `V${normalizedVersions.length}` : "");
 }
-
-// Enrichit la reponse API pour simplifier le rendu de la carte.
 function enrichDeliverable(
   item: ApiDeliverable,
   versionsByDeliverableId: Map<number, ApiVersion[]>,
@@ -187,8 +178,6 @@ function matchesDateFilter(item: EnrichedDeliverable, filters: Record<string, st
 
   return true;
 }
-
-// Applique exactement les memes regles de filtrage qu'avant.
 function filterDeliverables(items: EnrichedDeliverable[], viewType: ViewType, query: string, filters: Record<string, string>) {
   return items.filter((item) => {
     if (!matchesViewType(item, viewType)) return false;
@@ -336,7 +325,6 @@ function useDeliverablesData(viewType: ViewType) {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      // Charge les donnees principales de la page.
       const [deliverablesRes, projectsRes] = await Promise.all([
         deliverablesApi.list(buildDeliverableParams(viewType)),
         projectsApi.list({ size: 500 }),
@@ -387,7 +375,6 @@ function DeliverablesView({ viewType, titleKey }: DeliverablesViewProps) {
   }, []);
 
   const filteredItems = useMemo(() => {
-    // Filtre la liste selon la recherche et les filtres actifs.
     return filterDeliverables(items, viewType, searchQuery, filters);
   }, [items, viewType, searchQuery, filters]);
 

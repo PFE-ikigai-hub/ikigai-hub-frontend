@@ -1,4 +1,5 @@
-﻿import { clsx, type ClassValue } from "clsx";
+// Ce fichier gere une partie du frontend.
+import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 

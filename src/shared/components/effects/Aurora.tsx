@@ -1,4 +1,5 @@
-﻿import { useEffect, useRef } from 'react';
+// Ce fichier gere une partie du frontend.
+import { useEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
 
 

@@ -1,4 +1,5 @@
-﻿export function isTextLikeMimeType(contentType?: string | null): boolean {
+// Ce fichier gere une partie du frontend.
+export function isTextLikeMimeType(contentType?: string | null): boolean {
   if (!contentType) return false;
   const normalized = contentType.toLowerCase();
   return (

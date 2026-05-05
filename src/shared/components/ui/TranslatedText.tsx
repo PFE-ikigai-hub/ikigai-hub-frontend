@@ -1,4 +1,5 @@
-﻿import { useEffect } from "react";
+// Ce fichier gere une partie du frontend.
+import { useEffect } from "react";
 import { useTranslateText } from "@/shared/hooks/useTranslateText";
 import { useI18n } from "@/core/i18n/I18nProvider";
 

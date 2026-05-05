@@ -1,4 +1,5 @@
-﻿import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+// Ce fichier gere une partie du frontend.
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Client, type IMessage } from "@stomp/stompjs";
 import { getApiBaseUrl, notificationsApi } from "@/core/api/client";
 import { useAuth } from "@/core/auth/AuthProvider";
@@ -104,7 +105,6 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
             const payload = JSON.parse(message.body) as ApiNotification;
             handleIncomingNotification(payload);
           } catch {
-            // ignore malformed payload
           }
         });
       },

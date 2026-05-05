@@ -1,4 +1,5 @@
-﻿import { useRef, useCallback, useState, useEffect, type ReactNode } from 'react';
+// Ce fichier gere une partie du frontend.
+import { useRef, useCallback, useState, useEffect, type ReactNode } from 'react';
 
 
 interface BorderGlowProps {
@@ -176,7 +177,6 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
         boxShadow: 'rgba(0,0,0,0.1) 0 1px 2px, rgba(0,0,0,0.1) 0 2px 4px, rgba(0,0,0,0.1) 0 4px 8px, rgba(0,0,0,0.1) 0 8px 16px, rgba(0,0,0,0.1) 0 16px 32px, rgba(0,0,0,0.1) 0 32px 64px',
       }}
     >
-      {/* mesh gradient border */}
       <div
         className="absolute inset-0 rounded-[inherit] -z-[1]"
         style={{
@@ -192,8 +192,6 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
           transition: isVisible ? 'opacity 0.25s ease-out' : 'opacity 0.75s ease-in-out',
         }}
       />
-
-      {/* optional mesh fill near edges; disabled by default for border-only effect */}
       {fillOpacity > 0 && (
         <div
           className="absolute inset-0 rounded-[inherit] -z-[1]"
@@ -226,8 +224,6 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
           } as React.CSSProperties}
         />
       )}
-
-      {/* outer glow */}
       <span
         className="absolute pointer-events-none z-[1] rounded-[inherit]"
         style={{

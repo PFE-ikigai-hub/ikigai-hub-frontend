@@ -1,4 +1,5 @@
-﻿import { useCallback, useRef, useState } from "react";
+// Ce fichier gere une partie du frontend.
+import { useCallback, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
 
@@ -103,10 +104,13 @@ export function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useI18n();
 
+  // Cet onglet controle la section visible dans la page des parametres.
   const [activeTab, setActiveTab] = useState<TabId>("profile");
 
   const avatarKey = user?.id ? `ikigai-avatar-${user.id}` : "ikigai-avatar";
   const timestampKey = user?.id ? `ikigai-avatar-ts-${user.id}` : "ikigai-avatar-ts";
+
+  // Cette lecture charge l'avatar local s'il existe deja.
   const initialAvatar = (() => {
     try {
       const stored = localStorage.getItem(avatarKey);
@@ -131,6 +135,7 @@ export function SettingsPage() {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Cette fonction valide puis convertit l'image choisie pour l'avatar.
   const handleAvatarFile = (file: File) => {
     setProfileError(null);
 
@@ -156,12 +161,10 @@ export function SettingsPage() {
       try {
         localStorage.setItem(avatarKey, base64);
         localStorage.setItem(timestampKey, Date.now().toString());
-        // Dispatch event to notify other components after localStorage is written
         setTimeout(() => {
           window.dispatchEvent(new Event('avatar-updated'));
         }, 0);
       } catch {
-        // ignore
       }
     };
     reader.readAsDataURL(file);
@@ -172,11 +175,13 @@ export function SettingsPage() {
   const [securityError, setSecurityError] = useState("");
   const [securitySuccess, setSecuritySuccess] = useState(false);
 
+  // Cette fonction affiche un message de succes pendant quelques secondes.
   const showSuccessFor = (setter: (v: boolean) => void) => {
     setter(true);
     setTimeout(() => setter(false), 3000);
   };
 
+  // Cette action enregistre les informations du profil dans le backend.
   const handleProfileSave = async () => {
     setProfileError(null);
     try {
@@ -192,6 +197,7 @@ export function SettingsPage() {
     }
   };
 
+  // Cette action annule les changements du profil sans toucher a l'avatar.
   const handleProfileCancel = () => {
     setProfileData({
       firstName: user?.firstName ?? "",
@@ -203,6 +209,7 @@ export function SettingsPage() {
     setProfileError(null);
   };
 
+  // Cette action verifie localement le changement de mot de passe.
   const handlePasswordSave = () => {
     setSecurityError("");
     if (!securityData.current || !securityData.newPass || !securityData.confirm) {
@@ -213,7 +220,6 @@ export function SettingsPage() {
       setSecurityError("Les mots de passe ne correspondent pas");
       return;
     }
-    // Endpoint password change is not wired in the original UI either.
     setSecurityData({ current: "", newPass: "", confirm: "" });
     showSuccessFor(setSecuritySuccess);
   };
@@ -221,7 +227,7 @@ export function SettingsPage() {
   const langToLabel: Record<"FR" | "EN" | "AR", { flag: string; label: string }> = {
     FR: { flag: "", label: "Francais" },
     EN: { flag: "", label: "English" },
-    AR: { flag: "", label: "العربية" },
+    AR: { flag: "", label: "???????" },
   };
 
   const tabs = [
@@ -230,6 +236,7 @@ export function SettingsPage() {
     { id: "preferences" as const, label: t("settings.preferences"), icon: SlidersHorizontal },
   ];
 
+  // Ces callbacks gerent le glisser-deposer de l'image de profil.
   const onDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
@@ -451,12 +458,10 @@ export function SettingsPage() {
                                   try {
                                     localStorage.removeItem(avatarKey);
                                     localStorage.removeItem(timestampKey);
-                                    // Dispatch event to notify other components after localStorage is updated
                                     setTimeout(() => {
                                       window.dispatchEvent(new Event('avatar-updated'));
                                     }, 0);
                                   } catch {
-                                    // ignore
                                   }
                                 }}
                                 className="flex items-center gap-2 px-4 py-2 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900/40 dark:text-red-400 dark:hover:bg-red-950/20 text-sm font-medium transition-colors"

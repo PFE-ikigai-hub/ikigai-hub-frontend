@@ -1,4 +1,5 @@
-﻿import React, { useState, useRef, useEffect, RefObject } from 'react';
+// Ce fichier gere une partie du frontend.
+import React, { useState, useRef, useEffect, RefObject } from 'react';
 import { Circle, Trash2, Loader2 } from 'lucide-react';
 import { useAuth } from '@/core/auth/AuthProvider';
 import { useI18n } from '@/core/i18n/I18nProvider';
@@ -138,7 +139,6 @@ export function AnnotationTool({
           },
         ]);
       } catch {
-        // keep UI stable
       } finally {
         setSaving(false);
       }
@@ -415,7 +415,7 @@ export function AnnotationTool({
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 px-4 py-2 rounded-lg text-sm shadow-lg pointer-events-none">
           <div className="flex items-center gap-2">
             <Circle className="w-4 h-4" />
-            <span>Cliquez et glissez pour créer une annotation circulaire</span>
+            <span>Cliquez et glissez pour cr�er une annotation circulaire</span>
           </div>
         </div>
       )}

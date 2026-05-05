@@ -1,4 +1,5 @@
-﻿import type { CSSProperties } from "react";
+// Ce fichier gere une partie du frontend.
+import type { CSSProperties } from "react";
 import { SkeletonBlock } from "@/shared/components/skeleton/SkeletonBlock";
 
 

@@ -1,4 +1,5 @@
-﻿import { useCallback, useEffect, useState } from "react";
+// Ce fichier gere une partie du frontend.
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { LayoutGrid, List as ListIcon, ChevronLeft, ChevronRight } from "lucide-react";
@@ -89,7 +90,6 @@ export function EmployeeFeedbackPage() {
           versionsByDeliverableId.set(v.livrableId, existing);
         }
       } catch {
-        // Ignore and continue with empty map
       }
 
       const withFeedbackResults = await Promise.allSettled(

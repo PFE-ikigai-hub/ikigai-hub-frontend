@@ -1,4 +1,5 @@
-﻿import { useState, useEffect } from "react";
+// Ce fichier gere une partie du frontend.
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import SplitText from "@/shared/components/effects/SplitText";
 import Prism from "@/shared/components/effects/Prism";
@@ -11,7 +12,7 @@ interface SplashScreenProps {
   children: React.ReactNode;
 }
 
-const SPLASH_DURATION = 1000; // 1 second splash screen
+const SPLASH_DURATION = 1000;
 
 export function SplashScreen({ isLoading, children }: SplashScreenProps) {
   const { t } = useI18n();
@@ -19,7 +20,6 @@ export function SplashScreen({ isLoading, children }: SplashScreenProps) {
   const [animationComplete, setAnimationComplete] = useState(false);
 
   useEffect(() => {
-    // Minimum time to show splash (1 second)
     const minTimer = setTimeout(() => {
       setAnimationComplete(true);
     }, SPLASH_DURATION);
@@ -30,11 +30,7 @@ export function SplashScreen({ isLoading, children }: SplashScreenProps) {
   }, []);
 
   useEffect(() => {
-    // Only hide splash when:
-    // 1. Animation is complete (1 second passed)
-    // 2. App is done loading
     if (animationComplete && !isLoading) {
-      // Small delay for smooth transition
       const hideTimer = setTimeout(() => {
         setShowSplash(false);
       }, 200);
@@ -42,8 +38,6 @@ export function SplashScreen({ isLoading, children }: SplashScreenProps) {
       return () => clearTimeout(hideTimer);
     }
   }, [animationComplete, isLoading]);
-
-  // If splash is done and app is loaded, show children
   if (!showSplash && !isLoading) {
     return <>{children}</>;
   }
@@ -58,7 +52,6 @@ export function SplashScreen({ isLoading, children }: SplashScreenProps) {
           transition={{ duration: 0.3, ease: "easeInOut" }}
           className="fixed inset-0 z-50 flex items-center justify-center bg-[#0a0a0b] overflow-hidden"
         >
-          {/* Background Prism Effect */}
           <div className="absolute inset-0 z-0">
             <Prism
               animationType="rotate"
@@ -72,8 +65,6 @@ export function SplashScreen({ isLoading, children }: SplashScreenProps) {
               glow={1}
             />
           </div>
-
-          {/* Center Content */}
           <div className="relative z-10 text-center">
             <p className="text-xs md:text-sm tracking-[0.16em] text-stone-300 uppercase mb-2">
               {t("login.welcomeTo")}
@@ -87,8 +78,6 @@ export function SplashScreen({ isLoading, children }: SplashScreenProps) {
               from={{ opacity: 0, y: 30 }}
               to={{ opacity: 1, y: 0 }}
             />
-            
-            {/* Loading indicator - shows colored spinner when animation done but app still loading */}
             {animationComplete && isLoading && (
               <motion.div
                 initial={{ opacity: 0 }}

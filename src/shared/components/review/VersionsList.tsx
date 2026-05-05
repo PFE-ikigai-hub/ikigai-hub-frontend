@@ -1,4 +1,5 @@
-﻿import { History, CheckCircle2, Clock, FileClock } from 'lucide-react';
+// Ce fichier gere une partie du frontend.
+import { History, CheckCircle2, Clock, FileClock } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useI18n } from '@/core/i18n/I18nProvider';
 import type { ApiVersion } from '@/types/index';

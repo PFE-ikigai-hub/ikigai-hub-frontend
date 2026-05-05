@@ -1,4 +1,5 @@
-﻿import * as React from "react";
+// Ce fichier gere une partie du frontend.
+import * as React from "react";
 import { cn } from "@/shared/utils/cn";
 
 

@@ -1,4 +1,5 @@
-﻿import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+// Ce fichier gere une partie du frontend.
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { CheckCircle2, CircleAlert, Info, TriangleAlert, X } from "lucide-react";
 
@@ -222,4 +223,3 @@ export function useToast() {
   if (!ctx) throw new Error("useToast must be used within ToastProvider");
   return ctx;
 }
-

@@ -1,4 +1,5 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap');
+/* Ce fichier gere les styles du frontend. */
+@import url('https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
@@ -137,7 +138,6 @@
 }
 
 @layer base {
-  * {
     @apply border-border outline-ring/50;
   }
 
@@ -147,8 +147,6 @@
     -moz-osx-font-smoothing: grayscale;
     font-family: 'Old Standard TT', Georgia, 'Times New Roman', serif;
   }
-
-  /* Scrollbar styling */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -174,9 +172,6 @@
   .dark ::-webkit-scrollbar-thumb:hover {
     background: #52525b;
   }
-
-  /* Support for Firefox */
-  * {
     scrollbar-width: thin;
     scrollbar-color: #d1d5db transparent;
   }
@@ -184,15 +179,11 @@
   .dark {
     scrollbar-color: #3f3f46 transparent;
   }
-
-  /* Force "Ikigai Hub" to always be LTR to avoid word reversal in Arabic/RTL */
   .brand-text {
     unicode-bidi: isolate;
     direction: ltr;
     display: inline-block;
   }
-
-  /* Global native selector theming */
   select {
     color-scheme: light;
     background-color: #ffffff;
@@ -218,9 +209,6 @@
   }
 }
 
-/**
- * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
- */
 @layer base {
   :where(:not(:has([class*=' text-']), :not(:has([class^='text-'])))) {
     h1 {
@@ -318,8 +306,6 @@ html {
       transparent 100%
     );
   }
-
-  /* Keep only custom password visibility toggle (hide native browser reveal icons) */
   .hide-password-reveal::-ms-reveal,
   .hide-password-reveal::-ms-clear {
     display: none;

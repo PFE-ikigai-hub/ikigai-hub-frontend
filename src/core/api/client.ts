@@ -1,4 +1,5 @@
-﻿import axios from "axios";
+// Ce fichier gere une partie du frontend.
+import axios from "axios";
 import type {
 
   ApiAffectation,
@@ -20,18 +21,18 @@ import type {
 } from "@/types/index";
 
 const ALL_ROLES: UserRole[] = ["ADMIN", "CLIENT", "EMPLOYE"];
-
 const API_BASE_URL_STORAGE_KEY = "ikigai:apiBaseUrl";
 
+// Cette fonction nettoie l'URL de base avant usage.
 function normalizeApiBaseUrl(url: string): string {
   return url.trim().replace(/\/+$/, "");
 }
 
+// Cette fonction lit l'URL API sauvegardee dans le navigateur.
 function readStoredApiBaseUrl(): string | null {
   try {
     const raw = window.localStorage.getItem(API_BASE_URL_STORAGE_KEY);
     if (!raw) return null;
-    // Very small validation: must be http(s) URL.
     if (!/^https?:\/\//i.test(raw)) return null;
     return normalizeApiBaseUrl(raw);
   } catch {
@@ -39,6 +40,7 @@ function readStoredApiBaseUrl(): string | null {
   }
 }
 
+// Cette fonction enregistre ou efface l'URL API personnalisee.
 function writeStoredApiBaseUrl(url: string | null) {
   try {
     if (!url) {
@@ -47,21 +49,23 @@ function writeStoredApiBaseUrl(url: string | null) {
     }
     window.localStorage.setItem(API_BASE_URL_STORAGE_KEY, normalizeApiBaseUrl(url));
   } catch {
-    // ignore
   }
 }
 
+// Cette valeur choisit l'URL API depuis l'environnement ou le stockage local.
 const API_BASE_URL =
   normalizeApiBaseUrl((import.meta as ImportMeta & { env: { VITE_API_URL?: string } }).env.VITE_API_URL || "") ||
   readStoredApiBaseUrl() ||
   "";
 
+// Cette instance Axios centralise la configuration HTTP commune.
 export const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
   timeout: 30000
 });
 
+// Cette fonction transforme plusieurs formats de reponse en tableau simple.
 function toArray<T>(payload: unknown): T[] {
   if (Array.isArray(payload)) return payload as T[];
   if (payload && typeof payload === "object") {
@@ -74,6 +78,7 @@ function toArray<T>(payload: unknown): T[] {
   return [];
 }
 
+// Cette fonction transforme plusieurs formats de reponse en pagination standard.
 function toPage<T>(payload: unknown): ApiPage<T> {
   if (payload && typeof payload === "object" && Array.isArray((payload as { content?: unknown }).content)) {
     return payload as ApiPage<T>;
@@ -97,15 +102,17 @@ let logoutFired = false;
 let refreshInFlight: Promise<AuthResponse> | null = null;
 let refreshBlockedUntil = 0;
 
+// Cette fonction met a jour le role ajoute dans les headers.
 export const setApiRoleHeader = (role: UserRole | null) => {
   roleHeader = role;
 };
 
+// Cette fonction retourne l'URL API actuellement utilisee.
 export const getApiBaseUrl = () => String(api.defaults.baseURL ?? "");
 
+// Cette fonction change l'URL API a chaud dans le frontend.
 export const setApiBaseUrl = (url: string | null) => {
   if (!url) {
-    // Reset to default derived URL (or env) and clear storage.
     const derived =
       normalizeApiBaseUrl((import.meta as ImportMeta & { env: { VITE_API_URL?: string } }).env.VITE_API_URL || "") ||
       "";
@@ -118,10 +125,12 @@ export const setApiBaseUrl = (url: string | null) => {
   writeStoredApiBaseUrl(normalized);
 };
 
+// Cette fonction indique si l'application est encore en initialisation.
 export const setAppInitializing = (value: boolean) => {
   appInitializing = value;
 };
 
+// Cette fonction detecte les erreurs reseau temporaires.
 function isNetworkError(error: unknown): boolean {
   if (!error || typeof error !== "object") return false;
   const axiosErr = error as { response?: unknown; code?: string };
@@ -129,9 +138,8 @@ function isNetworkError(error: unknown): boolean {
   return axiosErr.code === "ECONNABORTED";
 }
 
+// Cet intercepteur ajoute automatiquement le role courant si besoin.
 api.interceptors.request.use((config) => {
-  // Allow callers to explicitly set the role header (ex: multi-role refresh probing).
-  // Otherwise default to the currently-authenticated role.
   if (roleHeader && !config.headers?.["X-Frontend-Role"]) {
     config.headers["X-Frontend-Role"] = roleHeader;
   }
@@ -141,14 +149,13 @@ api.interceptors.request.use((config) => {
 const MAX_RETRIES = 2;
 const RETRY_DELAY_MS = 500;
 
+// Cet intercepteur gere le refresh de session et les retries reseau.
 api.interceptors.response.use(
   (r) => r,
   async (error) => {
     const config = error.config;
     const status = error.response?.status;
     const url = String(config?.url ?? "");
-
-    // 1. Auth Refresh Logic (401) - Special priority
     if (
       status === 401 &&
       config &&
@@ -173,9 +180,6 @@ api.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-
-    // 2. Global Smart Retry Logic (Only for GET requests to avoid side-effects)
-    // We retry on: Network errors, 404 (race conditions), 408, 429, 500-504
     const isRetryableStatus = status === 404 || status === 408 || status === 429 || (status >= 500 && status <= 504);
     const canRetry = config && config.method?.toLowerCase() === "get" && (isRetryableStatus || !error.response);
 
@@ -183,7 +187,6 @@ api.interceptors.response.use(
       config._retryCount = config._retryCount || 0;
       if (config._retryCount < MAX_RETRIES) {
         config._retryCount += 1;
-        // Exponential backoff or simple delay
         await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS * config._retryCount));
         return api(config);
       }
@@ -193,6 +196,7 @@ api.interceptors.response.use(
   }
 );
 
+// Ce bloc regroupe les appels lies a l'authentification.
 export const authApi = {
   login: async (email: string, motDePasse: string) => {
     const { data } = await api.post<AuthResponse>("/api/auth/login", { email, motDePasse }, { timeout: 12000 });
@@ -284,8 +288,6 @@ export const authApi = {
     return data;
   },
   logout: async () => {
-    // Backend stores role-scoped cookies. To make "switch account" reliable in the unified
-    // app, we attempt to logout all role scopes (best-effort).
     await Promise.allSettled(
       ALL_ROLES.map((role) =>
         api.post(
@@ -300,6 +302,7 @@ export const authApi = {
   },
 };
 
+// Ce bloc regroupe les appels lies aux utilisateurs.
 export const usersApi = {
   list: async (params?: Record<string, unknown>) => {
     const { data } = await api.get<ApiPage<ApiUser>>("/api/users", { params });
@@ -320,6 +323,7 @@ export const usersApi = {
   },
 };
 
+// Ce bloc regroupe les appels lies aux projets.
 export const projectsApi = {
   list: async (params?: Record<string, unknown>) => {
     const { data } = await api.get("/api/projets", { params });
@@ -377,6 +381,7 @@ export const projectsApi = {
   },
 };
 
+// Ce bloc regroupe les appels lies aux affectations.
 export const affectationsApi = {
   byProject: async (projectId: number) => {
     const { data } = await api.get(`/api/affectations/projet/${projectId}`, { params: { size: 100 } });
@@ -409,6 +414,7 @@ export type DownloadConfirmationPayload = {
   confirmB: boolean;
 };
 
+// Ce bloc regroupe les appels lies aux livrables.
 export const deliverablesApi = {
   list: async (params?: Record<string, unknown>) => {
     const { data } = await api.get("/api/livrables", { params });
@@ -445,26 +451,32 @@ export const deliverablesApi = {
 
 const VERSION_API_BASE = "/api/versions";
 
+// Cette fonction construit une URL relative pour le module des versions.
 function getVersionUrl(suffix: string): string {
   return `${VERSION_API_BASE}${suffix}`;
 }
 
+// Cette fonction factorise les requetes GET sur les versions.
 async function versionGet<T>(suffix: string, config?: Parameters<typeof api.get>[1]) {
   return await api.get<T>(getVersionUrl(suffix), config);
 }
 
+// Cette fonction factorise les requetes POST sur les versions.
 async function versionPost<T>(suffix: string, data?: unknown, config?: Parameters<typeof api.post>[2]) {
   return await api.post<T>(getVersionUrl(suffix), data, config);
 }
 
+// Cette fonction factorise les requetes PATCH sur les versions.
 async function versionPatch<T>(suffix: string, data?: unknown, config?: Parameters<typeof api.patch>[2]) {
   return await api.patch<T>(getVersionUrl(suffix), data, config);
 }
 
+// Cette fonction factorise les requetes DELETE sur les versions.
 async function versionDelete(suffix: string, config?: Parameters<typeof api.delete>[1]) {
   return await api.delete(getVersionUrl(suffix), config);
 }
 
+// Ce bloc regroupe les appels lies aux versions.
 export const versionsApi = {
   byDeliverable: async (deliverableId: number) => {
     const { data } = await versionGet(`/livrable/${deliverableId}`, { params: { size: 100 } });
@@ -547,8 +559,6 @@ export const versionsApi = {
       responseType: "blob",
     });
     const contentType = (response.headers["content-type"] || "").toLowerCase();
-    
-    // If we got HTML, it's likely a redirect to a dashboard/login page (SPA fallback)
     if (contentType.includes("text/html")) {
       throw new Error("Invalid preview content type (HTML detected)");
     }
@@ -562,6 +572,7 @@ export const versionsApi = {
   },
 };
 
+// Ce bloc regroupe les appels lies aux commentaires.
 export const commentsApi = {
   byVersion: async (versionId: number) => {
     const { data } = await versionGet(`/${versionId}/commentaires`);
@@ -577,6 +588,7 @@ export const commentsApi = {
   },
 };
 
+// Ce bloc regroupe les appels lies aux annotations.
 export const annotationsApi = {
   byVersion: async (versionId: number) => {
     const { data } = await versionGet(`/${versionId}/annotations`);
@@ -591,6 +603,7 @@ export const annotationsApi = {
   },
 };
 
+// Ce bloc regroupe les appels lies a la traduction.
 export const translationApi = {
   translate: async (text: string, target: string) => {
     const { data } = await api.post<{ translatedText: string }>("/api/translate", { text, target });
@@ -598,6 +611,7 @@ export const translationApi = {
   },
 };
 
+// Ce bloc regroupe les appels lies aux notifications.
 export const notificationsApi = {
   list: async (params?: Record<string, unknown>) => {
     const { data } = await api.get<ApiPage<ApiNotification>>("/api/notifications", { params });
@@ -620,10 +634,7 @@ export const notificationsApi = {
   },
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-//  HELPERS
-// ═══════════════════════════════════════════════════════════════════════════════
-
+// Cette fonction lance un telechargement dans le navigateur.
 export function triggerBrowserDownload(blob: Blob, filename: string) {
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -635,6 +646,7 @@ export function triggerBrowserDownload(blob: Blob, filename: string) {
   window.URL.revokeObjectURL(url);
 }
 
+// Cette fonction devine le type MIME depuis le nom de fichier.
 export function guessMimeType(filename: string): string {
   const ext = filename.split(".").pop()?.toLowerCase() ?? "";
   const map: Record<string, string> = {
@@ -664,6 +676,7 @@ export function guessMimeType(filename: string): string {
   return map[ext] || "application/octet-stream";
 }
 
+// Cette fonction extrait le nom du fichier depuis le header HTTP.
 export function extractFilename(contentDisposition: string | undefined): string | null {
   if (!contentDisposition) return null;
   const utf8Match = contentDisposition.match(/filename\*=UTF-8''(.+?)(?:;|$)/i);

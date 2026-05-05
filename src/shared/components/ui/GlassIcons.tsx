@@ -1,4 +1,5 @@
-﻿import React from "react";
+// Ce fichier gere une partie du frontend.
+import React from "react";
 
 
 export interface GlassIconsItem {

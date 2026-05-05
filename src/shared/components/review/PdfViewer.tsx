@@ -1,12 +1,10 @@
-﻿import { useState, useRef, useCallback, useEffect } from 'react';
+// Ce fichier gere une partie du frontend.
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
-
-
-// Singleton worker to prevent "worker is being destroyed" errors
 let workerInitialized = false;
 if (typeof window !== 'undefined' && !workerInitialized) {
   try {
@@ -40,8 +38,6 @@ export default function PdfViewer({ url, currentPage, onPageChange }: PdfViewerP
   const onDocumentLoadError = useCallback((err: Error) => {
     setError(err.message);
   }, []);
-
-  // Sync current page while user scrolls with the PDF scrollbar.
   useEffect(() => {
     if (!containerRef.current || numPages === 0) return;
     const container = containerRef.current;
@@ -80,12 +76,9 @@ export default function PdfViewer({ url, currentPage, onPageChange }: PdfViewerP
     };
 
     container.addEventListener('scroll', syncPageFromScroll, { passive: true });
-    // Initial sync once pages are mounted.
     window.setTimeout(syncPageFromScroll, 0);
     return () => container.removeEventListener('scroll', syncPageFromScroll);
   }, [numPages, currentPage, onPageChange]);
-
-  // Scroll to page when currentPage changes from external source
   useEffect(() => {
     if (pageFromObserverRef.current === currentPage) {
       pageFromObserverRef.current = null;
@@ -128,7 +121,6 @@ export default function PdfViewer({ url, currentPage, onPageChange }: PdfViewerP
 
   return (
     <div className="w-full h-full flex flex-col bg-stone-100 dark:bg-stone-900">
-      {/* PDF Controls */}
       <div className="bg-white/40 dark:bg-stone-900/40 backdrop-blur-md border-b border-stone-100/30 dark:border-stone-800/30 px-6 py-2 flex items-center justify-center gap-4">
         <div className="flex items-center bg-white/80 dark:bg-stone-800/80 rounded-xl shadow-sm border border-stone-200/40 dark:border-stone-700/40 p-0.5">
           <button
@@ -153,8 +145,6 @@ export default function PdfViewer({ url, currentPage, onPageChange }: PdfViewerP
         </div>
 
         <div className="w-px h-4 bg-stone-200 dark:bg-stone-700" />
-
-        {/* Zoom controls */}
         <div className="flex items-center bg-white/80 dark:bg-stone-800/80 rounded-xl shadow-sm border border-stone-200/40 dark:border-stone-700/40 p-0.5">
           <button
             onClick={handleZoomOut}
@@ -175,8 +165,6 @@ export default function PdfViewer({ url, currentPage, onPageChange }: PdfViewerP
           </button>
         </div>
       </div>
-
-      {/* PDF Content */}
       <div 
         ref={containerRef}
         className="flex-1 overflow-auto p-4"

@@ -1,4 +1,5 @@
-﻿import type { CSSProperties, ElementType } from "react";
+// Ce fichier gere une partie du frontend.
+import type { CSSProperties, ElementType } from "react";
 import { cn } from "@/shared/utils/cn";
 
 

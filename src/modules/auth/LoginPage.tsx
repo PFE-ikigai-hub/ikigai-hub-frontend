@@ -1,4 +1,5 @@
-﻿import { useEffect, useState } from "react";
+// Ce fichier gere une partie du frontend.
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import axios from "axios";
@@ -54,11 +55,11 @@ export function LoginPage() {
         if (status === 401) {
           setError(backendMessage || t("login.error") || "Identifiants incorrects");
         } else if (isTimeout) {
-          setError("Le serveur met trop de temps à répondre. Vérifiez votre connexion puis réessayez.");
+          setError("Le serveur met trop de temps � r�pondre. V�rifiez votre connexion puis r�essayez.");
         } else if (isNetworkError) {
-          setError("Impossible de joindre le serveur. Vérifiez que le backend est lancé puis réessayez.");
+          setError("Impossible de joindre le serveur. V�rifiez que le backend est lanc� puis r�essayez.");
         } else {
-          setError(backendMessage || "Connexion impossible. Veuillez réessayer.");
+          setError(backendMessage || "Connexion impossible. Veuillez r�essayer.");
         }
       } else {
         setError(t("login.error") || "Identifiants incorrects");
@@ -76,7 +77,6 @@ export function LoginPage() {
       await authApi.forgotPassword(resetEmail);
       setPageState('reset-success');
     } catch (err: any) {
-      // Even on error, show success (avoid email enumeration)
       setPageState('reset-success');
     } finally {
       setIsForgotSubmitting(false);
@@ -91,7 +91,6 @@ export function LoginPage() {
         sessionStorage.removeItem("ikigai:authNotice");
       }
     } catch {
-      // ignore
     }
   }, []);
 
@@ -131,8 +130,6 @@ export function LoginPage() {
           glow={1}
         />
       </div>
-
-      {/* Card */}
       <motion.div
         initial={{ opacity: 0, scale: 0.97, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -140,8 +137,6 @@ export function LoginPage() {
         className="relative w-full max-w-[420px]"
       >
         <div className="bg-[#111113] rounded-2xl shadow-2xl shadow-black/60 border border-stone-800/80 overflow-hidden" style={{ fontFamily: "'Old Standard TT', serif" }}>
-
-          {/* Brand header */}
           <div className="px-8 pt-12 pb-8 text-center border-b border-stone-800/60 flex flex-col items-center">
             <p className="text-xs md:text-sm tracking-[0.16em] text-stone-400 uppercase mb-2">
               {t("login.welcomeTo")}
@@ -150,17 +145,13 @@ export function LoginPage() {
               Ikigai Hub
             </h1>
           </div>
-
-          {/* Content with animated transitions */}
           <div className="px-8 py-8 min-h-[340px] flex flex-col">
             <AnimatePresence mode="wait">
-
-              {/* â”€â”€ LOGIN FORM â”€â”€ */}
               {pageState === 'login' && (
                 <motion.div key="login" variants={pageVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col flex-1">
                   <div className="mb-7">
                     <h2 className="text-xl text-white mb-1 font-normal">Connexion</h2>
-                    <p className="text-sm text-stone-400">Connectez-vous à votre espace</p>
+                    <p className="text-sm text-stone-400">Connectez-vous � votre espace</p>
                   </div>
 
                   <AnimatePresence>
@@ -187,7 +178,6 @@ export function LoginPage() {
                   </AnimatePresence>
 
                   <form onSubmit={onSubmit} className="space-y-4 flex-1 flex flex-col">
-                    {/* Email */}
                     <div>
                       <label className="block text-xs font-medium text-stone-400 mb-1.5 uppercase tracking-wide">Email</label>
                       <div className="relative">
@@ -203,8 +193,6 @@ export function LoginPage() {
                         />
                       </div>
                     </div>
-
-                    {/* Password */}
                     <div>
                       <label className="block text-xs font-medium text-stone-400 mb-1.5 uppercase tracking-wide">Mot de passe</label>
                       <div className="relative">
@@ -213,7 +201,7 @@ export function LoginPage() {
                           type={showPassword ? 'text' : 'password'}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          placeholder="••••••••"
+                          placeholder="��������"
                           className="hide-password-reveal w-full pl-10 pr-12 py-3 border border-stone-700 rounded-xl bg-[#111113] text-white placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-stone-200/20 transition-all duration-200"
                           required
                           minLength={6}
@@ -228,8 +216,6 @@ export function LoginPage() {
                         </button>
                       </div>
                     </div>
-
-                    {/* Forgot */}
                     <div className="flex justify-end">
                       <button
                         type="button"
@@ -262,8 +248,6 @@ export function LoginPage() {
                   </form>
                 </motion.div>
               )}
-
-              {/* â”€â”€ FORGOT PASSWORD FORM â”€â”€ */}
               {pageState === 'forgot' && (
                 <motion.div key="forgot" variants={pageVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col flex-1">
                   <button
@@ -315,8 +299,6 @@ export function LoginPage() {
                   </form>
                 </motion.div>
               )}
-
-              {/* â”€â”€ RESET SUCCESS â”€â”€ */}
               {pageState === 'reset-success' && (
                 <motion.div key="success" variants={pageVariants} initial="initial" animate="animate" exit="exit" className="flex flex-col items-center justify-center flex-1 text-center py-6">
 	                  <h2 className="text-xl text-white mb-2 font-normal">{t('login.resetSuccess')}</h2>
@@ -333,8 +315,6 @@ export function LoginPage() {
 
             </AnimatePresence>
           </div>
-
-          {/* Footer */}
           <div className="px-8 py-4 border-t border-stone-800/60 bg-[#111113] text-center">
             <p className="text-xs text-stone-500">
               {t("login.needAccess")}
@@ -345,4 +325,3 @@ export function LoginPage() {
     </div>
   );
 }
-

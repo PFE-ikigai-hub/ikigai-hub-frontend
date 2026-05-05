@@ -1,4 +1,5 @@
-ï»¿import { useState } from "react";
+// Ce fichier gere une partie du frontend.
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence, type Variants } from "motion/react";
 import axios from "axios";
@@ -28,7 +29,7 @@ export function ResetPasswordPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const passwordRulesMessage = "Le mot de passe doit contenir au moins 6 caractÃ¨res, avec au moins 1 lettre et 1 chiffre.";
+  const passwordRulesMessage = "Le mot de passe doit contenir au moins 6 caractères, avec au moins 1 lettre et 1 chiffre.";
 
   const isPasswordValid = (value: string) => {
     if (value.length < 6) return false;
@@ -42,7 +43,7 @@ export function ResetPasswordPage() {
     setError("");
 
     if (!token) {
-      setError("Jeton de rÃ©initialisation manquant ou invalide.");
+      setError("Jeton de réinitialisation manquant ou invalide.");
       return;
     }
 
@@ -74,10 +75,10 @@ export function ResetPasswordPage() {
         if (passwordRelated) {
           setError(passwordRulesMessage);
         } else {
-          setError(backendMessage || "Le lien a expirÃ© ou est invalide. Veuillez recommencer la procÃ©dure.");
+          setError(backendMessage || "Le lien a expiré ou est invalide. Veuillez recommencer la procédure.");
         }
       } else {
-        setError("Une erreur est survenue lors de la rÃ©initialisation.");
+        setError("Une erreur est survenue lors de la réinitialisation.");
       }
     } finally {
       setIsSubmitting(false);
@@ -131,7 +132,7 @@ export function ResetPasswordPage() {
                 <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                   <div className="mb-7">
                     <h2 className="text-xl text-white mb-1 font-normal">Nouveau mot de passe</h2>
-                    <p className="text-sm text-stone-400">DÃ©finissez votre nouveau mot de passe sÃ©curisÃ©</p>
+                    <p className="text-sm text-stone-400">Définissez votre nouveau mot de passe sécurisé</p>
                   </div>
 
                   {error && (
@@ -149,7 +150,7 @@ export function ResetPasswordPage() {
                           type={showPassword ? 'text' : 'password'}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                          placeholder="••••••••"
                           className="w-full pl-10 pr-12 py-3 border border-stone-700 rounded-xl bg-[#111113] text-white placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-stone-200/20 transition-all duration-200"
                           required
                           minLength={6}
@@ -176,7 +177,7 @@ export function ResetPasswordPage() {
                           type={showPassword ? 'text' : 'password'}
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
-                          placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                          placeholder="••••••••"
                           className="w-full pl-10 pr-12 py-3 border border-stone-700 rounded-xl bg-[#111113] text-white placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-stone-200/20 transition-all duration-200"
                           required
                           minLength={6}
@@ -205,7 +206,7 @@ export function ResetPasswordPage() {
                         ) : (
                           <PaperPlaneTilt className="w-4 h-4" />
                         )}
-                        <span className="text-sm font-medium">RÃ©initialiser le mot de passe</span>
+                        <span className="text-sm font-medium">Réinitialiser le mot de passe</span>
                       </motion.button>
                     </div>
                   </form>
@@ -215,16 +216,16 @@ export function ResetPasswordPage() {
                   <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mb-5 border border-green-500/20">
                     <CheckCircle className="w-8 h-8 text-green-500" />
                   </div>
-                  <h2 className="text-xl text-white mb-2 font-normal">SuccÃ¨s !</h2>
+                  <h2 className="text-xl text-white mb-2 font-normal">Succès !</h2>
                   <p className="text-sm text-stone-400 max-w-[300px] leading-relaxed mb-8">
-                    Votre mot de passe a Ã©tÃ© rÃ©initialisÃ© avec succÃ¨s. Vous pouvez maintenant vous connecter.
+                    Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter.
                   </p>
                   <button
                     onClick={() => navigate("/login")}
                     className="flex items-center gap-2 text-sm text-stone-300 hover:text-white transition-colors"
                   >
                     <ArrowLeft className="w-4 h-4" />
-                    Retour Ã  la connexion
+                    Retour à la connexion
                   </button>
                 </motion.div>
               )}
@@ -233,7 +234,7 @@ export function ResetPasswordPage() {
 
           <div className="px-8 py-4 border-t border-stone-800/60 bg-[#111113] text-center">
             <p className="text-xs text-stone-500">
-              Â© {new Date().getFullYear()} Ikigai Hub - Studio de CrÃ©ation
+              © {new Date().getFullYear()} Ikigai Hub - Studio de Création
             </p>
           </div>
         </div>

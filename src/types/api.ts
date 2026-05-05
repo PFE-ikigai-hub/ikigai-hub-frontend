@@ -1,4 +1,5 @@
-﻿export interface ApiPage<T> {
+// Ce fichier gere une partie du frontend.
+export interface ApiPage<T> {
   content: T[];
   totalElements: number;
   totalPages: number;
