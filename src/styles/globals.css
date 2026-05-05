@@ -138,6 +138,7 @@
 }
 
 @layer base {
+  * {
     @apply border-border outline-ring/50;
   }
 
@@ -172,6 +173,8 @@
   .dark ::-webkit-scrollbar-thumb:hover {
     background: #52525b;
   }
+
+  * {
     scrollbar-width: thin;
     scrollbar-color: #d1d5db transparent;
   }

@@ -7,8 +7,7 @@ function includesFinal(label: unknown): boolean {
   return label.toLowerCase().includes("final");
 }
 
- * Normalizes version labels to a stable "V1..Vn" sequence (latest-first),
- * mirroring the behavior of the original dashboards.
+// Cette fonction renumerote les versions du plus recent au plus ancien de facon stable.
 export function normalizeVersions(versions: ApiVersion[]): ApiVersion[] {
   if (!versions.length) return [];
   const byId = new Map<number, ApiVersion>();

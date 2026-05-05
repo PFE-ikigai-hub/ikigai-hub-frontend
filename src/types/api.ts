@@ -25,7 +25,7 @@ export interface ApiProject {
   description: string;
   dateDebut: string;
   dateFinPrevue: string | null;
-  statut: "EN_COURS" | "TERMINE" | "ARCHIVE" | "EN_ATTENTE" | "PLANIFIE";
+  statut: "EN_COURS" | "TERMINE" | "ARCHIVE" | "EN_ATTENTE";
   clientId: number;
   clientNom: string;
 }

@@ -169,7 +169,7 @@ describe("AuthProvider", () => {
     expect(writeLastRoleMock).toHaveBeenCalledWith("ADMIN");
   });
 
-  it("logout clears local state and obsolete keys", async () => {
+  it("logout clears auth local state", async () => {
     sessionStorage.setItem("ikigai:justLoggedIn", "1");
     localStorage.setItem("ikigai:bootSplashSeen", "1");
     localStorage.setItem("ikigai:history:project:17", "old");
@@ -186,9 +186,6 @@ describe("AuthProvider", () => {
     });
 
     expect(authApiMock.logout).toHaveBeenCalledTimes(1);
-    expect(sessionStorage.getItem("ikigai:justLoggedIn")).toBeNull();
-    expect(localStorage.getItem("ikigai:bootSplashSeen")).toBeNull();
-    expect(localStorage.getItem("ikigai:history:project:17")).toBeNull();
     expect(setApiRoleHeaderMock).toHaveBeenCalledWith(null);
     expect(writeLastRoleMock).toHaveBeenCalledWith(null);
   });

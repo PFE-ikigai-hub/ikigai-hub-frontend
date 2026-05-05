@@ -90,8 +90,7 @@ export type ProjectStatus =
   | "EN_COURS"
   | "TERMINE"
   | "ARCHIVE"
-  | "EN_ATTENTE"
-  | "PLANIFIE";
+  | "EN_ATTENTE";
 
 export type ApiProjetStatut = ProjectStatus;
 

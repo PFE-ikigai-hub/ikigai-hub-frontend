@@ -76,8 +76,6 @@ function getProjectStatusBadge(status: ProjectStatus) {
       return "bg-rose-50 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 border-rose-200 dark:border-rose-800/50";
     case "EN_ATTENTE":
       return "bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-blue-200 dark:border-blue-800/50";
-    case "PLANIFIE":
-      return "bg-violet-50 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300 border-violet-200 dark:border-violet-800/50";
     default:
       return "bg-sky-50 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300 border-sky-200 dark:border-sky-800/50";
   }
@@ -1111,12 +1109,6 @@ export function AdminProjectsPage() {
     fetchData();
   }, [isFullyReady, user?.id, refreshTrigger, t]);
 
-  if (!isFullyReady) {
-    return <PageLoader minHeightClassName="min-h-[400px]" variant="table" />;
-  }
-
-  const getLocale = () => (language === "AR" ? "fr-FR" : language === "EN" ? "en-US" : "fr-FR");
-
   const filteredProjects = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     return projects.filter((p) => {
@@ -1135,6 +1127,12 @@ export function AdminProjectsPage() {
       return matchesQuery && matchesStatus && matchesClient && matchesStart && matchesEnd;
     });
   }, [projects, searchQuery, filters.status, filters.client, filters.startDate, filters.endDate]);
+
+  if (!isFullyReady) {
+    return <PageLoader minHeightClassName="min-h-[400px]" variant="table" />;
+  }
+
+  const getLocale = () => (language === "AR" ? "fr-FR" : language === "EN" ? "en-US" : "fr-FR");
 
   const totalPages = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE);
   const paginatedProjects = filteredProjects.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
@@ -1245,7 +1243,7 @@ export function AdminProjectsPage() {
 
   const openArchiveProjectModal = (project: ProjectCard) => {
     if (project.status !== "TERMINE") {
-      toast.error("Archivage autorisé uniquement pour les projets TERMINÉS.");
+      toast.error("Archivage autorisï¿½ uniquement pour les projets TERMINï¿½S.");
       return;
     }
     setArchiveProjectState({ isOpen: true, project });
@@ -1583,7 +1581,7 @@ export function AdminProjectsPage() {
                                     <button
                                       key={emp.affectationId}
                                       className={`w-7 h-7 rounded-full border-2 border-white dark:border-stone-900 overflow-hidden ${index > 0 ? "-ml-2" : ""} transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-stone-500`}
-                                      title={`${emp.name} • ${emp.role}`}
+                                      title={`${emp.name} ï¿½ ${emp.role}`}
                                       onClick={() =>
                                         setAffectationModalState({
                                           isOpen: true,
@@ -1669,7 +1667,7 @@ export function AdminProjectsPage() {
                                   })
                                 }
                                 className="px-2.5 py-1 rounded-full border border-stone-200 dark:border-stone-700 text-[10px] text-stone-600 dark:text-stone-300 bg-stone-50 dark:bg-stone-800/40"
-                                title={`${emp.name} • ${emp.role}`}
+                                title={`${emp.name} ï¿½ ${emp.role}`}
                               >
                                 {emp.name}
                               </button>
@@ -1770,12 +1768,12 @@ export function AdminProjectsPage() {
       <SecureDeleteModal
         isOpen={archiveProjectState.isOpen}
         onClose={() => setArchiveProjectState({ isOpen: false, project: null })}
-        title={`${t("archive")} • ${archiveProjectState.project?.name ?? ""}`}
-        description="Double vérification + mot de passe administrateur requis."
+        title={`${t("archive")} ï¿½ ${archiveProjectState.project?.name ?? ""}`}
+        description="Double vï¿½rification + mot de passe administrateur requis."
         strongMode={true}
         confirmLabel={t("archive")}
         confirmButtonClassName="bg-stone-800 text-white hover:bg-stone-900 dark:bg-stone-700 dark:hover:bg-stone-600"
-        checkTextA="Je confirme que ce projet est terminé."
+        checkTextA="Je confirme que ce projet est terminï¿½."
         checkTextB="Je comprends que l'archivage limite les modifications."
         onConfirm={handleArchiveProject}
       />

@@ -5,34 +5,34 @@ import type { Language, LanguageContextType } from "@/types/index";
 
 const translations: Record<string, Record<string, string>> = {
   fr: {
-    'header.logout': 'D�connexion',
+    'header.logout': 'Déconnexion',
     'header.clientDashboard': 'Client Dashboard',
     'nav.myProjects': 'Mes Projets',
     'nav.inReview': 'Livrables en revue',
-    'nav.validated': 'Valid�s',
-    'nav.archived': 'Archiv�s',
+    'nav.validated': 'Validés',
+    'nav.archived': 'Archivés',
     'nav.navigation': 'Navigation',
-    'nav.settings': 'Param�tres',
+    'nav.settings': 'Paramètres',
     'nav.users': 'Utilisateurs',
     'nav.projects': 'Projets',
-    'projects.plannedEnd': 'Date de fin pr�vue',
-    'employee.assignedProjects': 'Projets assign�s',
+    'projects.plannedEnd': 'Date de fin prévue',
+    'employee.assignedProjects': 'Projets assignés',
     'employee.uploadDeliverable': 'Uploader un livrable',
     'employee.feedbackTitle': 'Feedback clients',
-    'employee.feedbackSubtitle': 'Derni�re version en r�vision',
+    'employee.feedbackSubtitle': 'Dernière version en révision',
     'employee.noFeedback': 'Aucun feedback disponible',
-    'employee.noFeedbackDesc': 'Les retours clients appara�tront ici une fois que vos livrables auront �t� comment�s ou annot�s.',
+    'employee.noFeedbackDesc': 'Les retours clients apparaîtront ici une fois que vos livrables auront été commentés ou annotés.',
     'employee.latestFeedback': 'Derniers retours',
-    'employee.viewDetails': 'D�tails',
-    'employee.manageVersionsBtn': 'G�rer versions',
-    'employee.annotationsOnly': 'Annotations disponibles sur la derni�re version.',
+    'employee.viewDetails': 'Détails',
+    'employee.manageVersionsBtn': 'Gérer versions',
+    'employee.annotationsOnly': 'Annotations disponibles sur la dernière version.',
     'search.placeholder': 'Rechercher...',
     'filter.status': 'Statut',
     'filter.date': 'Date',
     'filter.name': 'Nom',
     'filter.type': 'Type',
     'filter.type.IMAGE': 'Image',
-    'filter.type.VIDEO': 'Vid�o',
+    'filter.type.VIDEO': 'Vidéo',
     'filter.type.PDF': 'PDF',
     'filter.type.TEXTE': 'Texte',
     'filter.type.AUDIO': 'Audio',
@@ -40,62 +40,62 @@ const translations: Record<string, Record<string, string>> = {
     'filter.version': 'Version',
     'filter.all': 'Tous',
     'filter.apply': 'Appliquer',
-    'filter.reset': 'R�initialiser',
+    'filter.reset': 'Réinitialiser',
     'deliverables.title': 'Livrables',
     'deliverables.count': 'livrable(s)',
-    'deliverables.noResults': 'Aucun livrable trouv�',
+    'deliverables.noResults': 'Aucun livrable trouvé',
     'deliverables.validate': 'Valider',
-    'deliverables.validated': 'Valid�',
+    'deliverables.validated': 'Validé',
     'deliverables.inReview': 'En revue',
-    'deliverables.download': 'T�l�charger',
+    'deliverables.download': 'Télécharger',
     'review.back': 'Retour',
     'review.zoom': 'Zoom',
-    'review.reset': 'R�initialiser',
+    'review.reset': 'Réinitialiser',
     'review.comments': 'Commentaires',
     'review.addComment': 'Ajouter un commentaire',
     'review.yourComment': 'Votre commentaire',
     'review.noComments': 'Aucun commentaire',
-    'review.commentPlaceholder': '�crivez votre commentaire ici...',
-    'review.commentLimit': 'Vous avez d�j� comment� cette version',
+    'review.commentPlaceholder': 'Écrivez votre commentaire ici...',
+    'review.commentLimit': 'Vous avez déjà commenté cette version',
     'review.submit': 'Envoyer',
     'review.cancel': 'Annuler',
     'review.versions': 'Versions',
     'review.currentVersion': 'Version actuelle',
     'review.deleteComment': 'Supprimer',
     'review.deleteAnnotation': 'Supprimer',
-    'review.preview': 'Pr�visualiser',
+    'review.preview': 'Prévisualiser',
     'review.version': 'Version',
-    'review.previewUnavailable': 'Aper�u non disponible',
+    'review.previewUnavailable': 'Aperçu non disponible',
     'review.invalidPdf': 'Fichier PDF invalide',
-    'review.previewUnavailableType': 'Aper�u non disponible pour ce type de fichier',
+    'review.previewUnavailableType': 'Aperçu non disponible pour ce type de fichier',
     'review.noVersionAvailable': 'Aucune version disponible pour ce livrable.',
-    'review.downloadFile': 'T�l�charger le fichier',
-    'review.videoUnsupported': 'Votre navigateur ne supporte pas la lecture vid�o.',
+    'review.downloadFile': 'Télécharger le fichier',
+    'review.videoUnsupported': 'Votre navigateur ne supporte pas la lecture vidéo.',
     'review.audioUnsupported': 'Votre navigateur ne supporte pas la lecture audio.',
     'review.deleteVersionConfirm': 'Supprimer la version {version} ?',
-    'review.versionDeleted': 'Version supprim�e.',
+    'review.versionDeleted': 'Version supprimée.',
     'comments.translate': 'Traduire',
     'comments.originalText': 'Texte original',
     'comments.showTranslation': 'Voir traduction',
     'comments.showOriginal': "Voir l'original",
     'validation.title': 'Confirmer la validation',
-    'validation.message': '�tes-vous s�r de vouloir valider ce livrable ?',
+    'validation.message': 'Êtes-vous sûr de vouloir valider ce livrable ?',
     'validation.secureMessage': 'Action sensible. Veuillez confirmer avec votre mot de passe.',
-    'validation.description': 'Cette action confirmera que vous approuvez d�finitivement ce travail. Le statut passera � "Valid�" et l\'�quipe sera notifi�e.',
+    'validation.description': 'Cette action confirmera que vous approuvez définitivement ce travail. Le statut passera à "Validé" et l\'équipe sera notifiée.',
     'validation.confirm': 'Confirmer la validation',
-    'validation.success': 'Livrable valid� avec succ�s !',
-    'validation.strongCheck1': 'Je confirme avoir v�rifi� le contenu de ce livrable.',
-    'validation.strongCheck2': 'Je comprends que cette validation est d�finitive et notifiera l\'�quipe.',
+    'validation.success': 'Livrable validé avec succès !',
+    'validation.strongCheck1': 'Je confirme avoir vérifié le contenu de ce livrable.',
+    'validation.strongCheck2': 'Je comprends que cette validation est définitive et notifiera l\'équipe.',
     'account.myAccount': 'Mon compte',
     'account.profile': 'Profil',
-    'account.settings': 'Param�tres',
+    'account.settings': 'Paramètres',
     'account.darkMode': 'Mode sombre',
     'account.language': 'Langue',
-    'account.firstName': 'Pr�nom',
+    'account.firstName': 'Prénom',
     'account.lastName': 'Nom',
     'account.email': 'Email',
-    'account.phone': 'T�l�phone',
-    'account.role': 'R�le',
+    'account.phone': 'Téléphone',
+    'account.role': 'Rôle',
     'account.organization': 'Organisation',
     'account.password': 'Mot de passe',
     'account.currentPassword': 'Mot de passe actuel',
@@ -105,42 +105,41 @@ const translations: Record<string, Record<string, string>> = {
     'account.avatar': 'Photo de profil',
     'account.save': 'Enregistrer',
     'account.saveChanges': 'Enregistrer les modifications',
-    'account.saved': 'Modifications enregistr�es avec succ�s',
+    'account.saved': 'Modifications enregistrées avec succès',
     'account.dragDropPhoto': 'Glissez une photo ou cliquez pour choisir',
     'settings.profile': 'Profil',
     'settings.account': 'Compte',
-    'settings.security': 'S�curit�',
-    'settings.preferences': 'Pr�f�rences',
+    'settings.security': 'Sécurité',
+    'settings.preferences': 'Préférences',
     'settings.personalInfo': 'Informations personnelles',
     'settings.profilePhoto': 'Photo de profil',
     'settings.changePhoto': 'Changer la photo',
-    'settings.passwordUpdate': 'Mettre � jour le mot de passe',
-    'settings.languageTheme': 'Langue & Th�me',
-    'settings.themeMode': 'Th�me de l\'interface',
+    'settings.passwordUpdate': 'Mettre à jour le mot de passe',
+    'settings.languageTheme': 'Langue & Thème',
+    'settings.themeMode': 'Thème de l\'interface',
     'settings.light': 'Clair',
     'settings.dark': 'Sombre',
-    'settings.saveSuccess': 'Vos modifications ont �t� enregistr�es.',
-    'settings.passwordSuccess': 'Votre mot de passe a �t� mis � jour.',
-    'login.forgotPassword': 'Mot de passe oubli� ?',
+    'settings.saveSuccess': 'Vos modifications ont été enregistrées.',
+    'settings.passwordSuccess': 'Votre mot de passe a été mis à jour.',
+    'login.forgotPassword': 'Mot de passe oublié ?',
     'login.welcomeTo': 'Bienvenue sur',
-    'login.forgotPasswordTitle': 'R�cup�rer mon acc�s',
-    'login.forgotPasswordDesc': 'Entrez votre adresse e-mail pour recevoir un lien de r�initialisation.',
+    'login.forgotPasswordTitle': 'Récupérer mon accès',
+    'login.forgotPasswordDesc': 'Entrez votre adresse e-mail pour recevoir un lien de réinitialisation.',
     'login.sendResetLink': 'Envoyer le lien',
-    'login.backToLogin': 'Retour � la connexion',
+    'login.backToLogin': 'Retour à la connexion',
     'login.fillAllFields': 'Veuillez remplir tous les champs',
     'login.signIn': 'Se connecter',
     'login.signingIn': 'Connexion...',
-    'login.resetSuccess': 'Lien envoy� ! V�rifiez votre bo�te mail.',
-    'login.resetSuccessDesc': 'Si un compte existe avec cet email, vous recevrez un lien de r�initialisation sous quelques minutes.',
+    'login.resetSuccess': 'Lien envoyé ! Vérifiez votre boîte mail.',
+    'login.resetSuccessDesc': 'Si un compte existe avec cet email, vous recevrez un lien de réinitialisation sous quelques minutes.',
     'status.EN_COURS': 'En cours',
-    'status.TERMINE': 'Termin�',
-    'status.ARCHIVE': 'Archiv�',
+    'status.TERMINE': 'Terminé',
+    'status.ARCHIVE': 'Archivé',
     'status.EN_ATTENTE': 'En attente',
-    'status.PLANIFIE': 'Planifi�',
     'status.EN_REVUE': 'En revue',
-    'status.VALIDE': 'Valid�',
-    'status.REVIEWED': 'R�vis�',
-    'status.VALIDATED': 'Valid�',
+    'status.VALIDE': 'Validé',
+    'status.REVIEWED': 'Révisé',
+    'status.VALIDATED': 'Validé',
     'common.close': 'Fermer',
     'common.open': 'Ouvrir',
     'common.edit': 'Modifier',
@@ -160,91 +159,91 @@ const translations: Record<string, Record<string, string>> = {
     'time.min': 'min',
     'time.h': 'h',
     'time.d': 'j',
-    'error.emptyFile': 'D�sol�, vous ne pouvez pas uploader un fichier vide (0 octet).',
+    'error.emptyFile': 'Désolé, vous ne pouvez pas uploader un fichier vide (0 octet).',
     'admin.users.addTitle': 'Ajouter un utilisateur',
-    'admin.users.addDescription': 'Cr�er un nouveau compte sur la plateforme',
-    'admin.users.create': 'Cr�er',
+    'admin.users.addDescription': 'Créer un nouveau compte sur la plateforme',
+    'admin.users.create': 'Créer',
     'admin.users.emailRequired': 'Email requis.',
-    'admin.users.createFailed': 'Cr�ation impossible. V�rifiez l\'email et r�essayez.',
+    'admin.users.createFailed': 'Création impossible. Vérifiez l\'email et réessayez.',
     'admin.users.loadFailed': 'Impossible de charger les utilisateurs.',
     'admin.users.searchPlaceholder': 'Rechercher par nom, email, organisation...',
-    'admin.users.count': '{count} utilisateur(s)',
+    'admin.users.count': '{count} ??????(??)',
     'admin.users.active': 'Actif',
     'admin.users.inactive': 'Inactif',
     'admin.users.activate': 'Activer',
-    'admin.users.deactivate': 'D�sactiver',
-    'admin.users.activated': 'Utilisateur activ�.',
-    'admin.users.deactivated': 'Utilisateur d�sactiv�.',
-    'admin.users.createdOn': 'Cr�� le',
-    'admin.users.created': 'Utilisateur cr��.',
-    'admin.users.roleLabel': 'R�le',
+    'admin.users.deactivate': 'Désactiver',
+    'admin.users.activated': 'Utilisateur activé.',
+    'admin.users.deactivated': 'Utilisateur désactivé.',
+    'admin.users.createdOn': 'Créé le',
+    'admin.users.created': 'Utilisateur créé.',
+    'admin.users.roleLabel': 'Rôle',
     'admin.projects.addTitle': 'Ajouter un projet',
-    'admin.projects.addDescription': 'Cr�er un nouveau projet',
+    'admin.projects.addDescription': 'Créer un nouveau projet',
     'admin.projects.requiredFields': 'Veuillez remplir les champs requis.',
-    'admin.projects.createFailed': 'Cr�ation impossible. V�rifiez les informations et r�essayez.',
-    'admin.projects.selectClient': 'S�lectionner un client',
-    'project.overview': 'Aper�u',
+    'admin.projects.createFailed': 'Création impossible. Vérifiez les informations et réessayez.',
+    'admin.projects.selectClient': 'Sélectionner un client',
+    'project.overview': 'Aperçu',
     'project.history': 'Historique',
     'project.client': 'Client',
-    'project.start': 'D�but',
+    'project.start': 'Début',
     'project.description': 'Description',
     'project.allDeliverables': 'Tous les livrables',
     'project.noDeliverables': 'Aucun livrable pour ce projet.',
-    'project.team': '�quipe',
+    'project.team': 'Équipe',
     'project.noTeam': 'Aucun membre.',
-    'project.activityLog': 'Journal d\'activit�',
+    'project.activityLog': 'Journal d\'activité',
     'project.noHistory': 'Aucun historique.',
     'project.notFound': 'Projet introuvable.',
-    'project.history.projectCreated': 'Projet cr��',
+    'project.history.projectCreated': 'Projet créé',
     'project.history.projectInitialized': 'Initialisation du projet',
-    'project.history.employeeAssigned': 'Employ� assign�',
-    'project.history.deliverableCreated': 'Livrable cr��',
-    'project.history.versionUploaded': 'Version upload�e',
-    'project.history.deliverableStatusChanged': 'Statut livrable modifi�',
-    'project.history.projectStatusChanged': 'Statut projet modifi�',
+    'project.history.employeeAssigned': 'Employé assigné',
+    'project.history.deliverableCreated': 'Livrable créé',
+    'project.history.versionUploaded': 'Version uploadée',
+    'project.history.deliverableStatusChanged': 'Statut livrable modifié',
+    'project.history.projectStatusChanged': 'Statut projet modifié',
 
-    'admin.projectDeleted': 'Projet supprim�.',
-    'admin.deliverableDeleted': 'Livrable supprim�.',
-    'project.history.deliverableDeleted': 'Livrable supprim�',
-    'project.history.versionDeleted': 'Version supprim�e',
-    'project.history.versionDownloaded': 'Version t�l�charg�e',
+    'admin.projectDeleted': 'Projet supprimé.',
+    'admin.deliverableDeleted': 'Livrable supprimé.',
+    'project.history.deliverableDeleted': 'Livrable supprimé',
+    'project.history.versionDeleted': 'Version supprimée',
+    'project.history.versionDownloaded': 'Version téléchargée',
     'users_management': 'Gestion des Utilisateurs',
     'projects_management': 'Gestion des Projets',
     'add_user': 'Ajouter utilisateur',
     'add_user_full': 'Ajouter un utilisateur',
-    'create_new_account': 'Cr�er un nouveau compte sur la plateforme',
+    'create_new_account': 'Créer un nouveau compte sur la plateforme',
     'email_star': 'Email *',
-    'first_name_caps': 'Pr�nom',
+    'first_name_caps': 'Prénom',
     'last_name_caps': 'Nom',
-    'role_caps': 'R�le',
+    'role_caps': 'Rôle',
     'org_caps': 'Organisation',
     'cancel': 'Annuler',
     'close': 'Fermer',
-    'save_success': 'Vos modifications ont �t� enregistr�es.',
+    'save_success': 'Vos modifications ont été enregistrées.',
     'save_changes': 'Enregistrer les modifications',
-    'unsaved_changes': 'Vous avez des modifications non enregistr�es',
+    'unsaved_changes': 'Vous avez des modifications non enregistrées',
     'activate_account': 'Activer le compte',
-    'deactivate_account': 'D�sactiver le compte',
+    'deactivate_account': 'Désactiver le compte',
     'admin_role': 'ADMIN',
     'employee_role': 'EMPLOYE',
     'client_role': 'CLIENT',
     'email': 'Email',
-    'first_name': 'Pr�nom',
+    'first_name': 'Prénom',
     'last_name': 'Nom',
     'organisation': 'Organisation',
-    'role': 'R�le',
+    'role': 'Rôle',
     'actions': 'Actions',
     'description': 'Description',
     'status': 'Statut',
-    'created_at': 'Date de cr�ation',
+    'created_at': 'Date de création',
     'user': 'Utilisateur',
     'loading': 'Chargement...',
     'search_and_filters': 'Recherche et filtres',
     'search_placeholder': 'Rechercher...',
-    'reset': 'R�initialiser',
-    'reset_filters': 'R�initialiser les filtres',
+    'reset': 'Réinitialiser',
+    'reset_filters': 'Réinitialiser les filtres',
     'active_filters': 'Filtres actifs',
-    'all_roles': 'Tous les r�les',
+    'all_roles': 'Tous les rôles',
     'all_statuses': 'Tous les statuts',
     'active': 'Actif',
     'inactive': 'Inactif',
@@ -253,21 +252,16 @@ const translations: Record<string, Record<string, string>> = {
     'project_count_one': 'projet',
     'project_count_other': 'projets',
     'total': 'au total',
-    'found': 'trouv�(s)',
-    'employees': 'Employ�s',
+    'found': 'trouvé(s)',
+    'employees': 'Employés',
     'none': 'Aucun',
     'client': 'Client',
-    'start_date': 'Date de d�but',
+    'start_date': 'Date de début',
     'end_date': 'Date de fin',
-    'in_progress': 'En cours',
-    'completed': 'Termin�',
-    'pending': 'En attente',
-    'planned': 'Planifi�',
-    'archived': 'Archiv�',
     'assign': 'Assigner',
     'view': 'Voir',
     'add_project': 'Ajouter projet',
-    'create_project_desc': 'Cr�er un nouveau projet sur la plateforme',
+    'create_project_desc': 'Créer un nouveau projet sur la plateforme',
     'project_name': 'Nom du Projet',
     'project.editTitle': 'Modifier le projet',
     'project.editSubtitle': 'Mettre a jour les informations du projet',
@@ -277,18 +271,18 @@ const translations: Record<string, Record<string, string>> = {
     'table.comments': 'Commentaires',
     'table.date': 'Date',
     'project_name_placeholder': 'Exemple: Refonte du site',
-    'description_placeholder': 'Description d�taill�e du projet...',
-    'select_client': 'S�lectionner un client...',
+    'description_placeholder': 'Description détaillée du projet...',
+    'select_client': 'Sélectionner un client...',
     'optional': 'Optionnel',
-    'create_project': 'Cr�er le projet',
+    'create_project': 'Créer le projet',
     'error_project_name_required': 'Le nom du projet est requis',
     'error_description_required': 'La description est requise',
-    'error_select_client': 'Veuillez s�lectionner un client',
-    'error_start_date_required': 'La date de d�but est requise',
+    'error_select_client': 'Veuillez sélectionner un client',
+    'error_start_date_required': 'La date de début est requise',
     'error_email_required': 'L\'email est requis',
-    'assign_employee': 'Affecter un employ�',
-    'assign_employee_desc': 'Assigner un membre de l\'�quipe au projet',
-    'role_placeholder': 'Ex: D�veloppeur Lead, Designer, Chef de projet�',
+    'assign_employee': 'Affecter un employé',
+    'assign_employee_desc': 'Assigner un membre de l\'équipe au projet',
+    'role_placeholder': 'Ex: Développeur Lead, Designer, Chef de projet...',
     'assign_btn': 'Affecter',
     'archive_project_confirm': 'Voulez-vous vraiment archiver ce projet ?',
     'restore_project_confirm': 'Voulez-vous vraiment restaurer ce projet ?',
@@ -296,23 +290,23 @@ const translations: Record<string, Record<string, string>> = {
     'archive': 'Archiver',
     'restore': 'Restaurer',
     'delete_project_confirm': 'Voulez-vous vraiment supprimer ce projet ?',
-    'delete_project_warning': 'Cette action est irr�versible et supprimera d�finitivement le projet et ses donn�es associ�es.',
-    'delete_user_warning': 'Cette action est irr�versible. Toutes les donn�es li�es � cet utilisateur seront supprim�es.',
-    'delete_project_strong_warning': 'Ce projet contient {count} livrables. Cette action est irr�versible.',
+    'delete_project_warning': 'Cette action est irréversible et supprimera définitivement le projet et ses données associées.',
+    'delete_user_warning': 'Cette action est irréversible. Toutes les données liées à cet utilisateur seront supprimées.',
+    'delete_project_strong_warning': '????? ??? ??????? ??? {count} ???????. ??? ??????? ?????.',
     'delete_deliverable_confirm': 'Confirmer la suppression du livrable',
-    'delete_deliverable_warning': '�tes-vous s�r de vouloir supprimer "{name}" ? Cette action est irr�versible.',
+    'delete_deliverable_warning': '?? ??? ????? ?? ??? "{name}"? ??? ??????? ?????.',
     'delete_version_confirm': 'Confirmer la suppression de la version',
     'admin_password_confirm': 'Mot de passe administrateur',
     'employee_password_confirm': 'Mot de passe employe',
     'client_password_confirm': 'Mot de passe client',
-    'delete_strong_check_1': 'Je confirme vouloir supprimer d�finitivement.',
-    'delete_strong_check_2': 'Je comprends que cette action est irr�versible.',
-    'secure_download_title': 'Confirmer le t�l�chargement',
+    'delete_strong_check_1': 'Je confirme vouloir supprimer définitivement.',
+    'delete_strong_check_2': 'Je comprends que cette action est irréversible.',
+    'secure_download_title': 'Confirmer le téléchargement',
     'secure_download_message': 'Action sensible. Veuillez confirmer avec votre mot de passe.',
-    'download_strong_check_1': 'Je confirme vouloir t�l�charger ce fichier.',
+    'download_strong_check_1': 'Je confirme vouloir télécharger ce fichier.',
     'download_strong_check_2': 'I understand this action will be logged.',
     'user_password_confirm': 'Mot de passe du compte',
-    'download_confirm': 'T�l�charger',
+    'download_confirm': 'Télécharger',
     'review.notFound': 'Livrable introuvable.',
     'review.historyComments': 'Historique et commentaires',
     'review.refresh': 'Rafraichir',
@@ -322,15 +316,15 @@ const translations: Record<string, Record<string, string>> = {
     'review.internalNoteEmpty': 'Cliquer pour ajouter une note',
     'review.internalNoteSaved': 'Note interne mise a jour.',
     'employee.noProjects': 'Aucun projet trouve',
-    'delete_permanently': 'Supprimer d�finitivement',
-    'review.commentDeleted': 'Commentaire supprim�.',
+    'delete_permanently': 'Supprimer définitivement',
+    'review.commentDeleted': 'Commentaire supprimé.',
     'review.deleteCommentConfirm': 'Voulez-vous vraiment supprimer ce commentaire ?',
-    'login.needAccess': 'Besoin d\'acc�s ? Contactez votre administrateur.',
+    'login.needAccess': 'Besoin d\'accès ? Contactez votre administrateur.',
     'login.error': 'Identifiants incorrects',
     'showing_results_prefix': 'Affichage de ',
-    'showing_results_to': ' � ',
+    'showing_results_to': ' à ',
     'showing_results_of': ' sur ',
-    'showing_results_suffix': ' r�sultats',
+    'showing_results_suffix': ' résultats',
   },
   en: {
     'header.logout': 'Logout',
@@ -464,7 +458,6 @@ const translations: Record<string, Record<string, string>> = {
     'status.TERMINE': 'Completed',
     'status.ARCHIVE': 'Archived',
     'status.EN_ATTENTE': 'On Hold',
-    'status.PLANIFIE': 'Planned',
     'status.EN_REVUE': 'In Review',
     'status.VALIDE': 'Validated',
     'status.REVIEWED': 'Reviewed',
@@ -587,11 +580,6 @@ const translations: Record<string, Record<string, string>> = {
     'client': 'Client',
     'start_date': 'Start date',
     'end_date': 'End date',
-    'in_progress': 'In progress',
-    'completed': 'Completed',
-    'pending': 'Pending',
-    'planned': 'Planned',
-    'archived': 'Archived',
     'assign': 'Assign',
     'view': 'View',
     'add_project': 'Add project',
@@ -616,7 +604,7 @@ const translations: Record<string, Record<string, string>> = {
     'error_email_required': 'Email is required',
     'assign_employee': 'Assign an employee',
     'assign_employee_desc': 'Assign a team member to the project',
-    'role_placeholder': 'Ex: Lead developer, Designer, Project manager�',
+    'role_placeholder': 'Ex: Lead developer, Designer, Project manager...',
     'assign_btn': 'Assign',
     'archive_project_confirm': 'Do you really want to archive this project?',
     'restore_project_confirm': 'Do you really want to restore this project?',
@@ -665,325 +653,331 @@ const translations: Record<string, Record<string, string>> = {
     'login.error': 'Incorrect email or password',
   },
   ar: {
-    "header.logout": "????? ??????",
-    "header.clientDashboard": "???? ???? ??????",
-    "nav.myProjects": "???????",
-    "nav.inReview": "??????? ??? ????????",
-    "nav.validated": "?? ??????",
-    "nav.archived": "?????",
-    "nav.navigation": "??????",
-    "nav.settings": "?????????",
-    "nav.users": "??????????",
-    "nav.projects": "????????",
-    "projects.plannedEnd": "??????? ?????? ???",
-    "employee.assignedProjects": "???????? ???????",
-    "employee.uploadDeliverable": "??? ???????",
-    "employee.feedbackTitle": "??????? ??????",
-    "employee.feedbackSubtitle": "??? ???? ??? ????????",
-    "employee.noFeedback": "?? ???? ??????? ?????",
-    "employee.noFeedbackDesc": "????? ??????? ?????? ??? ????? ?? ????? ???????? ??????? ?? ???????.",
-    "employee.latestFeedback": "??? ?????????",
-    "employee.viewDetails": "????????",
-    "employee.manageVersionsBtn": "????? ?????",
-    "employee.annotationsOnly": "????????? ????? ??? ??? ??? ????.",
-    "search.placeholder": "???...",
-    "filter.status": "??????",
-    "filter.date": "???????",
-    "filter.name": "?????",
-    "filter.type": "?????",
-    "filter.type.IMAGE": "????",
-    "filter.type.VIDEO": "?????",
-    "filter.type.PDF": "PDF",
-    "filter.type.TEXTE": "??",
-    "filter.type.AUDIO": "???",
-    "filter.type.AUTRE": "???",
-    "filter.version": "??????",
-    "filter.all": "????",
-    "filter.apply": "?????",
-    "filter.reset": "????? ?????",
-    "deliverables.title": "?????????",
-    "deliverables.count": "?????(??)",
-    "deliverables.noResults": "?? ??? ?????? ??? ???????",
-    "deliverables.validate": "????",
-    "deliverables.validated": "?? ??????",
-    "deliverables.inReview": "??? ????????",
-    "deliverables.download": "?????",
-    "review.back": "????",
-    "review.zoom": "?????",
-    "review.reset": "????? ?????",
-    "review.comments": "?????????",
-    "review.addComment": "????? ?????",
-    "review.yourComment": "??????",
-    "review.noComments": "?? ???? ???????",
-    "review.commentPlaceholder": "???? ?????? ???...",
-    "review.commentLimit": "??? ??? ???????? ?????? ??? ??? ??????",
-    "review.submit": "?????",
-    "review.cancel": "?????",
-    "review.versions": "?????",
-    "review.currentVersion": "?????? ???????",
-    "review.deleteComment": "???",
-    "review.deleteAnnotation": "???",
-    "review.preview": "??????",
-    "review.version": "????",
-    "review.previewUnavailable": "???????? ??? ?????",
-    "review.invalidPdf": "??? PDF ??? ????",
-    "review.previewUnavailableType": "???????? ??? ????? ???? ????? ?? ???????",
-    "review.noVersionAvailable": "?? ???? ???? ????? ???? ???????.",
-    "review.downloadFile": "????? ?????",
-    "review.videoUnsupported": "?????? ?? ???? ????? ???????.",
-    "review.audioUnsupported": "?????? ?? ???? ????? ?????.",
-    "review.deleteVersionConfirm": "??? ?????? {version}?",
-    "review.versionDeleted": "?? ??? ??????.",
-    "comments.translate": "?????",
-    "comments.originalText": "???? ??????",
-    "comments.showTranslation": "??? ???????",
-    "comments.showOriginal": "??? ???? ??????",
-    "validation.title": "????? ??????",
-    "validation.message": "?? ??? ????? ?? ????? ?? ?????? ?? ??? ????????",
-    "validation.description": "????? ??? ??????? ??????? ??????? ??? ??? ?????. ?????? ?????? ??? \"?? ??????\" ????? ????? ??????.",
-    "validation.confirm": "????? ??????",
-    "validation.success": "?? ?????? ?? ??????? ?????!",
-    "account.myAccount": "?????",
-    "account.profile": "????? ??????",
-    "account.settings": "?????????",
-    "account.darkMode": "????? ??????",
-    "account.language": "?????",
-    "account.firstName": "????? ?????",
-    "account.lastName": "??? ???????",
-    "account.email": "?????? ??????????",
-    "account.phone": "??????",
-    "account.role": "?????",
-    "account.organization": "???????",
-    "account.password": "???? ??????",
-    "account.currentPassword": "???? ?????? ???????",
-    "account.newPassword": "???? ?????? ???????",
-    "account.confirmPassword": "????? ???? ??????",
-    "account.changePassword": "????? ???? ??????",
-    "account.avatar": "???? ????? ??????",
-    "account.save": "???",
-    "account.saveChanges": "??? ?????????",
-    "account.saved": "?? ??? ????????? ?????",
-    "account.dragDropPhoto": "???? ???? ?? ???? ????????",
-    "settings.profile": "????? ??????",
-    "settings.account": "??????",
-    "settings.security": "??????",
-    "settings.preferences": "?????????",
-    "settings.personalInfo": "????????? ???????",
-    "settings.profilePhoto": "???? ????? ??????",
-    "settings.changePhoto": "????? ??????",
-    "settings.passwordUpdate": "????? ???? ??????",
-    "settings.languageTheme": "????? ???????",
-    "settings.themeMode": "???? ???????",
-    "settings.light": "????",
-    "settings.dark": "????",
-    "settings.saveSuccess": "?? ??? ?????????.",
-    "settings.passwordSuccess": "?? ????? ???? ??????.",
-    "login.forgotPassword": "???? ???? ???????",
-    "login.welcomeTo": "????? ?? ??",
-    "login.forgotPasswordTitle": "??????? ?????",
-    "login.forgotPasswordDesc": "???? ????? ?????????? ????? ???? ????? ???????.",
-    "login.sendResetLink": "????? ??????",
-    "login.backToLogin": "?????? ??? ????? ??????",
-    "login.fillAllFields": "???? ??? ???? ??????",
-    "login.signIn": "????? ??????",
-    "login.signingIn": "???? ????? ??????...",
-    "login.resetSuccess": "?? ???????! ???? ?? ?????.",
-    "login.resetSuccessDesc": "??? ??? ???? ???? ????? ???? ??????? ??????? ?????? ?????? ??????? ?? ???? ?????.",
-    "status.EN_COURS": "??? ???????",
-    "status.TERMINE": "?????",
-    "status.ARCHIVE": "?????",
-    "status.EN_ATTENTE": "??? ????????",
-    "status.PLANIFIE": "????",
-    "status.EN_REVUE": "??? ????????",
-    "status.VALIDE": "?? ??????",
-    "status.REVIEWED": "??? ????????",
-    "status.VALIDATED": "?? ??????",
-    "common.close": "?????",
-    "common.open": "???",
-    "common.edit": "?????",
-    "common.delete": "???",
-    "common.loading": "???? ???????...",
-    "common.cancel": "?????",
-    "common.confirmPassword": "?????",
-    "common.add": "?????",
-    "common.filters": "???????",
-    "common.save": "???",
-    'common.notifications': '?????????',
-    'common.noNotifications': '?? ???? ???????',
-    'common.markAllAsRead': '????? ???? ??????',
-    'common.unread': '??? ??????',
-    'admin_role': '?????',
-    'employee_role': '????',
-    'client_role': '????',
-    'time.now': '????',
-    'time.min': '?????',
-    'time.h': '????',
-    'time.d': '???',
-    'error.emptyFile': '?????? ?? ????? ??? ??? ???? (0 ????).',
-    "admin.users.addTitle": "????? ??????",
-    "admin.users.addDescription": "????? ???? ???? ??? ??????",
-    "admin.users.create": "?????",
-    "admin.users.emailRequired": "?????? ?????????? ?????.",
-    "admin.users.createFailed": "???? ????? ????????. ???? ?? ?????? ????? ??? ????.",
-    "admin.users.loadFailed": "???? ????? ??????????.",
-    "admin.users.searchPlaceholder": "??? ?????? ?? ?????? ?? ???????...",
-    "admin.users.count": "{count} ??????",
-    "admin.users.active": "???",
-    "admin.users.inactive": "??? ???",
-    "admin.users.activate": "?????",
-    "admin.users.deactivate": "?????",
-    "admin.users.activated": "?? ????? ????????.",
-    "admin.users.deactivated": "?? ????? ????????.",
-    "admin.users.createdOn": "?? ??????? ??",
-    "admin.users.created": "?? ????? ????????.",
-    "admin.users.roleLabel": "?????",
-    "admin.projects.addTitle": "????? ?????",
-    "admin.projects.addDescription": "????? ????? ????",
-    "admin.projects.requiredFields": "???? ??? ?????? ????????.",
-    "admin.projects.createFailed": "???? ????? ???????. ???? ?? ????????? ????? ??? ????.",
-    "admin.projects.selectClient": "???? ????",
-    "project.overview": "???? ????",
-    "project.history": "?????",
-    "project.client": "??????",
-    "project.start": "???????",
-    "project.description": "?????",
-    "project.allDeliverables": "?? ?????????",
-    "project.noDeliverables": "?? ???? ??????? ???? ???????.",
-    "project.team": "??????",
-    "project.noTeam": "?? ???? ?????.",
-    "project.activityLog": "??? ??????",
-    "project.noHistory": "?? ???? ???.",
-    "project.notFound": "??????? ??? ?????.",
-    "project.history.projectCreated": "?? ????? ???????",
-    "project.history.projectInitialized": "????? ???????",
-    "project.history.employeeAssigned": "?? ????? ????",
-    "project.history.deliverableCreated": "?? ????? ???????",
-    "project.history.versionUploaded": "?? ??? ????",
-    "project.history.deliverableStatusChanged": "?? ????? ???? ???????",
-    "project.history.projectStatusChanged": "?? ????? ???? ???????",
-    "admin.projectDeleted": "?? ??? ???????.",
-    "admin.deliverableDeleted": "?? ??? ???????.",
-    "project.history.deliverableDeleted": "?? ??? ???????",
-    "project.history.versionDeleted": "?? ??? ??????",
-    "project.history.versionDownloaded": "?? ????? ???????",
-    "users_management": "????? ??????????",
-    "projects_management": "????? ????????",
-    "add_user": "????? ??????",
-    "add_user_full": "????? ??????",
-    "create_new_account": "????? ???? ???? ??? ??????",
-    'email_star': '?????? ?????????? *',
-    'first_name_caps': '????? ?????',
-    'last_name_caps': '????? ??????',
-    'role_caps': '?????',
-    'org_caps': '???????',
-    'save_success': '?? ??? ????????? ?????.',
-    'save_changes': '??? ?????????',
-    'unsaved_changes': '???? ??????? ??? ??????',
-    'activate_account': '????? ??????',
-    'deactivate_account': '????? ??????',
-    'all_roles': '???? ???????',
-    'all_statuses': '???? ???????',
-    'total': '??????',
-    'found': '?? ??????',
-    'employees': '????????',
-    'none': '?? ????',
-    'start_date': '????? ?????',
-    'end_date': '????? ????????',
-    'in_progress': '??? ???????',
-    'completed': '?????',
-    'pending': '??? ????????',
-    'planned': '????',
-    'assign': '?????',
-    'view': '???',
-    'add_project': '????? ?????',
-    'create_project_desc': '????? ????? ???? ??? ??????',
-    'project_name': '??? ???????',
-    'project.editTitle': '????? ???????',
-    'project.editSubtitle': '????? ?????? ???????',
-    'projects.count': '?????',
-    'table.deliverable': '???????',
-    'table.version': '??????',
-    'table.comments': '?????????',
-    'table.date': '???????',
-    'project_name_placeholder': '????: ????? ????? ??????',
-    'description_placeholder': '??? ???? ???????...',
-    'select_client': '???? ??????...',
-    'optional': '???????',
-    'create_project': '????? ?????',
-    'error_project_name_required': '??? ??????? ?????',
-    'error_description_required': '????? ?????',
-    'error_select_client': '???? ?????? ????',
-    'error_start_date_required': '????? ????? ?????',
-    'error_email_required': '?????? ?????????? ?????',
-    'assign_employee': '????? ????',
-    'assign_employee_desc': '????? ??? ???? ???????',
-    'role_placeholder': '????: ???? ?????? ????? ???? ?????...',
-    'assign_btn': '?????',
-    'archive_project_confirm': '?? ???? ???? ????? ??? ????????',
-    'restore_project_confirm': '?? ???? ???? ??????? ??? ????????',
-    'archive_project': '????? ???????',
-    'archive': '?????',
-    'restore': '???????',
-    'delete_project_confirm': '?? ???? ???? ??? ??? ????????',
-    'delete_project_warning': '??? ??????? ??? ???? ??????? ?????? ??? ??? ??????? ???????? ???????? ???? ????.',
-    'delete_user_warning': '??? ??????? ??? ???? ???????. ???? ??? ???? ???????? ???????? ???? ???????? ???? ????.',
-    'delete_project_strong_warning': '????? ??? ??????? ??? {count} ???????. ??? ??????? ??? ???? ???????.',
-    'delete_deliverable_confirm': '????? ??? ???????',
-    'delete_deliverable_warning': '?? ??? ????? ?? ??? "{name}"? ??? ??????? ??? ???? ???????.',
-    'delete_version_confirm': '????? ??? ??????',
-    'admin_password_confirm': '???? ???? ???????',
-    'employee_password_confirm': '???? ???? ??????',
-    'client_password_confirm': '???? ???? ??????',
-    'delete_strong_check_1': '???? ????? ?? ????? ???????.',
-    'delete_strong_check_2': '???? ?? ??? ??????? ??? ???? ???????.',
-    'secure_download_title': '????? ???????',
-    'secure_download_message': '????? ????. ???? ??????? ????? ?????.',
-    'download_strong_check_1': '???? ????? ?? ????? ??? ?????.',
-    'download_strong_check_2': '???? ??? ???? ????? ??? ???????.',
-    'user_password_confirm': '???? ???? ??????',
-    'download_confirm': '?????',
-    'review.notFound': '??????? ??? ?????.',
-    'review.historyComments': '????? ??????????',
-    'review.refresh': '?????',
-    'review.uploadedBy': '???',
-    'review.internalNote': '?????? ??????',
-    'review.internalNotePlaceholder': '??? ?????? ??????...',
-    'review.internalNoteEmpty': '???? ?????? ??????',
-    'review.internalNoteSaved': '?? ????? ????????.',
-    'employee.noProjects': '?? ???? ??????',
-    'delete_permanently': '??? ?????',
-    'delete': '???',
-    'previous': '??????',
-    'next': '??????',
-    "showing_results_prefix": "??? ",
-    "showing_results_to": " ??? ",
-    "showing_results_of": " ?? ",
-    "showing_results_suffix": " ?????",
-    "no_users_found": "?? ??? ?????? ??? ????????",
-    "no_projects_found": "?? ??? ?????? ??? ??????",
-    "translation_unavailable": "??????? ??? ?????",
-    "login.needAccess": "????? ??? ????? ????? ?? ??????.",
-    "login.error": "?????? ?? ???? ?????? ??? ?????",
-    'validation.strongCheck1': '???? ???? ??? ??????? ????? ??? ???????.',
-    'validation.strongCheck2': '???? ?? ??? ?????? ????? ????? ????? ??????.',
-    'review.deleteCommentConfirm': '?? ???? ???? ??? ??? ????????',
-    'review.commentDeleted': '?? ??? ???????.',
-    "user": "????????",
-    "email": "?????? ??????????",
-    "organisation": "???????",
-    "role": "?????",
-    "actions": "?????????",
-    "description": "?????",
-    "client": "??????",
-    "status": "??????",
-    "created_at": "????? ???????",
-    "users_count_one": "??????",
-    "users_count_other": "????????",
-    "project_count_one": "?????",
-    "project_count_other": "??????",
-    "active": "???",
-    "inactive": "??? ???",
-    "search_placeholder": "???...",
+    'header.logout': 'تسجيل الخروج',
+    'header.clientDashboard': 'لوحة العميل',
+    'nav.myProjects': 'مشاريعي',
+    'nav.inReview': 'التسليمات قيد المراجعة',
+    'nav.validated': 'تمت المصادقة',
+    'nav.archived': 'الأرشيف',
+    'nav.navigation': 'التنقل',
+    'nav.settings': 'الإعدادات',
+    'nav.users': 'المستخدمون',
+    'nav.projects': 'المشاريع',
+    'projects.plannedEnd': 'تاريخ النهاية المتوقع',
+    'employee.assignedProjects': 'المشاريع المسندة',
+    'employee.uploadDeliverable': 'رفع تسليم',
+    'employee.feedbackTitle': 'ملاحظات العميل',
+    'employee.feedbackSubtitle': 'آخر نسخة قيد المراجعة',
+    'employee.noFeedback': 'لا توجد ملاحظات',
+    'employee.noFeedbackDesc': 'ستظهر ملاحظات العميل هنا بعد إضافة تعليقات أو تعيينات على تسليماتك.',
+    'employee.latestFeedback': 'آخر الملاحظات',
+    'employee.viewDetails': 'التفاصيل',
+    'employee.manageVersionsBtn': 'إدارة النسخ',
+    'employee.annotationsOnly': 'التعليقات التوضيحية متاحة على آخر نسخة.',
+    'search.placeholder': 'بحث...',
+    'filter.status': 'الحالة',
+    'filter.date': 'التاريخ',
+    'filter.name': 'الاسم',
+    'filter.type': 'النوع',
+    'filter.type.IMAGE': 'صورة',
+    'filter.type.VIDEO': 'فيديو',
+    'filter.type.PDF': 'PDF',
+    'filter.type.TEXTE': 'نص',
+    'filter.type.AUDIO': 'صوت',
+    'filter.type.AUTRE': 'أخرى',
+    'filter.version': 'النسخة',
+    'filter.all': 'الكل',
+    'filter.apply': 'تطبيق',
+    'filter.reset': 'إعادة التعيين',
+    'deliverables.title': 'التسليمات',
+    'deliverables.count': 'تسليم(ات)',
+    'deliverables.noResults': 'لم يتم العثور على أي تسليم',
+    'deliverables.validate': 'مصادقة',
+    'deliverables.validated': 'تمت المصادقة',
+    'deliverables.inReview': 'قيد المراجعة',
+    'deliverables.download': 'تنزيل',
+    'review.back': 'رجوع',
+    'review.zoom': 'تكبير',
+    'review.reset': 'إعادة التعيين',
+    'review.comments': 'التعليقات',
+    'review.addComment': 'إضافة تعليق',
+    'review.yourComment': 'تعليقك',
+    'review.noComments': 'لا توجد تعليقات',
+    'review.commentPlaceholder': 'اكتب تعليقك هنا...',
+    'review.commentLimit': 'لقد علّقت بالفعل على هذه النسخة',
+    'review.submit': 'إرسال',
+    'review.cancel': 'إلغاء',
+    'review.versions': 'النسخ',
+    'review.currentVersion': 'النسخة الحالية',
+    'review.deleteComment': 'حذف',
+    'review.deleteAnnotation': 'حذف',
+    'review.preview': 'معاينة',
+    'review.version': 'نسخة',
+    'review.previewUnavailable': 'المعاينة غير متاحة',
+    'review.invalidPdf': 'ملف PDF غير صالح',
+    'review.previewUnavailableType': 'المعاينة غير متاحة لهذا النوع من الملفات',
+    'review.noVersionAvailable': 'لا توجد نسخة متاحة لهذا التسليم.',
+    'review.downloadFile': 'تنزيل الملف',
+    'review.videoUnsupported': 'متصفحك لا يدعم تشغيل الفيديو.',
+    'review.audioUnsupported': 'متصفحك لا يدعم تشغيل الصوت.',
+    'review.deleteVersionConfirm': 'حذف النسخة {version}؟',
+    'review.versionDeleted': 'تم حذف النسخة.',
+    'comments.translate': 'ترجمة',
+    'comments.originalText': 'النص الأصلي',
+    'comments.showTranslation': 'عرض الترجمة',
+    'comments.showOriginal': 'عرض الأصل',
+    'validation.title': 'تأكيد المصادقة',
+    'validation.message': 'هل أنت متأكد من أنك تريد المصادقة على هذا التسليم؟',
+    'validation.secureMessage': 'إجراء حساس. يرجى التأكيد بكلمة المرور.',
+    'validation.description': 'سيؤكد هذا الإجراء أنك توافق نهائيًا على هذا العمل. ستتغير الحالة إلى "تمت المصادقة" وسيتم إشعار الفريق.',
+    'validation.confirm': 'تأكيد المصادقة',
+    'validation.success': 'تمت المصادقة على التسليم بنجاح!',
+    'validation.strongCheck1': 'أؤكد أنني راجعت محتوى هذا التسليم.',
+    'validation.strongCheck2': 'أفهم أن هذه المصادقة نهائية وسيتم إشعار الفريق.',
+    'account.myAccount': 'حسابي',
+    'account.profile': 'الملف الشخصي',
+    'account.settings': 'الإعدادات',
+    'account.darkMode': 'الوضع الداكن',
+    'account.language': 'اللغة',
+    'account.firstName': 'الاسم',
+    'account.lastName': 'اللقب',
+    'account.email': 'البريد الإلكتروني',
+    'account.phone': 'الهاتف',
+    'account.role': 'الدور',
+    'account.organization': 'المؤسسة',
+    'account.password': 'كلمة المرور',
+    'account.currentPassword': 'كلمة المرور الحالية',
+    'account.newPassword': 'كلمة المرور الجديدة',
+    'account.confirmPassword': 'تأكيد كلمة المرور',
+    'account.changePassword': 'تغيير كلمة المرور',
+    'account.avatar': 'صورة الملف الشخصي',
+    'account.save': 'حفظ',
+    'account.saveChanges': 'حفظ التغييرات',
+    'account.saved': 'تم حفظ التغييرات بنجاح',
+    'account.dragDropPhoto': 'اسحب صورة أو انقر للاختيار',
+    'settings.profile': 'الملف الشخصي',
+    'settings.account': 'الحساب',
+    'settings.security': 'الأمان',
+    'settings.preferences': 'التفضيلات',
+    'settings.personalInfo': 'المعلومات الشخصية',
+    'settings.profilePhoto': 'صورة الملف الشخصي',
+    'settings.changePhoto': 'تغيير الصورة',
+    'settings.passwordUpdate': 'تحديث كلمة المرور',
+    'settings.languageTheme': 'اللغة والمظهر',
+    'settings.themeMode': 'مظهر الواجهة',
+    'settings.light': 'فاتح',
+    'settings.dark': 'داكن',
+    'settings.saveSuccess': 'تم حفظ تغييراتك.',
+    'settings.passwordSuccess': 'تم تحديث كلمة المرور.',
+    'login.forgotPassword': 'هل نسيت كلمة المرور؟',
+    'login.welcomeTo': 'مرحبًا بك في',
+    'login.forgotPasswordTitle': 'استرجاع الوصول',
+    'login.forgotPasswordDesc': 'أدخل بريدك الإلكتروني لتلقي رابط إعادة التعيين.',
+    'login.sendResetLink': 'إرسال رابط إعادة التعيين',
+    'login.backToLogin': 'العودة إلى تسجيل الدخول',
+    'login.fillAllFields': 'يرجى ملء جميع الحقول',
+    'login.signIn': 'تسجيل الدخول',
+    'login.signingIn': 'جارٍ تسجيل الدخول...',
+    'login.resetSuccess': 'تم إرسال الرابط! تحقق من بريدك الوارد.',
+    'login.resetSuccessDesc': 'إذا كان هناك حساب مرتبط بهذا البريد، فستتلقى رابط إعادة تعيين خلال بضع دقائق.',
+    'status.EN_COURS': 'قيد التنفيذ',
+    'status.TERMINE': 'مكتمل',
+    'status.ARCHIVE': 'مؤرشف',
+    'status.EN_ATTENTE': 'قيد الانتظار',
+    'status.EN_REVUE': 'قيد المراجعة',
+    'status.VALIDE': 'تمت المصادقة',
+    'status.REVIEWED': 'تمت المراجعة',
+    'status.VALIDATED': 'تمت المصادقة',
+    'common.close': 'إغلاق',
+    'common.open': 'فتح',
+    'common.edit': 'تعديل',
+    'common.delete': 'حذف',
+    'common.loading': 'جارٍ التحميل...',
+    'common.cancel': 'إلغاء',
+    'common.confirmPassword': 'تأكيد',
+    'common.add': 'إضافة',
+    'common.filters': 'الفلاتر',
+    'common.save': 'حفظ',
+    'common.error': 'حدث خطأ',
+    'common.notifications': 'الإشعارات',
+    'common.noNotifications': 'لا توجد إشعارات',
+    'common.markAllAsRead': 'تحديد الكل كمقروء',
+    'common.unread': 'غير مقروء',
+    'time.now': 'الآن',
+    'time.min': 'د',
+    'time.h': 'س',
+    'time.d': 'ي',
+    'error.emptyFile': 'عذرًا، لا يمكنك رفع ملف فارغ (0 بايت).',
+    'admin.users.addTitle': 'إضافة مستخدم',
+    'admin.users.addDescription': 'إنشاء حساب جديد على المنصة',
+    'admin.users.create': 'إنشاء',
+    'admin.users.emailRequired': 'البريد الإلكتروني مطلوب.',
+    'admin.users.createFailed': 'تعذر إنشاء المستخدم. تحقق من البريد الإلكتروني ثم أعد المحاولة.',
+    'admin.users.loadFailed': 'تعذر تحميل المستخدمين.',
+    'admin.users.searchPlaceholder': 'ابحث بالاسم أو البريد أو المؤسسة...',
+    'admin.users.count': '{count} مستخدم(ون)',
+    'admin.users.active': 'نشط',
+    'admin.users.inactive': 'غير نشط',
+    'admin.users.activate': 'تفعيل',
+    'admin.users.deactivate': 'تعطيل',
+    'admin.users.activated': 'تم تفعيل المستخدم.',
+    'admin.users.deactivated': 'تم تعطيل المستخدم.',
+    'admin.users.createdOn': 'تاريخ الإنشاء',
+    'admin.users.created': 'تم إنشاء المستخدم.',
+    'admin.users.roleLabel': 'الدور',
+    'admin.projects.addTitle': 'إضافة مشروع',
+    'admin.projects.addDescription': 'إنشاء مشروع جديد',
+    'admin.projects.requiredFields': 'يرجى ملء الحقول المطلوبة.',
+    'admin.projects.createFailed': 'تعذر إنشاء المشروع. تحقق من المعلومات ثم أعد المحاولة.',
+    'admin.projects.selectClient': 'اختر عميلًا',
+    'project.overview': 'نظرة عامة',
+    'project.history': 'السجل',
+    'project.client': 'العميل',
+    'project.start': 'البداية',
+    'project.description': 'الوصف',
+    'project.allDeliverables': 'كل التسليمات',
+    'project.noDeliverables': 'لا توجد تسليمات لهذا المشروع.',
+    'project.team': 'الفريق',
+    'project.noTeam': 'لا يوجد أعضاء في الفريق.',
+    'project.activityLog': 'سجل النشاط',
+    'project.noHistory': 'لا يوجد سجل.',
+    'project.notFound': 'المشروع غير موجود.',
+    'project.history.projectCreated': 'تم إنشاء المشروع',
+    'project.history.projectInitialized': 'تهيئة المشروع',
+    'project.history.employeeAssigned': 'تم إسناد موظف',
+    'project.history.deliverableCreated': 'تم إنشاء التسليم',
+    'project.history.versionUploaded': 'تم رفع النسخة',
+    'project.history.deliverableStatusChanged': 'تم تغيير حالة التسليم',
+    'project.history.projectStatusChanged': 'تم تغيير حالة المشروع',
+
+    'admin.projectDeleted': 'تم حذف المشروع.',
+    'admin.deliverableDeleted': 'تم حذف التسليم.',
+    'project.history.deliverableDeleted': 'تم حذف التسليم',
+    'project.history.versionDeleted': 'تم حذف النسخة',
+    'project.history.versionDownloaded': 'تم تنزيل النسخة',
+    'users_management': 'إدارة المستخدمين',
+    'projects_management': 'إدارة المشاريع',
+    'add_user': 'إضافة مستخدم',
+    'add_user_full': 'إضافة مستخدم',
+    'create_new_account': 'إنشاء حساب جديد على المنصة',
+    'email_star': 'البريد الإلكتروني *',
+    'first_name_caps': 'الاسم',
+    'last_name_caps': 'اللقب',
+    'role_caps': 'الدور',
+    'org_caps': 'المؤسسة',
+    'cancel': 'إلغاء',
+    'close': 'إغلاق',
+    'save_success': 'تم حفظ التغييرات.',
+    'save_changes': 'حفظ التغييرات',
+    'unsaved_changes': 'لديك تغييرات غير محفوظة',
+    'activate_account': 'تفعيل الحساب',
+    'deactivate_account': 'تعطيل الحساب',
+    'admin_role': 'مدير',
+    'employee_role': 'موظف',
+    'client_role': 'عميل',
+    'email': 'البريد الإلكتروني',
+    'first_name': 'الاسم',
+    'last_name': 'اللقب',
+    'organisation': 'المؤسسة',
+    'role': 'الدور',
+    'actions': 'الإجراءات',
+    'description': 'الوصف',
+    'status': 'الحالة',
+    'created_at': 'تاريخ الإنشاء',
+    'user': 'المستخدم',
+    'loading': 'جارٍ التحميل...',
+    'search_and_filters': 'البحث والفلاتر',
+    'search_placeholder': 'بحث...',
+    'reset': 'إعادة التعيين',
+    'reset_filters': 'إعادة تعيين الفلاتر',
+    'active_filters': 'الفلاتر النشطة',
+    'all_roles': 'كل الأدوار',
+    'all_statuses': 'كل الحالات',
+    'active': 'نشط',
+    'inactive': 'غير نشط',
+    'users_count_one': 'مستخدم',
+    'users_count_other': 'مستخدمون',
+    'project_count_one': 'مشروع',
+    'project_count_other': 'مشاريع',
+    'total': 'إجمالي',
+    'found': 'تم العثور على',
+    'employees': 'الموظفون',
+    'none': 'لا يوجد',
+    'client': 'عميل',
+    'start_date': 'تاريخ البداية',
+    'end_date': 'تاريخ النهاية',
+    'assign': 'إسناد',
+    'view': 'عرض',
+    'add_project': 'إضافة مشروع',
+    'create_project_desc': 'إنشاء مشروع جديد على المنصة',
+    'project_name': 'اسم المشروع',
+    'project.editTitle': 'تعديل المشروع',
+    'project.editSubtitle': 'تحديث معلومات المشروع',
+    'projects.count': 'مشروع/مشاريع',
+    'table.deliverable': 'التسليم',
+    'table.version': 'النسخة',
+    'table.comments': 'التعليقات',
+    'table.date': 'التاريخ',
+    'project_name_placeholder': 'مثال: إعادة تصميم الموقع',
+    'description_placeholder': 'وصف مفصل للمشروع...',
+    'select_client': 'اختر عميلًا...',
+    'optional': 'اختياري',
+    'create_project': 'إنشاء المشروع',
+    'error_project_name_required': 'اسم المشروع مطلوب',
+    'error_description_required': 'الوصف مطلوب',
+    'error_select_client': 'يرجى اختيار عميل',
+    'error_start_date_required': 'تاريخ البداية مطلوب',
+    'error_email_required': 'البريد الإلكتروني مطلوب',
+    'assign_employee': 'إسناد موظف',
+    'assign_employee_desc': 'إسناد عضو من الفريق إلى المشروع',
+    'role_placeholder': 'مثال: مطور رئيسي، مصمم، مدير مشروع...',
+    'assign_btn': 'إسناد',
+    'archive_project_confirm': 'هل تريد فعلًا أرشفة هذا المشروع؟',
+    'restore_project_confirm': 'هل تريد فعلًا استعادة هذا المشروع؟',
+    'archive_project': 'أرشفة المشروع',
+    'archive': 'أرشفة',
+    'restore': 'استعادة',
+    'delete_project_confirm': 'هل تريد فعلًا حذف هذا المشروع؟',
+    'delete_project_warning': 'هذا الإجراء نهائي وسيحذف المشروع وكل بياناته المرتبطة نهائيًا.',
+    'delete_user_warning': 'هذا الإجراء نهائي. سيتم حذف كل البيانات المرتبطة بهذا المستخدم نهائيًا.',
+    'delete_project_strong_warning': 'يحتوي هذا المشروع على {count} تسليمات. هذا الإجراء نهائي.',
+    'delete_deliverable_confirm': 'تأكيد حذف التسليم',
+    'delete_deliverable_warning': 'هل أنت متأكد من حذف "{name}"؟ هذا الإجراء نهائي.',
+    'delete_version_confirm': 'تأكيد حذف النسخة',
+    'admin_password_confirm': 'كلمة مرور المدير',
+    'employee_password_confirm': 'كلمة مرور الموظف',
+    'client_password_confirm': 'كلمة مرور العميل',
+    'delete_strong_check_1': 'أؤكد أنني أريد الحذف النهائي.',
+    'delete_strong_check_2': 'أفهم أن هذا الإجراء نهائي.',
+    'secure_download_title': 'تأكيد التنزيل',
+    'secure_download_message': 'إجراء حساس. يرجى التأكيد بكلمة المرور.',
+    'download_strong_check_1': 'أؤكد أنني أريد تنزيل هذا الملف.',
+    'download_strong_check_2': 'أفهم أن هذا الإجراء سيتم تسجيله.',
+    'user_password_confirm': 'كلمة مرور الحساب',
+    'download_confirm': 'تنزيل',
+    'review.notFound': 'التسليم غير موجود.',
+    'review.historyComments': 'السجل والتعليقات',
+    'review.refresh': 'تحديث',
+    'review.uploadedBy': 'تم الرفع بواسطة',
+    'review.internalNote': 'ملاحظة داخلية',
+    'review.internalNotePlaceholder': 'أضف ملاحظة داخلية...',
+    'review.internalNoteEmpty': 'انقر لإضافة ملاحظة',
+    'review.internalNoteSaved': 'تم تحديث الملاحظة الداخلية.',
+    'employee.noProjects': 'لا توجد مشاريع مسندة',
+    'delete_permanently': 'حذف نهائي',
+    'delete': 'حذف',
+    'previous': 'السابق',
+    'next': 'التالي',
+    'showing_results_prefix': 'عرض ',
+    'showing_results_to': ' إلى ',
+    'showing_results_of': ' من ',
+    'showing_results_suffix': ' نتائج',
+    'no_users_found': 'لم يتم العثور على مستخدمين',
+    'no_projects_found': 'لم يتم العثور على مشاريع',
+    'translation_unavailable': 'الترجمة غير متاحة',
+    'login.needAccess': 'تحتاج إلى وصول؟ تواصل مع المسؤول.',
+    'login.error': 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
+  
   }
 };
 

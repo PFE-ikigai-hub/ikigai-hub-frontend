@@ -25,8 +25,6 @@ export function getStatusIcon(status: string): ElementType {
       return Archive;
     case "EN_ATTENTE":
       return PauseCircle;
-    case "PLANIFIE":
-      return CalendarBlank;
     case "EN_REVUE":
       return Eye;
     case "VALIDE":

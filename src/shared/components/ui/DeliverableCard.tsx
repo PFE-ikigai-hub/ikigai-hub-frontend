@@ -1,6 +1,6 @@
 // Ce fichier gere une partie du frontend.
 import { useState, useEffect, useRef } from 'react';
-import { MessageCircle, FileText, Image, Video, FileType, File, Music } from 'lucide-react';
+import { MessageCircle, FileText, Image, Video, FileType, File, Music, ChevronRight } from 'lucide-react';
 import { useI18n } from '@/core/i18n/I18nProvider';
 import { versionsApi } from '@/core/api/client';
 import BorderGlow from '../effects/BorderGlow';
@@ -288,7 +288,7 @@ export function DeliverableCard({
                 </button>
               )}
               <div className="text-stone-400 group-hover:text-stone-900 dark:group-hover:text-white transition-colors flex justify-end">
-                <svg xmlns="http:
+                <ChevronRight className="w-4 h-4" />
               </div>
            </div>
         </td>

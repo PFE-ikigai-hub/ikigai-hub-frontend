@@ -47,8 +47,6 @@ function statusPill(status: ProjectStatus): string {
       return "bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300 border-stone-200 dark:border-white/10";
     case "EN_ATTENTE":
       return "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-400 border-indigo-200 dark:border-white/10";
-    case "PLANIFIE":
-      return "bg-purple-50 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400 border-purple-200 dark:border-white/10";
     default:
       return "bg-stone-100 text-stone-700 border-stone-200";
   }
@@ -65,9 +63,9 @@ function shouldHideEmployeeProjectAccessMessage(role: string | undefined, messag
   if (role !== "EMPLOYE" || typeof message !== "string") return false;
   const normalized = message.toLowerCase();
   return (
-    (normalized.includes("pas autorisé") || normalized.includes("not authorized")) &&
+    (normalized.includes("pas autorisï¿½") || normalized.includes("not authorized")) &&
     normalized.includes("projet")
-  ) || normalized.includes("pas affecté à ce projet");
+  ) || normalized.includes("pas affectï¿½ ï¿½ ce projet");
 }
 
 function EditProjectModal({
@@ -921,7 +919,7 @@ export function ProjectDetailView({
 
   const handleArchiveProject = async (p: ApiProject) => {
     if (p.statut !== "TERMINE") {
-      toast.error("Archivage autorisé uniquement pour les projets TERMINÉS.");
+      toast.error("Archivage autorisï¿½ uniquement pour les projets TERMINï¿½S.");
       return;
     }
     setArchiveProjectState({ isOpen: true, project: p });
@@ -1450,12 +1448,12 @@ export function ProjectDetailView({
       <SecureDeleteModal
         isOpen={archiveProjectState.isOpen}
         onClose={() => setArchiveProjectState({ isOpen: false, project: null })}
-        title={`${t("archive")} • ${archiveProjectState.project?.nom ?? ""}`}
-        description="Double vérification + mot de passe administrateur requis."
+        title={`${t("archive")} ï¿½ ${archiveProjectState.project?.nom ?? ""}`}
+        description="Double vï¿½rification + mot de passe administrateur requis."
         strongMode={true}
         confirmLabel={t("archive")}
         confirmButtonClassName="bg-stone-800 text-white hover:bg-stone-900 dark:bg-stone-700 dark:hover:bg-stone-600"
-        checkTextA="Je confirme que ce projet est terminé."
+        checkTextA="Je confirme que ce projet est terminï¿½."
         checkTextB="Je comprends que l'archivage limite les modifications."
         onConfirm={handleArchiveProjectConfirm}
       />
